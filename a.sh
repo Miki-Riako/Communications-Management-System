@@ -12,17 +12,17 @@ comp() {
         return 1
     fi
 
-    gcc "$file_path" -o "$DIR/$filename.out" -Wall
+    gcc "$file_path" -o "$DIR/$filename.exe" -Wall
 
     if [ $? -eq 0 ]; then
         echo "comp: Compilation successful. Running the program..."
-        "$DIR/$filename.out"
+        "$DIR/$filename.exe"
     else
         echo "comp: Compilation failed."
     fi
 }
 
 cl() {
-    find $DIR -type f \( -name "*.out" -o -name "*.exe" \) -exec rm {} \;
+    find $DIR -type f \( -name "*.out" -o -name "*.exe"\) -exec rm {} \;
     echo "cl: Cleaned up the directory."
 }

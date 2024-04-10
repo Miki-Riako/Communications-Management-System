@@ -8,8 +8,11 @@ void exitSystem();
 
 int main(void) {
     int choice;
-    login();
-    while(1) {
+    while (true) {
+        if (login())
+            break;
+    }
+    while(true) {
         printf("\n\n通信管理系统\n\n");
         printf("1. 添加客户信息\n");
         printf("2. 查看客户信息\n");
