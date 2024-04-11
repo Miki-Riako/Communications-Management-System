@@ -5,4 +5,14 @@
 #include <string.h>
 #include <stdbool.h>
 
+
+#define SYSTEM_CLEAR "clear"
+// if in windows, change the clear to cls
+
+#define MAX_LENGTH 255
+
 #endif
+
+
+
+typedef char string[MAX_LENGTH];

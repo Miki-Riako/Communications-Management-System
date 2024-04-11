@@ -1,28 +1,27 @@
 #!/bin/bash
-DIR="$(pwd)/src"
-EXTENSION=".c"
-DEFAULT_FILE="main"
 
+# comp 函数：编译 main.c 并运行
 comp() {
-    local filename=${1:-$DEFAULT_FILE}
+    if [ -f "main.c" ]; then
+        echo "找到 main.c，正在编译..."
+        g++ main.c -o main.exe
 
-    local file_path="$DIR/$filename$EXTENSION"
-    if [ ! -f "$file_path" ]; then
-        echo "comp: File $file_path does not exist."
-        return 1
-    fi
-
-    gcc "$file_path" -o "$DIR/$filename.exe" -Wall
-
-    if [ $? -eq 0 ]; then
-        echo "comp: Compilation successful. Running the program..."
-        "$DIR/$filename.exe"
+        if [ $? -eq 0 ]; then
+            echo "编译成功！正在运行程序..."
+            ./main.exe
+        else
+            echo "编译失败。"
+        fi
     else
-        echo "comp: Compilation failed."
+        echo "未找到 main.c 文件。"
     fi
 }
 
+# cl 函数：清理目录下的特定文件
 cl() {
-    find $DIR -type f \( -name "*.out" -o -name "*.exe"\) -exec rm {} \;
-    echo "cl: Cleaned up the directory."
+    echo "正在清理..."
+    rm -f *.out *.exe *.ini
+    echo "清理完毕。"
 }
+
+cd src || (echo "无法进入 src 目录" && exit 1)

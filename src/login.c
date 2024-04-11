@@ -1,55 +1,16 @@
 #include "header.h"
 
 #define CREDENTIALS_FILE "credentials.ini"
-#define MAX_USERNAME_LENGTH 50
-#define MAX_PASSWORD_LENGTH 50
-#define MAX_CREDENTIALS_LENGTH (MAX_USERNAME_LENGTH + MAX_PASSWORD_LENGTH + 2)
 
 #define MANAGER_SECTION "Manager"
 #define EMPLOYEE_SECTION "Employee"
+#define SECRET_KEY "secret_key_secret_key_secret_key_secret_key_secret_key"
 
-const unsigned char encryptionKey[] = "secret_key_secret_key_secret_key_secret_key_secret_key";
-
-
-void promptLogin();
 void initializeCredentialsFile();
-int verifyLogin(const char* username, const char* encryptedPassword, const char* section);
-void xorEncryptDecrypt(unsigned char *input, size_t length, unsigned char *output);
-bool login();
-
-void promptLogin() {
-    char username[MAX_USERNAME_LENGTH];
-    char password[MAX_PASSWORD_LENGTH];
-    unsigned char encryptedPassword[MAX_PASSWORD_LENGTH + 1];
-    int role;
-
-    printf("请选择角色：\n");
-    printf("1. 公司经理\n");
-    printf("2. 公司业务员\n");
-    printf("3. 退出程序\n");
-    printf("请输入选择的角色数字（1-3）：");
-    scanf("%d", &role);
-
-    if (role == 3) {
-        printf("程序已退出。\n");
-        exit(0);  // 直接退出程序
-    }
-    
-    const char* section = (role == 1) ? MANAGER_SECTION : EMPLOYEE_SECTION;
-
-    printf("请输入用户名：");
-    scanf("%49s", username);
-    printf("请输入密码：");
-    scanf("%49s", password);
-
-    xorEncryptDecrypt((unsigned char*)password, strlen(password), encryptedPassword);
-
-    if (verifyLogin(username, (const char*)encryptedPassword, section)) {
-        printf("登录成功！\n");
-    } else {
-        printf("登录失败，用户名或密码错误。\n");
-    }
-}
+bool verifyLogin(string username, string password, string section);
+void xorEncryptDecrypt(string input, size_t length);
+void registerUser();
+void login();
 
 void initializeCredentialsFile() {
     FILE *file = fopen(CREDENTIALS_FILE, "r");
@@ -71,30 +32,27 @@ void initializeCredentialsFile() {
     }
 }
 
-int verifyLogin(const char* username, const char* encryptedPassword, const char* section) {
-    char line[MAX_CREDENTIALS_LENGTH];
-    char sectionHeader[50];
+bool verifyLogin(string username, string password, string section) {
+    string line;
+    string sectionHeader;
     sprintf(sectionHeader, "[%s]", section); // 格式化section头字符串
-    int isInSection = 0;
-    int userFound = 0;
+    bool isInSection = false;
+    bool userFound = false;
+
+    initializeCredentialsFile();
 
     FILE *file = fopen(CREDENTIALS_FILE, "r");
     if (!file) {
-        initializeCredentialsFile();
-        file = fopen(CREDENTIALS_FILE, "r"); // 重新打开新创建的文件
-        if (!file) {
-            perror("无法打开新创建的凭据文件");
-            return 0;
-        }
+        perror("无法打开新创建的凭据文件");
+        return false;
     }
 
     while (fgets(line, sizeof(line), file)) {
-        // 去除换行符
-        line[strcspn(line, "\n")] = 0;
+        line[strcspn(line, "\n")] = 0; // 去除换行符
 
         // 检查是否是我们需要的section头
         if (strncmp(line, sectionHeader, strlen(sectionHeader)) == 0) {
-            isInSection = 1;
+            isInSection = true;
             continue;
         }
 
@@ -108,13 +66,8 @@ int verifyLogin(const char* username, const char* encryptedPassword, const char*
             char *file_password = strtok(NULL, "\n");
 
             if (file_username && file_password) {
-                // 使用异或加密对文件中的密码进行解密
-                unsigned char decryptedPassword[MAX_PASSWORD_LENGTH + 1];
-                xorEncryptDecrypt((unsigned char*)file_password, strlen(file_password), decryptedPassword);
-
-                // 比较用户名和密码
-                if (strcmp(username, file_username) == 0 && strcmp(encryptedPassword, (char*)decryptedPassword) == 0) {
-                    userFound = 1;
+                if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
+                    userFound = true;
                     break;
                 }
             }
@@ -126,62 +79,127 @@ int verifyLogin(const char* username, const char* encryptedPassword, const char*
 }
 
 
-void xorEncryptDecrypt(unsigned char *input, size_t length, unsigned char *output) {
-    size_t key_length = strlen((const char *)encryptionKey);
+void xorEncryptDecrypt(string input, size_t length) {
+    string encryptionKey;
+    strcpy(encryptionKey, SECRET_KEY);
+    size_t key_length = strlen(encryptionKey);
     for (size_t i = 0; i < length; ++i) {
-        output[i] = input[i] ^ encryptionKey[i % key_length];
+        input[i] ^= encryptionKey[i % key_length];
     }
-    output[length] = '\0'; // 确保输出是以null结尾的字符串
+    input[length] = '\0'; // 确保输出是以null结尾的字符串
 }
 
-bool login() {
-    char username[MAX_USERNAME_LENGTH];
-    char password[MAX_PASSWORD_LENGTH];
-    unsigned char encryptedPassword[MAX_PASSWORD_LENGTH + 1];
-    int role;
+void registerUser() {
+    string username, password, role;
+    string section = "";  // 初始化为空字符串
+    FILE *file;
+
+    printf("创建新用户.\n");
+    while (getchar() != '\n'); // 清空缓冲区
+
+    printf("请输入用户名：");
+    fgets(username, MAX_LENGTH, stdin);
+    username[strcspn(username, "\n")] = 0;
+
+    printf("请输入密码：");
+    fgets(password, MAX_LENGTH, stdin);
+    password[strcspn(password, "\n")] = 0;
+    xorEncryptDecrypt(password, strlen(password)); // 加密密码
 
     printf("请选择角色：\n");
     printf("1. 公司经理\n");
     printf("2. 公司业务员\n");
-    printf("3. 退出程序\n");
-    printf("请输入选择的角色数字（1-3）：");
-    scanf("%d", &role);
+    printf("请输入角色数字（1-2）：");
+    fgets(role, MAX_LENGTH, stdin);
+    role[strcspn(role, "\n")] = 0;
+    system(SYSTEM_CLEAR);
 
-    if (role == 3) {
-        printf("程序已退出。\n");
-        exit(0);  // 直接退出程序
-    }
-    
-    const char* section = (role == 1) ? MANAGER_SECTION : EMPLOYEE_SECTION;
-    
-    // 清空缓冲区以防止输入问题
-    while (getchar() != '\n');
-
-    // 确定角色对应的部分名称
-    section = (role == 1) ? MANAGER_SECTION : EMPLOYEE_SECTION;
-
-    // 获取用户输入
-    printf("请输入用户名：");
-    fgets(username, MAX_USERNAME_LENGTH, stdin);
-    // 去除fgets捕获的换行符
-    username[strcspn(username, "\n")] = 0;
-
-    printf("请输入密码：");
-    // 密码应该隐藏起来，这里为了演示简便就直接输入了
-    fgets(password, MAX_PASSWORD_LENGTH, stdin);
-    // 去除fgets捕获的换行符
-    password[strcspn(password, "\n")] = 0;
-
-    // 加密用户密码
-    xorEncryptDecrypt((unsigned char*)password, strlen(password), encryptedPassword);
-
-    // 验证登录
-    if (verifyLogin(username, (const char*)encryptedPassword, section)) {
-        printf("登录成功！欢迎, %s!\n", username);
-        return true;
+    if (strcmp(role, "1") == 0) {
+        strcpy(section, "[Manager]");
+    } else if (strcmp(role, "2") == 0) {
+        strcpy(section, "[Employee]");
     } else {
-        printf("登录失败，用户名或密码错误。\n");
-        return false;
+        printf("无效角色. 返回登录菜单.\n");
+        return;
+    }
+
+    file = fopen(CREDENTIALS_FILE, "a"); // 以追加模式打开文件
+    if (!file) {
+        perror("无法打开凭据文件进行写入");
+        return;
+    }
+
+    fprintf(file, "%s=%s\n", username, password); // 写入新的用户信息
+    fclose(file);
+
+    printf("用户注册成功.\n");
+}
+
+
+
+void login() {
+    while (true) {
+        bool flag = false;
+        string username;
+        string password;
+        string section;
+
+        printf("请选择角色：\n");
+        printf("1. 公司经理\n");
+        printf("2. 公司业务员\n");
+        printf("3. 注册用户\n");
+        printf("4. 退出程序\n");
+        printf("请输入选择的角色数字（1-4）：");
+        string role;
+        scanf("%254s", role);
+        system(SYSTEM_CLEAR);
+
+        if (strlen(role) != 1) {
+            printf("无效的选项，请重新选择。\n");
+            continue;  // 继续循环等待有效输入
+        }
+        switch (role[0]) {
+        case '1':
+            strcpy(section, "Manager");
+            break;
+        case '2':
+            strcpy(section, "Employee");
+            break;
+        case '3':
+            registerUser();
+            flag = true;
+            break;
+        case '4':
+            printf("程序已退出。\n");
+            exit(0);
+        default:
+            printf("无效的选项，请重新选择。\n");
+            flag = true;
+        }
+        if (flag) {
+            continue;
+        }
+
+        while (getchar() != '\n');
+
+        // 获取用户输入
+        printf("请输入用户名：");
+        fgets(username, MAX_LENGTH, stdin);
+        username[strcspn(username, "\n")] = 0; // 去除fgets捕获的换行符
+
+        printf("请输入密码：");
+        fgets(password, MAX_LENGTH, stdin);
+        password[strcspn(password, "\n")] = 0; // 去除fgets捕获的换行符
+        xorEncryptDecrypt(password, strlen(password)); // 加密用户密码
+        system(SYSTEM_CLEAR);
+
+        // 验证登录
+        if (verifyLogin(username, password, section)) {
+            printf("登录成功！欢迎, %s!\n", username);
+            return;
+        } else {
+            printf("登录失败，用户名或密码错误。\n");
+        }
     }
 }
 
