@@ -20,7 +20,7 @@ comp() {
 # cl 函数：清理目录下的特定文件
 cl() {
     echo "正在清理..."
-    rm -f *.out *.exe *.ini
+    rm -f *.out *.exe *.csv
     echo "清理完毕。"
 }
 

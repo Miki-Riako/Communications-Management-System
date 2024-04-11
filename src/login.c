@@ -7,75 +7,88 @@
 #define SECRET_KEY "secret_key_secret_key_secret_key_secret_key_secret_key"
 
 void initializeCredentialsFile();
-bool verifyLogin(string username, string password, string section);
+bool verifyLogin(string username, string password, int section);
 void xorEncryptDecrypt(string input, size_t length);
 void registerUser();
 void login();
 
 void initializeCredentialsFile() {
-    FILE *file = fopen(CREDENTIALS_FILE, "r");
+    FILE *file;
+
+    // 检查并初始化 managers.csv 文件
+    file = fopen("managers.csv", "r");
     if (!file) {
         // 文件不存在，创建新文件
-        printf("凭据文件未找到，将创建新文件。\n");
-        file = fopen(CREDENTIALS_FILE, "w");
+        file = fopen("managers.csv", "w");
         if (!file) {
-            perror("创建新凭据文件失败");
-            exit(EXIT_FAILURE);
+            perror("创建 managers.csv 文件失败");
+        } else {
+            fprintf(file, "user|||password\n");
+            fclose(file);
         }
-        // 可以选择在这里写入一些初始数据
-        fprintf(file, "[Manager]\n");
-        fprintf(file, "[Employee]\n");
+    } else {
+        // 文件已存在，只关闭文件流
         fclose(file);
+    }
+
+    // 检查并初始化 employees.csv 文件
+    file = fopen("employees.csv", "r");
+    if (!file) {
+        // 文件不存在，创建新文件
+        file = fopen("employees.csv", "w");
+        if (!file) {
+            perror("创建 employees.csv 文件失败");
+        } else {
+            fprintf(file, "user|||password\n");
+            fclose(file);
+        }
     } else {
         // 文件已存在，只关闭文件流
         fclose(file);
     }
 }
 
-bool verifyLogin(string username, string password, string section) {
-    string line;
-    string sectionHeader;
-    sprintf(sectionHeader, "[%s]", section); // 格式化section头字符串
-    bool isInSection = false;
-    bool userFound = false;
+bool verifyLogin(string username, string password, int section) {
+    FILE *file;
+    char line[512]; // 假设每行不超过512个字符
+    const char *filename = (section == 1) ? "managers.csv" : "employees.csv";
 
-    initializeCredentialsFile();
-
-    FILE *file = fopen(CREDENTIALS_FILE, "r");
+    file = fopen(filename, "r");
     if (!file) {
-        perror("无法打开新创建的凭据文件");
+        perror("打开文件失败");
         return false;
     }
 
     while (fgets(line, sizeof(line), file)) {
-        line[strcspn(line, "\n")] = 0; // 去除换行符
+        char *token;
+        char file_username[MAX_LENGTH], file_password[MAX_LENGTH];
 
-        // 检查是否是我们需要的section头
-        if (strncmp(line, sectionHeader, strlen(sectionHeader)) == 0) {
-            isInSection = true;
+        // 获取用户名，假设它们由|||分隔
+        token = strtok(line, "|||");
+        if (token != NULL) {
+            strncpy(file_username, token, MAX_LENGTH - 1);
+            file_username[MAX_LENGTH - 1] = '\0';
+        } else {
             continue;
         }
 
-        // 检查是否是其他section的头，如果是则跳出循环
-        if (isInSection && line[0] == '[') {
-            break;
+        // 获取密码
+        token = strtok(NULL, "\n");
+        if (token != NULL) {
+            strncpy(file_password, token, MAX_LENGTH - 1);
+            file_password[MAX_LENGTH - 1] = '\0';
+        } else {
+            continue;
         }
 
-        if (isInSection) {
-            char *file_username = strtok(line, "=");
-            char *file_password = strtok(NULL, "\n");
-
-            if (file_username && file_password) {
-                if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
-                    userFound = true;
-                    break;
-                }
-            }
+        if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
+            fclose(file);
+            return true; // 找到匹配项
         }
     }
 
     fclose(file);
-    return userFound;
+    return false; // 未找到匹配项
 }
 
 
@@ -90,12 +103,15 @@ void xorEncryptDecrypt(string input, size_t length) {
 }
 
 void registerUser() {
-    string username, password, role;
-    string section = "";  // 初始化为空字符串
     FILE *file;
+    char line[512];
+    string username, password, role;
+    int section;
 
     printf("创建新用户.\n");
-    while (getchar() != '\n'); // 清空缓冲区
+
+    // 清空缓冲区以防止输入问题
+    while (getchar() != '\n');
 
     printf("请输入用户名：");
     fgets(username, MAX_LENGTH, stdin);
@@ -112,37 +128,52 @@ void registerUser() {
     printf("请输入角色数字（1-2）：");
     fgets(role, MAX_LENGTH, stdin);
     role[strcspn(role, "\n")] = 0;
+    section = atoi(role);
     system(SYSTEM_CLEAR);
 
-    if (strcmp(role, "1") == 0) {
-        strcpy(section, "[Manager]");
-    } else if (strcmp(role, "2") == 0) {
-        strcpy(section, "[Employee]");
-    } else {
-        printf("无效角色. 返回登录菜单.\n");
-        return;
-    }
-
-    file = fopen(CREDENTIALS_FILE, "a"); // 以追加模式打开文件
+    const char *filename = (section == 1) ? "managers.csv" : "employees.csv";
+    file = fopen(filename, "r");
     if (!file) {
-        perror("无法打开凭据文件进行写入");
+        perror("打开文件失败");
         return;
     }
 
-    fprintf(file, "%s=%s\n", username, password); // 写入新的用户信息
+    // 检查用户名是否已存在
+    bool userExists = false;
+    while (fgets(line, sizeof(line), file)) {
+        char file_username[MAX_LENGTH];
+        sscanf(line, "%254[^|||]", file_username);
+        if (strcmp(username, file_username) == 0) {
+            userExists = true;
+            break;
+        }
+    }
+    fclose(file);
+
+    if (userExists) {
+        printf("用户已存在.\n");
+        return;
+    }
+
+    // 用户不存在，添加新用户
+    file = fopen(filename, "a");
+    if (!file) {
+        perror("打开文件失败");
+        return;
+    }
+    fprintf(file, "%s|||%s\n", username, password); // 写入新的用户信息
     fclose(file);
 
     printf("用户注册成功.\n");
 }
 
-
-
 void login() {
+    initializeCredentialsFile();
     while (true) {
         bool flag = false;
         string username;
         string password;
-        string section;
+        int section = 0;
 
         printf("请选择角色：\n");
         printf("1. 公司经理\n");
@@ -160,10 +191,10 @@ void login() {
         }
         switch (role[0]) {
         case '1':
-            strcpy(section, "Manager");
+            section = 1;
             break;
         case '2':
-            strcpy(section, "Employee");
+            section = 2;
             break;
         case '3':
             registerUser();
