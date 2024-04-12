@@ -1,16 +1,36 @@
+// login.c
 #include "header.h"
-
-#define CREDENTIALS_FILE "credentials.ini"
 
 #define MANAGER_SECTION "Manager"
 #define EMPLOYEE_SECTION "Employee"
 #define SECRET_KEY "secret_key_secret_key_secret_key_secret_key_secret_key"
 
+bool matchRegex(const char *password);
 void initializeCredentialsFile();
 bool verifyLogin(string username, string password, int section);
 void xorEncryptDecrypt(string input, size_t length);
 void registerUser();
 void login();
+
+
+bool matchRegex(const char *password) {
+    if (strlen(password) < 8) {
+        return false;  // 密码长度小于8
+    }
+
+    int hasUpper = 0, hasLower = 0, hasDigit = 0, hasPunct = 0;
+    while (*password) {
+        if (isupper((unsigned char)*password)) hasUpper = 1;
+        if (islower((unsigned char)*password)) hasLower = 1;
+        if (isdigit((unsigned char)*password)) hasDigit = 1;
+        if (ispunct((unsigned char)*password)) hasPunct = 1;
+        password++;
+    }
+
+    // 检查至少包含两种字符类型
+    int count = hasUpper + hasLower + hasDigit + hasPunct;
+    return (count >= 2);
+}
 
 void initializeCredentialsFile() {
     FILE *file;
@@ -50,8 +70,10 @@ void initializeCredentialsFile() {
 
 bool verifyLogin(string username, string password, int section) {
     FILE *file;
-    char line[512]; // 假设每行不超过512个字符
+    char line[512];
     const char *filename = (section == 1) ? "managers.csv" : "employees.csv";
+    const char *delimiter = "|||";
+    char *delimiter_pos;
 
     file = fopen(filename, "r");
     if (!file) {
@@ -60,30 +82,28 @@ bool verifyLogin(string username, string password, int section) {
     }
 
     while (fgets(line, sizeof(line), file)) {
-        char *token;
         char file_username[MAX_LENGTH], file_password[MAX_LENGTH];
 
-        // 获取用户名，假设它们由|||分隔
-        token = strtok(line, "|||");
-        if (token != NULL) {
-            strncpy(file_username, token, MAX_LENGTH - 1);
+        // 找到分隔符位置
+        delimiter_pos = strstr(line, delimiter);
+        if (delimiter_pos) {
+            // 从行中提取用户名
+            *delimiter_pos = '\0';  // 切断字符串，结束用户名部分
+            strncpy(file_username, line, MAX_LENGTH - 1);
             file_username[MAX_LENGTH - 1] = '\0';
-        } else {
-            continue;
-        }
 
-        // 获取密码
-        token = strtok(NULL, "\n");
-        if (token != NULL) {
-            strncpy(file_password, token, MAX_LENGTH - 1);
+            // 提取密码，跳过分隔符
+            strncpy(file_password, delimiter_pos + strlen(delimiter), MAX_LENGTH - 1);
             file_password[MAX_LENGTH - 1] = '\0';
-        } else {
-            continue;
-        }
 
-        if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
-            fclose(file);
-            return true; // 找到匹配项
+            // 删除密码末尾的可能的换行符
+            file_password[strcspn(file_password, "\n")] = '\0';
+
+            // 比较用户名和密码
+            if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
+                fclose(file);
+                return true; // 找到匹配项
+            }
         }
     }
 
@@ -117,10 +137,18 @@ void registerUser() {
     fgets(username, MAX_LENGTH, stdin);
     username[strcspn(username, "\n")] = 0;
 
-    printf("请输入密码：");
-    fgets(password, MAX_LENGTH, stdin);
-    password[strcspn(password, "\n")] = 0;
-    xorEncryptDecrypt(password, strlen(password)); // 加密密码
+    while (true) {
+        printf("请输入密码：");
+        fgets(password, MAX_LENGTH, stdin);
+        password[strcspn(password, "\n")] = 0;
+
+        if (matchRegex(password)) {
+            xorEncryptDecrypt(password, strlen(password)); // 加密密码
+            break;
+        } else {
+            printf("密码不符合要求。必须至少8个字符且包含大写字母、小写字母、数字、标点符号中的两种。\n");
+        }
+    }
 
     printf("请选择角色：\n");
     printf("1. 公司经理\n");
