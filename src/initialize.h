@@ -19,5 +19,20 @@ void initializeCustomerFile() {
     }
 }
 
+void initializeCommunicationFile() {
+    FILE *file = fopen("communication_records.csv", "r");
+    if (!file) { 
+        file = fopen("communication_records.csv", "w");
+        if (!file) {
+            perror("创建通信记录文件失败");
+        } else {
+            fprintf(file, "CompanyName|||ContactName|||Date|||Time|||Duration|||Content\n");
+            fclose(file);
+        }
+    } else {
+        fclose(file);
+    }
+}
+
 #endif
 

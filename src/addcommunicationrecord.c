@@ -1,27 +1,12 @@
 // addcommunicationrecord.c
-
-#include "header.h"
+#include "initialize.h"
 
 // 函数声明
 void addCommunicationRecord();
 void saveCommunicationRecordToFile(CommunicationRecord record);
 bool matchDate(const char *date);
+bool matchTime(const char *time);
 bool matchDuration(const char *duration);
-
-void initializeCommunicationFile() {
-    FILE *file = fopen("communication_records.csv", "r");
-    if (!file) { // 文件不存在，创建新文件
-        file = fopen("communication_records.csv", "w");
-        if (!file) {
-            perror("创建通信记录文件失败");
-        } else {
-            fprintf(file, "CompanyName|||ContactName|||Date|||Duration|||Content\n"); // 写入列标题
-            fclose(file);
-        }
-    } else {
-        fclose(file); // 文件已存在，关闭文件
-    }
-}
 
 void addCommunicationRecord() {
     initializeCommunicationFile(); // 确保通信记录文件已初始化
@@ -31,12 +16,12 @@ void addCommunicationRecord() {
     CommunicationRecord newRecord;
     printf("输入公司名称: ");
     fgets(newRecord.companyName, sizeof(newRecord.companyName), stdin);
-    newRecord.companyName[strcspn(newRecord.companyName, "\n")] = 0; // 去除换行符
+    newRecord.companyName[strcspn(newRecord.companyName, "\n")] = 0;
     if (newRecord.companyName[0] == '\0') strcpy(newRecord.companyName, " ");
 
     printf("输入联系人姓名: ");
     fgets(newRecord.contactName, sizeof(newRecord.contactName), stdin);
-    newRecord.contactName[strcspn(newRecord.contactName, "\n")] = 0; // 去除换行符
+    newRecord.contactName[strcspn(newRecord.contactName, "\n")] = 0;
     if (newRecord.contactName[0] == '\0') strcpy(newRecord.contactName, " ");
 
     while (true) {
@@ -50,6 +35,21 @@ void addCommunicationRecord() {
             break;
         } else {
             printf("日期格式不正确，请重新输入。\n");
+        }
+    }
+
+    while (true) {
+        printf("输入通信时间 (HH:MM:SS): ");
+        fgets(newRecord.time, sizeof(newRecord.time), stdin);
+        newRecord.time[strcspn(newRecord.time, "\n")] = 0;
+
+        if (newRecord.time[0] == '\0') {
+            strcpy(newRecord.time, " ");
+            break;
+        } else if (matchTime(newRecord.time)) {
+            break;
+        } else {
+            printf("通信时间格式不正确，请重新输入。\n");
         }
     }
 
@@ -70,7 +70,7 @@ void addCommunicationRecord() {
 
     printf("输入通信内容: ");
     fgets(newRecord.content, sizeof(newRecord.content), stdin);
-    newRecord.content[strcspn(newRecord.content, "\n")] = 0; // 去除换行符
+    newRecord.content[strcspn(newRecord.content, "\n")] = 0;
     if (newRecord.content[0] == '\0') strcpy(newRecord.content, " ");
 
     saveCommunicationRecordToFile(newRecord);
@@ -105,6 +105,36 @@ bool matchDate(const char *date) {
     }
 }
 
+bool matchTime(const char *time) {
+    regex_t regex;
+    int ret;
+    char msgbuf[100];
+
+    // HH:MM:SS format
+    ret = regcomp(&regex, "^[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$", REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex for time\n");
+        return false;
+    }
+
+    // Execute matching
+    ret = regexec(&regex, time, 0, NULL, 0);
+    regfree(&regex);  // 释放正则表达式
+    if (!ret) {
+        if (atoi(time) < 24) { // 验证小时部分是否小于24
+            return true;
+        }
+        return false;
+    } else if (ret == REG_NOMATCH) {
+        return false;
+    } else {
+        regerror(ret, &regex, msgbuf, sizeof(msgbuf));
+        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        return false;
+    }
+}
+
+
 bool matchDuration(const char *duration) {
     regex_t regex;
     int ret;
@@ -129,17 +159,18 @@ bool matchDuration(const char *duration) {
 
 
 void saveCommunicationRecordToFile(CommunicationRecord record) {
-    FILE *file = fopen("communication_records.csv", "a"); // 以追加模式打开文件
-    if (file == NULL) {
+    FILE *file = fopen("communication_records.csv", "a");
+    if (!file) {
         perror("打开文件失败");
         return;
     }
-    fprintf(file, "%s|||%s|||%s|||%s|||%s\n", 
+    fprintf(file, "%s|||%s|||%s|||%s|||%s|||%s\n", 
         record.companyName, 
         record.contactName, 
         record.date, 
+        record.time, 
         record.duration, 
         record.content
-        );
+    );
     fclose(file);
 }

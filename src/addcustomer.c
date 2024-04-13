@@ -58,26 +58,32 @@ void addCustomer() {
     printf("输入客户姓名: ");
     fgets(newCustomer.name, sizeof(newCustomer.name), stdin);
     newCustomer.name[strcspn(newCustomer.name, "\n")] = 0;
+    if (newCustomer.name[0] == '\0') strcpy(newCustomer.name, " ");
 
     printf("输入客户所在区域: ");
     fgets(newCustomer.region, sizeof(newCustomer.region), stdin);
     newCustomer.region[strcspn(newCustomer.region, "\n")] = 0;
+    if (newCustomer.region[0] == '\0') strcpy(newCustomer.region, " ");
 
     printf("输入客户地址: ");
     fgets(newCustomer.address, sizeof(newCustomer.address), stdin);
     newCustomer.address[strcspn(newCustomer.address, "\n")] = 0;
+    if (newCustomer.address[0] == '\0') strcpy(newCustomer.address, " ");
 
     printf("输入客户公司法人: ");
     fgets(newCustomer.legalRepresentative, sizeof(newCustomer.legalRepresentative), stdin);
     newCustomer.legalRepresentative[strcspn(newCustomer.legalRepresentative, "\n")] = 0;
+    if (newCustomer.legalRepresentative[0] == '\0') strcpy(newCustomer.legalRepresentative, " ");
 
     printf("输入客户规模（大、中、小）: ");
     fgets(newCustomer.scale, sizeof(newCustomer.scale), stdin);
     newCustomer.scale[strcspn(newCustomer.scale, "\n")] = 0;
+    if (newCustomer.scale[0] == '\0') strcpy(newCustomer.scale, " ");
 
     printf("输入与本公司业务联系程度（高、中、低）: ");
     fgets(newCustomer.businessContactLevel, sizeof(newCustomer.businessContactLevel), stdin);
     newCustomer.businessContactLevel[strcspn(newCustomer.businessContactLevel, "\n")] = 0;
+    if (newCustomer.businessContactLevel[0] == '\0') strcpy(newCustomer.businessContactLevel, " ");
 
     while (true) {
         printf("输入客户电子邮件: ");

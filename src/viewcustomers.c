@@ -38,16 +38,18 @@ void viewCustomers() {
         char *email = strtok(NULL, "|||");
         char *phone = strtok(NULL, "|||");
 
-        printf("%-20s %-20s %-30s %-20s %-10s %-20s %-25s %-15s\n",
-                name,
-                region,
-                address,
-                legalRepresentative,
-                scale,
-                businessContactLevel,
-                email,
-                phone
-            );
+        if (phone) phone[strcspn(phone, "\n")] = 0;
+
+        printf("%-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s\n",
+            name,
+            region,
+            address,
+            legalRepresentative,
+            scale,
+            businessContactLevel,
+            email,
+            phone
+        );
     }
 
     fclose(file);

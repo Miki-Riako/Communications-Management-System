@@ -28,11 +28,12 @@ typedef struct {
     char phone[MAX_LENGTH];                   // 客户公司联络电话
 } Customer;
 typedef struct {
-    char companyName[MAX_LENGTH];
-    char contactName[MAX_LENGTH];
-    char date[MAX_LENGTH];
-    char duration[MAX_LENGTH];
-    char content[MAX_LENGTH];
+    char companyName[MAX_LENGTH];   // 客户公司名称
+    char contactName[MAX_LENGTH];   // 客户联络员名称
+    char date[MAX_LENGTH];          // 日期 YYYY-MM-DD
+    char time[MAX_LENGTH];          // 时间 HH:MM:SS
+    char duration[MAX_LENGTH];      // 通信时长（分钟）
+    char content[MAX_LENGTH];       // 通信内容
 } CommunicationRecord;
 
 #endif
