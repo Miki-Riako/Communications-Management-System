@@ -3,8 +3,8 @@
 #include "addcustomer.c"
 #include "viewcustomers.c"
 #include "addcommunicationrecord.c"
+#include "viewcommunicationrecords.c"
 
-void viewCommunicationRecords();
 void exitSystem();
 
 int main(void) {
@@ -53,10 +53,6 @@ int main(void) {
         }
     }
     return 0;
-}
-
-void viewCommunicationRecords() {
-    printf("功能尚未实现。\n");
 }
 
 void exitSystem() {

@@ -73,16 +73,21 @@ void addCustomer() {
     printf("输入客户姓名: ");
     fgets(newCustomer.name, sizeof(newCustomer.name), stdin);
     newCustomer.name[strcspn(newCustomer.name, "\n")] = 0; // 去除换行符
+    if (newCustomer.name[0] == '\0') strcpy(newCustomer.name, " ");
 
     printf("输入客户地址: ");
     fgets(newCustomer.address, sizeof(newCustomer.address), stdin);
     newCustomer.address[strcspn(newCustomer.address, "\n")] = 0; // 去除换行符
+    if (newCustomer.address[0] == '\0') strcpy(newCustomer.address, " ");
 
     while (true) {
         printf("输入客户电子邮件: ");
         fgets(newCustomer.email, sizeof(newCustomer.email), stdin);
         newCustomer.email[strcspn(newCustomer.email, "\n")] = 0;
-        if (newCustomer.email[0] == '\0' || matchMail(newCustomer.email)) {
+        if (newCustomer.email[0] == '\0') {
+            strcpy(newCustomer.email, " ");
+            break;
+        } else if (matchMail(newCustomer.email)) {
             break;
         } else {
             printf("电子邮件格式不正确，请重新输入。\n");
@@ -93,7 +98,10 @@ void addCustomer() {
         printf("输入客户电话: ");
         fgets(newCustomer.phone, sizeof(newCustomer.phone), stdin);
         newCustomer.phone[strcspn(newCustomer.phone, "\n")] = 0; // 去除换行符
-        if (newCustomer.phone[0] == '\0' || matchPhone(newCustomer.phone)) {
+        if (newCustomer.phone[0] == '\0') {
+            strcpy(newCustomer.phone, " ");
+            break;
+        } else if (matchPhone(newCustomer.phone)) {
             break;
         } else {
             printf("电话号码格式不正确，请重新输入。\n");

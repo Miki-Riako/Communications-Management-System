@@ -32,16 +32,21 @@ void addCommunicationRecord() {
     printf("输入公司名称: ");
     fgets(newRecord.companyName, sizeof(newRecord.companyName), stdin);
     newRecord.companyName[strcspn(newRecord.companyName, "\n")] = 0; // 去除换行符
+    if (newRecord.companyName[0] == '\0') strcpy(newRecord.companyName, " ");
 
     printf("输入联系人姓名: ");
     fgets(newRecord.contactName, sizeof(newRecord.contactName), stdin);
     newRecord.contactName[strcspn(newRecord.contactName, "\n")] = 0; // 去除换行符
+    if (newRecord.contactName[0] == '\0') strcpy(newRecord.contactName, " ");
 
     while (true) {
         printf("输入通信日期 (YYYY-MM-DD): ");
         fgets(newRecord.date, sizeof(newRecord.date), stdin);
         newRecord.date[strcspn(newRecord.date, "\n")] = 0; // 去除换行符
-        if (newRecord.date[0] == '\0' || matchDate(newRecord.date)) {
+        if (newRecord.date[0] == '\0') {
+            strcpy(newRecord.date, " ");
+            break;
+        } else if (matchDate(newRecord.date)) {
             break;
         } else {
             printf("日期格式不正确，请重新输入。\n");
@@ -53,7 +58,10 @@ void addCommunicationRecord() {
         fgets(newRecord.duration, sizeof(newRecord.duration), stdin);
         newRecord.duration[strcspn(newRecord.duration, "\n")] = 0; // 去除换行符
 
-        if (newRecord.duration[0] == '\0' || matchDuration(newRecord.duration)) {
+        if (newRecord.duration[0] == '\0') {
+            strcpy(newRecord.duration, " ");
+            break;
+        } else if (matchDuration(newRecord.duration)) {
             break;
         } else {
             printf("通信持续时间格式不正确，请输入正整数或正小数。\n");
@@ -63,6 +71,7 @@ void addCommunicationRecord() {
     printf("输入通信内容: ");
     fgets(newRecord.content, sizeof(newRecord.content), stdin);
     newRecord.content[strcspn(newRecord.content, "\n")] = 0; // 去除换行符
+    if (newRecord.content[0] == '\0') strcpy(newRecord.content, " ");
 
     saveCommunicationRecordToFile(newRecord);
     printf("通信记录已添加.\n");
