@@ -23,6 +23,12 @@ typedef struct {
     char email[MAX_LENGTH];
     char phone[MAX_LENGTH];
 } Customer;
-
+typedef struct {
+    char companyName[MAX_LENGTH];
+    char contactName[MAX_LENGTH];
+    char date[MAX_LENGTH];
+    char duration[MAX_LENGTH];
+    char content[MAX_LENGTH];
+} CommunicationRecord;
 
 #endif

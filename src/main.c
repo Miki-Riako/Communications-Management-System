@@ -2,9 +2,8 @@
 #include "login.c"
 #include "addcustomer.c"
 #include "viewcustomers.c"
+#include "addcommunicationrecord.c"
 
-void viewCustomers();
-void addCommunicationRecord();
 void viewCommunicationRecords();
 void exitSystem();
 
@@ -54,10 +53,6 @@ int main(void) {
         }
     }
     return 0;
-}
-
-void addCommunicationRecord() {
-    printf("功能尚未实现。\n");
 }
 
 void viewCommunicationRecords() {
