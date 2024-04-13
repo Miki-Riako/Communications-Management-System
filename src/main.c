@@ -1,6 +1,7 @@
 // main.c
 #include "login.c"
 #include "addcustomer.c"
+#include "viewcustomers.c"
 
 void viewCustomers();
 void addCommunicationRecord();
@@ -21,11 +22,10 @@ int main(void) {
         printf("请选择一个操作（1-5）：");
         string choice;
         scanf("%254s", choice);
+        system(SYSTEM_CLEAR);
         if (strlen(choice) != 1) {
             printf("无效的选项，请重新选择。\n");
             continue;  // 继续循环等待有效输入
-        } else {
-            system(SYSTEM_CLEAR);
         }
         switch(choice[0]) {
         case '1':
@@ -54,10 +54,6 @@ int main(void) {
         }
     }
     return 0;
-}
-
-void viewCustomers() {
-    printf("功能尚未实现。\n");
 }
 
 void addCommunicationRecord() {

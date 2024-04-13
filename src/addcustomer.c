@@ -82,7 +82,7 @@ void addCustomer() {
         printf("输入客户电子邮件: ");
         fgets(newCustomer.email, sizeof(newCustomer.email), stdin);
         newCustomer.email[strcspn(newCustomer.email, "\n")] = 0;
-        if (matchMail(newCustomer.email)) {
+        if (newCustomer.email[0] == '\0' || matchMail(newCustomer.email)) {
             break;
         } else {
             printf("电子邮件格式不正确，请重新输入。\n");
@@ -93,7 +93,7 @@ void addCustomer() {
         printf("输入客户电话: ");
         fgets(newCustomer.phone, sizeof(newCustomer.phone), stdin);
         newCustomer.phone[strcspn(newCustomer.phone, "\n")] = 0; // 去除换行符
-        if (matchPhone(newCustomer.phone)) {
+        if (newCustomer.phone[0] == '\0' || matchPhone(newCustomer.phone)) {
             break;
         } else {
             printf("电话号码格式不正确，请重新输入。\n");
