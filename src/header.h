@@ -18,10 +18,14 @@
 
 typedef char string[MAX_LENGTH];
 typedef struct {
-    char name[MAX_LENGTH];
-    char address[MAX_LENGTH];
-    char email[MAX_LENGTH];
-    char phone[MAX_LENGTH];
+    char name[MAX_LENGTH];                    // 客户名称
+    char region[MAX_LENGTH];                  // 客户所在区域
+    char address[MAX_LENGTH];                 // 客户地址
+    char legalRepresentative[MAX_LENGTH];     // 客户公司法人
+    char scale[MAX_LENGTH];                   // 客户规模
+    char businessContactLevel[MAX_LENGTH];    // 与本公司业务联系程度
+    char email[MAX_LENGTH];                   // 客户公司邮箱
+    char phone[MAX_LENGTH];                   // 客户公司联络电话
 } Customer;
 typedef struct {
     char companyName[MAX_LENGTH];

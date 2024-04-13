@@ -1,5 +1,5 @@
 // addcustomer.c
-#include "header.h"
+#include "initialize.h"
 
 // 函数声明
 void addCustomer();
@@ -7,21 +7,6 @@ bool matchMail(const char *email);
 bool matchPhone(const char *phone);
 void saveCustomerToFile(Customer customer);
 void displayCustomer(Customer customer);
-
-void initializeCustomerFile() {
-    FILE *file = fopen("customers.csv", "r");
-    if (!file) { // 文件不存在，创建新文件
-        file = fopen("customers.csv", "w");
-        if (!file) {
-            perror("创建客户文件失败");
-        } else {
-            fprintf(file, "Name|||Address|||Email|||Phone\n"); // 写入列标题
-            fclose(file);
-        }
-    } else {
-        fclose(file); // 文件已存在，关闭文件
-    }
-}
 
 bool matchMail(const char *email) {
     regex_t regex;
@@ -68,17 +53,31 @@ void addCustomer() {
     initializeCustomerFile(); // 确保客户文件已初始化
     Customer newCustomer;
 
-    while (getchar() != '\n');
+    while (getchar() != '\n'); // 清空缓冲区
 
     printf("输入客户姓名: ");
     fgets(newCustomer.name, sizeof(newCustomer.name), stdin);
-    newCustomer.name[strcspn(newCustomer.name, "\n")] = 0; // 去除换行符
-    if (newCustomer.name[0] == '\0') strcpy(newCustomer.name, " ");
+    newCustomer.name[strcspn(newCustomer.name, "\n")] = 0;
+
+    printf("输入客户所在区域: ");
+    fgets(newCustomer.region, sizeof(newCustomer.region), stdin);
+    newCustomer.region[strcspn(newCustomer.region, "\n")] = 0;
 
     printf("输入客户地址: ");
     fgets(newCustomer.address, sizeof(newCustomer.address), stdin);
-    newCustomer.address[strcspn(newCustomer.address, "\n")] = 0; // 去除换行符
-    if (newCustomer.address[0] == '\0') strcpy(newCustomer.address, " ");
+    newCustomer.address[strcspn(newCustomer.address, "\n")] = 0;
+
+    printf("输入客户公司法人: ");
+    fgets(newCustomer.legalRepresentative, sizeof(newCustomer.legalRepresentative), stdin);
+    newCustomer.legalRepresentative[strcspn(newCustomer.legalRepresentative, "\n")] = 0;
+
+    printf("输入客户规模（大、中、小）: ");
+    fgets(newCustomer.scale, sizeof(newCustomer.scale), stdin);
+    newCustomer.scale[strcspn(newCustomer.scale, "\n")] = 0;
+
+    printf("输入与本公司业务联系程度（高、中、低）: ");
+    fgets(newCustomer.businessContactLevel, sizeof(newCustomer.businessContactLevel), stdin);
+    newCustomer.businessContactLevel[strcspn(newCustomer.businessContactLevel, "\n")] = 0;
 
     while (true) {
         printf("输入客户电子邮件: ");
@@ -97,7 +96,7 @@ void addCustomer() {
     while (true) {
         printf("输入客户电话: ");
         fgets(newCustomer.phone, sizeof(newCustomer.phone), stdin);
-        newCustomer.phone[strcspn(newCustomer.phone, "\n")] = 0; // 去除换行符
+        newCustomer.phone[strcspn(newCustomer.phone, "\n")] = 0;
         if (newCustomer.phone[0] == '\0') {
             strcpy(newCustomer.phone, " ");
             break;
@@ -108,30 +107,43 @@ void addCustomer() {
         }
     }
 
-    system(SYSTEM_CLEAR); // 保存客户信息到文件
-    saveCustomerToFile(newCustomer); // 显示客户信息
+    system(SYSTEM_CLEAR); // 清屏
+    saveCustomerToFile(newCustomer);
     displayCustomer(newCustomer);
-
     printf("客户信息已添加.\n");
 }
 
 // 将客户信息保存到文件
 void saveCustomerToFile(Customer customer) {
-    FILE *file = fopen("customers.csv", "a"); // 以追加模式打开文件
-    if (file == NULL) {
+    FILE *file = fopen("customers.csv", "a");
+    if (!file) {
         perror("打开文件失败");
         return;
     }
-    fprintf(file, "%s|||%s|||%s|||%s\n", customer.name, customer.address, customer.email, customer.phone);
+    fprintf(file,
+        "%s|||%s|||%s|||%s|||%s|||%s|||%s|||%s\n",
+        customer.name,
+        customer.region,
+        customer.address,
+        customer.legalRepresentative,
+        customer.scale,
+        customer.businessContactLevel,
+        customer.email,
+        customer.phone
+        );
     fclose(file);
 }
 
 // 显示客户信息
 void displayCustomer(Customer customer) {
     printf("\n显示客户信息:\n");
-    printf("姓名: %s\n", customer.name);
-    printf("地址: %s\n", customer.address);
-    printf("电子邮件: %s\n", customer.email);
-    printf("电话: %s\n", customer.phone);
+    printf("姓名: %-20s\n", customer.name);
+    printf("区域: %-20s\n", customer.region);
+    printf("地址: %-30s\n", customer.address);
+    printf("法人: %-20s\n", customer.legalRepresentative);
+    printf("规模: %-10s\n", customer.scale);
+    printf("业务联系程度: %-15s\n", customer.businessContactLevel);
+    printf("电子邮件: %-25s\n", customer.email);
+    printf("电话: %-15s\n", customer.phone);
 }
 
