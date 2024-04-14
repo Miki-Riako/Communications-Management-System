@@ -7,7 +7,9 @@ void clearBuffer();
 void getInput(char *input, int buffer_size);
 void infoInput(char *input, int buffer_size, const char *prompt);
 bool isSameString(const char *str1, const char *str2);
+void inputTheName(char *name, int buffer_size, const char *prompt);
 void initializeInfoFile(const char *path, const char *header);
+void removeRecord(const char *filename, const char *prompt);
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);
@@ -46,6 +48,18 @@ void infoInput(char *input, int buffer_size, const char *prompt) {
 // 是相同的字符串
 bool isSameString(const char *str1, const char *str2) { return (strcmp(str1, str2) == 0); }
 
+// 输入非空姓名
+void inputTheName(char *name, int buffer_size, const char *prompt) {
+    while (true) {
+        infoInput(name, buffer_size, prompt);
+        if (!isSameString(name, " ")) {
+            break;
+        } else {
+            printf("请输入一个有效的名字。\n");
+        }
+    }
+}
+
 // 初始化创建文件
 void initializeInfoFile(const char *path, const char *header) {
     FILE *file = fopen(path, "r");
@@ -61,6 +75,52 @@ void initializeInfoFile(const char *path, const char *header) {
         fclose(file);
     }
 }
+
+// 删除头标题的行
+void removeRecord(const char *filename, const char *prompt) {
+    char delName[MAX_LENGTH];
+    char buffer[MAX_LENGTH];
+    FILE *fp, *fp_temp;
+
+    printf("%s", prompt); // 显示删除提示信息
+    while (true) {
+        getInput(delName, sizeof(delName));
+        if (!isEmpty(delName)) {
+            break;
+        } else {
+            printf("请输入一个有效的名字。\n");
+        }
+    }
+
+    fp = fopen(filename, "r");
+    if (!fp) {
+        printf("无法打开文件 %s\n", filename);
+        return;
+    }
+
+    fp_temp = fopen("temp.csv", "w");
+    if (!fp_temp) {
+        printf("无法创建临时文件\n");
+        fclose(fp);
+        return;
+    }
+
+    while (fgets(buffer, MAX_LENGTH, fp) != NULL) {
+        // 确保不是仅仅因为名字的一部分才匹配
+        if (!strstr(buffer, delName) || strstr(buffer, delName) != buffer) {
+            fprintf(fp_temp, "%s", buffer);
+        }
+    }
+
+    fclose(fp);
+    fclose(fp_temp);
+
+    remove(filename);
+    rename("temp.csv", filename);
+
+    printf("记录删除成功。\n");
+}
+
 
 // XOR 加密/解密算法
 void xorEncryptDecrypt(const char *input, size_t length, char *output) {

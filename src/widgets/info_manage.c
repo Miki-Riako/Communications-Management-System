@@ -5,6 +5,9 @@ void infoManageWidget();
 void addEmployeeWidget();
 void addCustomerWidget();
 void addContactWidget();
+void changeEmployeeWidget();
+void changeCustomerWidget();
+void changeContactWidget();
 void saveEmployeeToFile(Employee employee);
 void saveCustomerToFile(Customer customer);
 void saveContactToFile(ContactPerson contact);
@@ -17,7 +20,7 @@ void infoManageWidget() {
     initializeInfoFile("customers.csv", "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone");
     initializeInfoFile("contacts.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
     while(true) {
-        printf("您好，经理！\n");
+        printf("\n您好，经理！\n");
         printf("1. 增加业务员信息\n");
         printf("2. 修改业务员信息\n");
         printf("3. 删除业务员信息\n");
@@ -46,7 +49,7 @@ void infoManageWidget() {
 
                 break;
             case '3':
-
+                removeRecord("employees.csv", "输入要删除的业务员姓名: ");
                 break;
             case '4':
                 addCustomerWidget();
@@ -55,7 +58,7 @@ void infoManageWidget() {
 
                 break;
             case '6':
-
+                removeRecord("customers.csv", "输入要删除的客户姓名: ");
                 break;
             case '7':
                 addContactWidget();
@@ -64,7 +67,7 @@ void infoManageWidget() {
 
                 break;
             case '9':
-
+                removeRecord("contacts.csv", "输入要删除的联络员姓名: ");
                 break;
             case '0':
                 return;  // 返回主菜单
@@ -77,7 +80,7 @@ void infoManageWidget() {
 void addEmployeeWidget() {
     Employee newEmployee;
 
-    infoInput(newEmployee.name, sizeof(newEmployee.name), "输入业务员姓名: ");
+    inputTheName(newEmployee.name, sizeof(newEmployee.name), "输入业务员姓名: ");
     infoInput(newEmployee.gender, sizeof(newEmployee.gender), "输入业务员性别: ");
     infoInput(newEmployee.birthday, sizeof(newEmployee.birthday), "输入业务员生日: ");
     while (true) {
@@ -91,7 +94,7 @@ void addEmployeeWidget() {
 
     while (true) {
         infoInput(newEmployee.phone, sizeof(newEmployee.phone), "输入业务员电话: ");
-        if (isSameString(newEmployee.email, " ") || matchPhone(newEmployee.phone)) {
+        if (isSameString(newEmployee.phone, " ") || matchPhone(newEmployee.phone)) {
             break;
         } else {
             printf("电话号码格式不正确，请重新输入。\n");
@@ -103,13 +106,13 @@ void addEmployeeWidget() {
     system(SYSTEM_CLEAR); // 清屏
     saveEmployeeToFile(newEmployee);
     displayEmployee(newEmployee);
-    printf("业务员信息已添加.\n");
+    printf("业务员信息已添加。\n");
 }
 
 void addCustomerWidget() {
     Customer newCustomer;
 
-    infoInput(newCustomer.name, sizeof(newCustomer.name), "输入客户姓名: ");
+    inputTheName(newCustomer.name, sizeof(newCustomer.name), "输入客户姓名: ");
     infoInput(newCustomer.region, sizeof(newCustomer.region), "输入客户所在区域: ");
     infoInput(newCustomer.address, sizeof(newCustomer.address), "输入客户地址: ");
     infoInput(newCustomer.legalRepresentative, sizeof(newCustomer.legalRepresentative), "输入客户公司法人: ");
@@ -126,7 +129,7 @@ void addCustomerWidget() {
 
     while (true) {
         infoInput(newCustomer.phone, sizeof(newCustomer.phone), "输入客户电话: ");
-        if (isSameString(newCustomer.email, " ") || matchPhone(newCustomer.phone)) {
+        if (isSameString(newCustomer.phone, " ") || matchPhone(newCustomer.phone)) {
             break;
         } else {
             printf("电话号码格式不正确，请重新输入。\n");
@@ -136,13 +139,13 @@ void addCustomerWidget() {
     system(SYSTEM_CLEAR);
     saveCustomerToFile(newCustomer);
     displayCustomer(newCustomer);
-    printf("客户信息已添加.\n");
+    printf("业务员信息已添加。\n");
 }
 
 void addContactWidget() {
     ContactPerson newContact;
 
-    infoInput(newContact.name, sizeof(newContact.name), "输入联络员姓名: ");
+    inputTheName(newContact.name, sizeof(newContact.name), "输入联络员姓名: ");
     infoInput(newContact.gender, sizeof(newContact.gender), "输入联络员性别: ");
     infoInput(newContact.birthday, sizeof(newContact.birthday), "输入联络员生日: ");
 
@@ -169,7 +172,19 @@ void addContactWidget() {
     system(SYSTEM_CLEAR); // 清屏
     saveContactToFile(newContact);
     displayContact(newContact);
-    printf("联络员信息已添加.\n");
+    printf("业务员信息已添加。\n");
+}
+
+void changeEmployeeWidget(){
+
+}
+
+void changeCustomerWidget(){
+
+}
+
+void changeContactWidget(){
+
 }
 
 void saveEmployeeToFile(Employee employee) {
