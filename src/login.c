@@ -140,9 +140,18 @@ void registerUser() {
     // 清空缓冲区以防止输入问题
     while (getchar() != '\n');
 
-    printf("请输入用户名：");
-    fgets(username, MAX_LENGTH, stdin);
-    username[strcspn(username, "\n")] = 0;
+    while (true) {
+        printf("请输入用户名：");
+        fgets(username, MAX_LENGTH, stdin);
+        username[strcspn(username, "\n")] = 0;
+
+        if (strlen(username) = 0) {
+            printf("用户名不能为空。\n");
+            continue;
+        } else {
+            break;
+        }
+    }
 
     while (true) {
         printf("请输入密码：");

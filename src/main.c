@@ -17,8 +17,11 @@ int main(void) {
         printf("2. 查看客户信息\n");
         printf("3. 添加通信记录\n");
         printf("4. 查看通信记录\n");
-        printf("5. 退出系统\n");
-        printf("请选择一个操作（1-5）：");
+        printf("5. 查询信息\n");
+        printf("6. 统计信息\n");
+        printf("7. 设置\n");
+        printf("8. 退出系统\n");
+        printf("请选择一个操作（1-8）：");
         string choice;
         scanf("%254s", choice);
         system(SYSTEM_CLEAR);
@@ -40,6 +43,15 @@ int main(void) {
             viewCommunicationRecords();
             break;
         case '5':
+            // queryInformation();
+            break;
+        case '6':
+            // statisticsInformation();
+            break;
+        case '7':
+            // setSystem();
+            break;
+        case '8':
             exitSystem();
             return 0;
         default:
