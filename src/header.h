@@ -11,6 +11,7 @@
 #include <regex.h>
 
 #define MAIL_REGEX "/^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.]){1,2}[A-Za-z\d]{2,5}$/g"
+#define SECRET_KEY "secret_key_secret_key_secret_key_secret_key_secret_key"
 #define SYSTEM_CLEAR "clear"
 // if in windows, change the clear to cls
 

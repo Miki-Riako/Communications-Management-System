@@ -5,11 +5,15 @@
 #include "addcommunicationrecord.c"
 #include "viewcommunicationrecords.c"
 
+#include "setsystem.c"
+
 void exitSystem();
 
 int main(void) {
     system(SYSTEM_CLEAR);
-    login();
+    string user;
+    bool isManager = false;
+    login(isManager, user);
     while(true) {
         bool flag = false;
         printf("\n\n通信管理系统\n\n");
@@ -49,7 +53,11 @@ int main(void) {
             // statisticsInformation();
             break;
         case '7':
-            // setSystem();
+            if (isManager) {
+                setSystem(user);
+            } else {
+                printf("无法权限进行设置操作。\n");
+            }
             break;
         case '8':
             exitSystem();

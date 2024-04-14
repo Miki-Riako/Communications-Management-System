@@ -1,36 +1,14 @@
 // login.c
-#include "header.h"
+#include "initialize.h"
 
 #define MANAGER_SECTION "Manager"
 #define EMPLOYEE_SECTION "Employee"
-#define SECRET_KEY "secret_key_secret_key_secret_key_secret_key_secret_key"
 
-bool matchRegex(const char *password);
 void initializeCredentialsFile();
 bool verifyLogin(string username, string password, int section);
-void xorEncryptDecrypt(string input, size_t length, string output);
 void registerUser();
 void login();
 
-
-bool matchRegex(const char *password) {
-    if (strlen(password) < 8) {
-        return false;  // 密码长度小于8
-    }
-
-    int hasUpper = 0, hasLower = 0, hasDigit = 0, hasPunct = 0;
-    while (*password) {
-        if (isupper((unsigned char)*password)) hasUpper = 1;
-        if (islower((unsigned char)*password)) hasLower = 1;
-        if (isdigit((unsigned char)*password)) hasDigit = 1;
-        if (ispunct((unsigned char)*password)) hasPunct = 1;
-        password++;
-    }
-
-    // 检查至少包含两种字符类型
-    int count = hasUpper + hasLower + hasDigit + hasPunct;
-    return (count >= 2);
-}
 
 void initializeCredentialsFile() {
     FILE *file;
@@ -111,23 +89,7 @@ bool verifyLogin(string username, string password, int section) {
     return false; // 未找到匹配项
 }
 
-// XOR 加密/解密算法
-void xorEncryptDecrypt(string input, size_t length, string output) {
-    string encryptionKey;
-    strcpy(encryptionKey, SECRET_KEY);
-    size_t key_length = strlen(encryptionKey);
 
-    if (key_length == 0) {
-        fprintf(stderr, "Encryption key is empty.\n");
-        return;
-    }
-
-    for (size_t i = 0; i < length; ++i) {
-        unsigned char encrypted_char = input[i] ^ encryptionKey[i % key_length];
-        sprintf(output + 2 * i, "%02x", encrypted_char);  // 将每个加密字节转换为两个十六进制字符
-    }
-    output[2 * length] = '\0'; // 确保输出字符串是以null结尾的
-}
 
 void registerUser() {
     FILE *file;
@@ -145,7 +107,7 @@ void registerUser() {
         fgets(username, MAX_LENGTH, stdin);
         username[strcspn(username, "\n")] = 0;
 
-        if (strlen(username) = 0) {
+        if (strlen(username) == 0) {
             printf("用户名不能为空。\n");
             continue;
         } else {
@@ -211,7 +173,7 @@ void registerUser() {
     printf("用户注册成功.\n");
 }
 
-void login() {
+void login(bool &isManager, string user) {
     initializeCredentialsFile();
     while (true) {
         bool flag = false;
@@ -271,6 +233,10 @@ void login() {
         // 验证登录
         if (verifyLogin(username, encryptedPassword, section)) {
             printf("登录成功！欢迎, %s!\n", username);
+            strcpy(user, username);
+            if (section == 1) {
+                isManager = true;
+            }
             return;
         } else {
             printf("登录失败，用户名或密码错误。\n");
