@@ -8,7 +8,7 @@
 bool matchRegex(const char *password);
 void initializeCredentialsFile();
 bool verifyLogin(string username, string password, int section);
-void xorEncryptDecrypt(string input, size_t length);
+void xorEncryptDecrypt(string input, size_t length, string output);
 void registerUser();
 void login();
 
@@ -111,15 +111,22 @@ bool verifyLogin(string username, string password, int section) {
     return false; // 未找到匹配项
 }
 
-
-void xorEncryptDecrypt(string input, size_t length) {
+// XOR 加密/解密算法
+void xorEncryptDecrypt(string input, size_t length, string output) {
     string encryptionKey;
     strcpy(encryptionKey, SECRET_KEY);
     size_t key_length = strlen(encryptionKey);
-    for (size_t i = 0; i < length; ++i) {
-        input[i] ^= encryptionKey[i % key_length];
+
+    if (key_length == 0) {
+        fprintf(stderr, "Encryption key is empty.\n");
+        return;
     }
-    input[length] = '\0'; // 确保输出是以null结尾的字符串
+
+    for (size_t i = 0; i < length; ++i) {
+        unsigned char encrypted_char = input[i] ^ encryptionKey[i % key_length];
+        sprintf(output + 2 * i, "%02x", encrypted_char);  // 将每个加密字节转换为两个十六进制字符
+    }
+    output[2 * length] = '\0'; // 确保输出字符串是以null结尾的
 }
 
 void registerUser() {
@@ -143,7 +150,8 @@ void registerUser() {
         password[strcspn(password, "\n")] = 0;
 
         if (matchRegex(password)) {
-            xorEncryptDecrypt(password, strlen(password)); // 加密密码
+            string encryptedPassword;
+            xorEncryptDecrypt(password, strlen(password), encryptedPassword); // 加密密码
             break;
         } else {
             printf("密码不符合要求。必须至少8个字符且包含大写字母、小写字母、数字、标点符号中的两种。\n");
@@ -249,7 +257,9 @@ void login() {
         printf("请输入密码：");
         fgets(password, MAX_LENGTH, stdin);
         password[strcspn(password, "\n")] = 0; // 去除fgets捕获的换行符
-        xorEncryptDecrypt(password, strlen(password)); // 加密用户密码
+
+        string encryptedPassword;
+        xorEncryptDecrypt(password, strlen(password), encryptedPassword); // 加密用户密码
         system(SYSTEM_CLEAR);
 
         // 验证登录

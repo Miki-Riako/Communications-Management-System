@@ -40,10 +40,10 @@ bool matchPhone(const char *phone) {
     if (phone == NULL) return false;
 
     while (*phone != '\0') {
-        if (!isdigit((unsigned char)*phone) && *phone != '-' && *phone != '+') {
+        if (!isdigit((unsigned char)*phone) && *phone != '-' && *phone != '+' && *phone != ',') {
             return false;  // 如果字符不是数字也不是连字符，则返回false
         }
-        phone++;
+        ++phone;
     }
     return true;  // 所有字符都是数字或连字符
 }
