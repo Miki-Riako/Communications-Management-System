@@ -9,9 +9,7 @@ void exitSystem();
 
 int main(void) {
     system(SYSTEM_CLEAR);
-    string user;
-    bool isManager = false;
-    login(isManager, user);
+    login();
     while(true) {
         bool flag = false;
         printf("\n\n通信管理系统\n\n");
@@ -43,8 +41,8 @@ int main(void) {
             // statisticsInformation();
             break;
         case '5':
-            if (isManager) {
-                setSystem(user);
+            if (IsManager) {
+                setSystem();
             } else {
                 printf("无法权限进行设置操作。\n");
             }

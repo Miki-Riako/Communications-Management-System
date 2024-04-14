@@ -4,6 +4,9 @@
 
 #include "header.h"
 
+string User;
+bool IsManager = false;
+
 void initializeCustomerFile() {
     FILE *file = fopen("customers.csv", "r");
     if (!file) { // 文件不存在，创建新文件

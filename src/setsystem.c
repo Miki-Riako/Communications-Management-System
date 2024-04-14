@@ -3,9 +3,9 @@
 
 void initializeSettingFile();
 void initializeSetting();
-void setSystem(string user);
+void setSystem();
 void updateSetting(const char *key, int value);
-void changePassword(string user);
+void changePassword();
 void toggleDatabaseOption();
 void toggleFileOption();
 void enableBackup();
@@ -70,7 +70,7 @@ void initializeSetting() {
     fclose(file);
 }
 
-void setSystem(string user) {
+void setSystem() {
     while (true) {
         initializeSetting();
         printf("\n系统设置\n\n");
@@ -107,7 +107,7 @@ void setSystem(string user) {
         system(SYSTEM_CLEAR);
         switch(choice) {
             case '1':
-                changePassword(user);
+                changePassword();
                 break;
             case '2':
                 toggleDatabaseOption();
@@ -142,7 +142,7 @@ void updateSetting(const char *key, int value) {
     fclose(file);
 }
 
-void changePassword(string user) {
+void changePassword() {
     FILE *file = fopen("managers.csv", "r+");
     if (!file) {
         perror("无法打开用户文件");
@@ -155,7 +155,7 @@ void changePassword(string user) {
     while (fgets(line, sizeof(line), file)) {
         char *tmp = strdup(line);  // 复制一行，因为 strtok 会修改原字符串
         char *username = strtok(tmp, "|||");
-        if (strcmp(username, user) == 0) {
+        if (strcmp(username, User) == 0) {
             found = true;
             printf("请输入新密码：");
             string newPassword;
@@ -167,7 +167,7 @@ void changePassword(string user) {
 
             // 定位到这一行的开头
             fseek(file, pos, SEEK_SET);
-            fprintf(file, "%s|||%s\n", user, encryptedPassword);  // 写回新密码
+            fprintf(file, "%s|||%s\n", User, encryptedPassword);  // 写回新密码
             break;
         }
         free(tmp);  // 释放复制的字符串
@@ -175,7 +175,7 @@ void changePassword(string user) {
     }
 
     if (!found) {
-        printf("未找到用户名：%s\n", user);
+        printf("未找到用户名：%s\n", User);
     }
 
     fclose(file);

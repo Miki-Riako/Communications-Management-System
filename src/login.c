@@ -9,7 +9,6 @@ bool verifyLogin(string username, string password, int section);
 void registerUser();
 void login();
 
-
 void initializeCredentialsFile() {
     FILE *file;
 
@@ -173,7 +172,7 @@ void registerUser() {
     printf("用户注册成功.\n");
 }
 
-void login(bool &isManager, string user) {
+void login() {
     initializeCredentialsFile();
     while (true) {
         bool flag = false;
@@ -233,9 +232,9 @@ void login(bool &isManager, string user) {
         // 验证登录
         if (verifyLogin(username, encryptedPassword, section)) {
             printf("登录成功！欢迎, %s!\n", username);
-            strcpy(user, username);
+            strcpy(User, username);
             if (section == 1) {
-                isManager = true;
+                IsManager = true;
             }
             return;
         } else {
