@@ -1,5 +1,6 @@
 // menu.c
 #include "widgets/info_manage.c"
+#include "widgets/customer_assign.c"
 
 void managerMenuWidget();
 void employeeMenuWidget();

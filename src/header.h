@@ -70,8 +70,8 @@ void clearBuffer();
 void getInput(char *input, int buffer_size);
 bool isSameString(const char *str1, const char *str2);
 
-#include "libs/String.h"
-#include "libs/BasciIO.h"
-#include "libs/Regex.h"
+#include "libs/String.c"
+#include "libs/BasciIO.c"
+#include "libs/Regex.c"
 
 #endif
