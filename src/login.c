@@ -1,26 +1,178 @@
 // login.c
-#include "initialize.h"
+#include "header.h"
+#include "menu.c"
 
-#define MANAGER_SECTION "Manager"
-#define EMPLOYEE_SECTION "Employee"
+void startWidget();
+void loginWidget();
+void registerWidget();
+void initializeUser();
+bool verify(const char *username, const char *password);
 
-void initializeCredentialsFile();
-bool verifyLogin(string username, string password, int section);
-void registerUser();
-void login();
+void startWidget() {
+    initializeUser();
+    while (true) {
+        char get[MAX_LENGTH];
 
-void initializeCredentialsFile() {
+        printf("登入中...\n");
+        printf("请选择角色：\n");
+        printf("1. 公司经理\n");
+        printf("2. 公司业务员\n");
+        printf("3. 注册用户\n");
+        printf("4. 退出程序\n");
+        printf("请输入选择的角色数字（1-4）：");
+
+        getInput(get, sizeof(get));
+        system(SYSTEM_CLEAR);
+
+        if (!isOneChar(get)) {
+            printf("无效的选项，请重新选择。\n");
+            continue;  // 继续循环等待有效输入
+        }
+        switch (get[0]) {
+        case '1':
+            IsManager = true;
+            loginWidget();
+            break;
+        case '2':
+            IsManager = false;
+            loginWidget();
+            break;
+        case '3':
+            registerWidget();
+            break;
+        case '4':
+            printf("程序已退出。\n");
+            exit(0);
+        default:
+            printf("无效的选项，请重新选择。\n");
+        }
+    }
+}
+
+void loginWidget() {
+    char username[MAX_LENGTH];
+    char password[MAX_LENGTH];
+    char encryptedPassword[MAX_LENGTH * 2];
+
+    // 获取用户输入
+    printf("请输入用户名：");
+    getInput(username, sizeof(username));
+
+    printf("请输入密码：");
+    getInput(password, sizeof(password));
+    xorEncryptDecrypt(password, strlen(password), encryptedPassword); // 加密用户密码
+
+    system(SYSTEM_CLEAR);
+
+    // 验证登录
+    if (verify(username, encryptedPassword)) {
+        printf("登录成功！欢迎, %s!\n", username);
+        strcpy(User, username);
+        if (IsManager) {
+            managerMenuWidget();
+        } else {
+            employeeMenuWidget();
+        }
+        return;
+    } else {
+        printf("登录失败，用户名或密码错误。\n");
+    }
+}
+
+void registerWidget() {
+    FILE *file;
+    char line[MAX_LENGTH * 3];
+    char username[MAX_LENGTH];
+    char password[MAX_LENGTH];
+    char encryptedPassword[MAX_LENGTH * 2];
+    char role[MAX_LENGTH];
+
+    printf("创建新用户.\n");
+
+    while (true) {
+        printf("请输入用户名：");
+        getInput(username, sizeof(username));
+
+        if (isEmpty(username)) {
+            printf("用户名不能为空。\n");
+            continue;
+        } else {
+            break;
+        }
+    }
+
+    while (true) {
+        printf("请输入密码：");
+        getInput(password, sizeof(password));
+
+        if (matchRegex(password)) {
+            xorEncryptDecrypt(password, strlen(password), encryptedPassword);
+            break;
+        } else {
+            printf("密码不符合要求。必须至少8个字符且包含大写字母、小写字母、数字、标点符号中的两种。\n");
+        }
+    }
+
+    while (true) {
+        printf("请选择角色：\n");
+        printf("1. 公司经理\n");
+        printf("2. 公司业务员\n");
+        printf("请输入角色数字（1-2）：");
+        getInput(role, sizeof(role));
+        system(SYSTEM_CLEAR);
+        if (isOneChar(role)) {
+            break;
+        } else {
+            printf("无效的角色，请重新选择。\n");
+        }
+    }
+    const char *filename = (role[0] == '1') ? "manager_user.csv" : "employee_user.csv";
+
+    file = fopen(filename, "r");
+    if (!file) {
+        perror("打开文件失败");
+        return;
+    }
+
+    // 检查用户名是否已存在
+    bool userExists = false;
+    while (fgets(line, sizeof(line), file)) {
+        char file_username[MAX_LENGTH];
+        sscanf(line, "%254[^|||]", file_username);
+        if (strcmp(username, file_username) == 0) {
+            userExists = true;
+            break;
+        }
+    }
+    fclose(file);
+
+    if (userExists) {
+        printf("用户已存在.\n");
+        return;
+    }
+
+    // 用户不存在，添加新用户
+    file = fopen(filename, "a");
+    if (!file) {
+        perror("打开文件失败");
+        return;
+    }
+    fprintf(file, "%s|||%s\n", username, encryptedPassword); // 写入新的用户信息
+    fclose(file);
+
+    printf("用户注册成功.\n");
+}
+
+void initializeUser() {
     FILE *file;
 
-    // 检查并初始化 managers.csv 文件
-    file = fopen("managers.csv", "r");
+    file = fopen("manager_user.csv", "r");
     if (!file) {
         // 文件不存在，创建新文件
-        file = fopen("managers.csv", "w");
+        file = fopen("manager_user.csv", "w");
         if (!file) {
             perror("创建 managers.csv 文件失败");
         } else {
-            fprintf(file, "user|||password\n");
             fclose(file);
         }
     } else {
@@ -28,15 +180,13 @@ void initializeCredentialsFile() {
         fclose(file);
     }
 
-    // 检查并初始化 employees.csv 文件
-    file = fopen("employees.csv", "r");
+    file = fopen("employee_user.csv", "r");
     if (!file) {
         // 文件不存在，创建新文件
-        file = fopen("employees.csv", "w");
+        file = fopen("employee_user.csv", "w");
         if (!file) {
-            perror("创建 employees.csv 文件失败");
+            perror("创建 employee_user.csv 文件失败");
         } else {
-            fprintf(file, "user|||password\n");
             fclose(file);
         }
     } else {
@@ -45,10 +195,10 @@ void initializeCredentialsFile() {
     }
 }
 
-bool verifyLogin(string username, string password, int section) {
+bool verify(const char *username, const char *password) {
     FILE *file;
-    char line[512];
-    const char *filename = (section == 1) ? "managers.csv" : "employees.csv";
+    char line[MAX_LENGTH * 3];
+    const char *filename = (IsManager) ? "manager_user.csv" : "employee_user.csv";
     const char *delimiter = "|||";
     char *delimiter_pos;
 
@@ -88,159 +238,4 @@ bool verifyLogin(string username, string password, int section) {
     return false; // 未找到匹配项
 }
 
-
-
-void registerUser() {
-    FILE *file;
-    char line[512];
-    string username, password, role, encryptedPassword;
-    int section;
-
-    printf("创建新用户.\n");
-
-    // 清空缓冲区以防止输入问题
-    while (getchar() != '\n');
-
-    while (true) {
-        printf("请输入用户名：");
-        fgets(username, MAX_LENGTH, stdin);
-        username[strcspn(username, "\n")] = 0;
-
-        if (strlen(username) == 0) {
-            printf("用户名不能为空。\n");
-            continue;
-        } else {
-            break;
-        }
-    }
-
-    while (true) {
-        printf("请输入密码：");
-        fgets(password, MAX_LENGTH, stdin);
-        password[strcspn(password, "\n")] = 0;
-
-        if (matchRegex(password)) {
-            xorEncryptDecrypt(password, strlen(password), encryptedPassword); // 加密密码
-            break;
-        } else {
-            printf("密码不符合要求。必须至少8个字符且包含大写字母、小写字母、数字、标点符号中的两种。\n");
-        }
-    }
-
-    printf("请选择角色：\n");
-    printf("1. 公司经理\n");
-    printf("2. 公司业务员\n");
-    printf("请输入角色数字（1-2）：");
-    fgets(role, MAX_LENGTH, stdin);
-    role[strcspn(role, "\n")] = 0;
-    section = atoi(role);
-    system(SYSTEM_CLEAR);
-
-    const char *filename = (section == 1) ? "managers.csv" : "employees.csv";
-    file = fopen(filename, "r");
-    if (!file) {
-        perror("打开文件失败");
-        return;
-    }
-
-    // 检查用户名是否已存在
-    bool userExists = false;
-    while (fgets(line, sizeof(line), file)) {
-        char file_username[MAX_LENGTH];
-        sscanf(line, "%254[^|||]", file_username);
-        if (strcmp(username, file_username) == 0) {
-            userExists = true;
-            break;
-        }
-    }
-    fclose(file);
-
-    if (userExists) {
-        printf("用户已存在.\n");
-        return;
-    }
-
-    // 用户不存在，添加新用户
-    file = fopen(filename, "a");
-    if (!file) {
-        perror("打开文件失败");
-        return;
-    }
-    fprintf(file, "%s|||%s\n", username, encryptedPassword); // 写入新的用户信息
-    fclose(file);
-
-    printf("用户注册成功.\n");
-}
-
-void login() {
-    initializeCredentialsFile();
-    while (true) {
-        bool flag = false;
-        string username, password, encryptedPassword;
-        int section = 0;
-
-        printf("请选择角色：\n");
-        printf("1. 公司经理\n");
-        printf("2. 公司业务员\n");
-        printf("3. 注册用户\n");
-        printf("4. 退出程序\n");
-        printf("请输入选择的角色数字（1-4）：");
-        string role;
-        scanf("%254s", role);
-        system(SYSTEM_CLEAR);
-
-        if (strlen(role) != 1) {
-            printf("无效的选项，请重新选择。\n");
-            continue;  // 继续循环等待有效输入
-        }
-        switch (role[0]) {
-        case '1':
-            section = 1;
-            break;
-        case '2':
-            section = 2;
-            break;
-        case '3':
-            registerUser();
-            flag = true;
-            break;
-        case '4':
-            printf("程序已退出。\n");
-            exit(0);
-        default:
-            printf("无效的选项，请重新选择。\n");
-            flag = true;
-        }
-        if (flag) {
-            continue;
-        }
-
-        while (getchar() != '\n');
-
-        // 获取用户输入
-        printf("请输入用户名：");
-        fgets(username, MAX_LENGTH, stdin);
-        username[strcspn(username, "\n")] = 0; // 去除fgets捕获的换行符
-
-        printf("请输入密码：");
-        fgets(password, MAX_LENGTH, stdin);
-        password[strcspn(password, "\n")] = 0; // 去除fgets捕获的换行符
-
-        xorEncryptDecrypt(password, strlen(password), encryptedPassword); // 加密用户密码
-        system(SYSTEM_CLEAR);
-
-        // 验证登录
-        if (verifyLogin(username, encryptedPassword, section)) {
-            printf("登录成功！欢迎, %s!\n", username);
-            strcpy(User, username);
-            if (section == 1) {
-                IsManager = true;
-            }
-            return;
-        } else {
-            printf("登录失败，用户名或密码错误。\n");
-        }
-    }
-}
-
-
+// end login.c
