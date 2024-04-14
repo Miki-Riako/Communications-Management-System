@@ -1,10 +1,3 @@
-bool isEmpty(const char *input);
-bool isOneChar(const char *input);
-void clearBuffer();
-void getInput(char *input, int buffer_size);
-bool isSameString(const char *str1, const char *str2);
-
-
 // 检验输入是否为空
 bool isEmpty(const char *input) { return (input[0] == '\0'); }
 

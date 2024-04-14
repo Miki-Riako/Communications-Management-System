@@ -1,9 +1,3 @@
-void xorEncryptDecrypt(const char *input, size_t length, char *output);
-bool matchRegex(const char *password);
-bool matchMail(const char *email);
-bool matchPhone(const char *phone);
-
-
 // XOR 加密/解密算法
 void xorEncryptDecrypt(const char *input, size_t length, char *output) {
     if (input == NULL || output == NULL) {

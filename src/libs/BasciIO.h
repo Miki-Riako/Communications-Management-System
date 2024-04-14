@@ -1,10 +1,3 @@
-void infoInput(char *input, int buffer_size, const char *prompt);
-void inputTheName(char *name, int buffer_size, const char *prompt);
-bool alreadyExists(const char *filename, const char *username);
-void initializeInfoFile(const char *path, const char *header);
-void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact);
-void removeRecord(const char *filename, const char *prompt);
-
 // 信息写入
 void infoInput(char *input, int buffer_size, const char *prompt) {
     printf("%s", prompt);
