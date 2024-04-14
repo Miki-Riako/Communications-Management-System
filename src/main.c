@@ -1,7 +1,7 @@
 // main.c
 #include "login.c"
-#include "changecustomer.c"
-#include "changecommunicationrecord.c"
+#include "managecustomer.c"
+#include "managecommunicationrecord.c"
 
 #include "setsystem.c"
 
@@ -13,8 +13,8 @@ int main(void) {
     while(true) {
         bool flag = false;
         printf("\n\n通信管理系统\n\n");
-        printf("1. 修改客户信息\n");
-        printf("2. 修改通信记录\n");
+        printf("1. 管理客户信息\n");
+        printf("2. 管理通信记录\n");
         printf("3. 查询信息\n");
         printf("4. 统计信息\n");
         printf("5. 设置\n");
@@ -29,10 +29,10 @@ int main(void) {
         }
         switch(choice[0]) {
         case '1':
-            changeCustomer();
+            manageCustomer();
             break;
         case '2':
-            changeCommunicationRecord();
+            manageCommunicationRecord();
             break;
         case '3':
             // queryInformation();

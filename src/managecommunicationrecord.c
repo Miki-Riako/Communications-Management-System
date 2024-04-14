@@ -2,18 +2,63 @@
 #include "initialize.h"
 
 // 函数声明
+void manageCommunicationRecord();
+void initializeCommunicationFile();
 void addCommunicationRecord();
-void saveCommunicationRecordToFile(CommunicationRecord record);
+void viewCommunicationRecords();
 bool matchDate(const char *date);
 bool matchTime(const char *time);
 bool matchDuration(const char *duration);
+void saveCommunicationRecordToFile(CommunicationRecord record);
+
+// 管理通信记录界面
+void manageCommunicationRecord() {
+    while (true) {
+        int choice;
+        printf("\n管理通信记录\n");
+        printf("1. 添加通信记录\n");
+        printf("2. 查看通信记录\n");
+        printf("3. 返回\n");
+        printf("请选择操作（1-3）：");
+        scanf("%d", &choice);
+        system(SYSTEM_CLEAR);
+
+        switch (choice) {
+            case 1:
+                addCommunicationRecord();
+                break;
+            case 2:
+                viewCommunicationRecords();
+                break;
+            case 3:
+                return;  // 返回主菜单
+            default:
+                printf("无效的选项，请重新输入。\n");
+        }
+    }
+}
+
+void initializeCommunicationFile() {
+    FILE *file = fopen("communication_records.csv", "r");
+    if (!file) { 
+        file = fopen("communication_records.csv", "w");
+        if (!file) {
+            perror("创建通信记录文件失败");
+        } else {
+            fprintf(file, "CompanyName|||ContactName|||Date|||Time|||Duration|||Content\n");
+            fclose(file);
+        }
+    } else {
+        fclose(file);
+    }
+}
 
 void addCommunicationRecord() {
     initializeCommunicationFile(); // 确保通信记录文件已初始化
+    CommunicationRecord newRecord;
 
     while (getchar() != '\n');
 
-    CommunicationRecord newRecord;
     printf("输入公司名称: ");
     fgets(newRecord.companyName, sizeof(newRecord.companyName), stdin);
     newRecord.companyName[strcspn(newRecord.companyName, "\n")] = 0;
@@ -75,6 +120,43 @@ void addCommunicationRecord() {
 
     saveCommunicationRecordToFile(newRecord);
     printf("通信记录已添加.\n");
+}
+
+void viewCommunicationRecords() {
+    initializeCommunicationFile(); // 确保通信记录文件已初始化
+
+    FILE *file = fopen("communication_records.csv", "r");
+    if (!file) {
+        perror("无法打开文件");
+        return;
+    }
+
+    char line[1024];
+    printf("\n通信记录列表:\n");
+    printf("\t%-20s %-20s %-20s %-20s %-20s %-20s\n", "公司名称", "联系人姓名", "日期", "时间", "持续时间", "内容");
+
+    fgets(line, sizeof(line), file);  // 跳过标题行
+    while (fgets(line, sizeof(line), file)) {
+        char *companyName = strtok(line, "|||");
+        char *contactName = strtok(NULL, "|||");
+        char *date = strtok(NULL, "|||");
+        char *time = strtok(NULL, "|||");
+        char *duration = strtok(NULL, "|||");
+        char *content = strtok(NULL, "|||");
+
+        if (content) content[strcspn(content, "\n")] = 0;
+
+        printf("%-20s %-20s %-20s %-20s %-20s %-20s\n", 
+            companyName,
+            contactName,
+            date,
+            time,
+            duration,
+            content
+        );
+    }
+
+    fclose(file);
 }
 
 bool matchDate(const char *date) {
@@ -156,7 +238,6 @@ bool matchDuration(const char *duration) {
         return false; // 匹配失败
     }
 }
-
 
 void saveCommunicationRecordToFile(CommunicationRecord record) {
     FILE *file = fopen("communication_records.csv", "a");
