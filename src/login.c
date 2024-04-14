@@ -132,7 +132,7 @@ void xorEncryptDecrypt(string input, size_t length, string output) {
 void registerUser() {
     FILE *file;
     char line[512];
-    string username, password, role;
+    string username, password, role, encryptedPassword;
     int section;
 
     printf("创建新用户.\n");
@@ -159,7 +159,6 @@ void registerUser() {
         password[strcspn(password, "\n")] = 0;
 
         if (matchRegex(password)) {
-            string encryptedPassword;
             xorEncryptDecrypt(password, strlen(password), encryptedPassword); // 加密密码
             break;
         } else {
@@ -206,7 +205,7 @@ void registerUser() {
         perror("打开文件失败");
         return;
     }
-    fprintf(file, "%s|||%s\n", username, password); // 写入新的用户信息
+    fprintf(file, "%s|||%s\n", username, encryptedPassword); // 写入新的用户信息
     fclose(file);
 
     printf("用户注册成功.\n");
@@ -216,8 +215,7 @@ void login() {
     initializeCredentialsFile();
     while (true) {
         bool flag = false;
-        string username;
-        string password;
+        string username, password, encryptedPassword;
         int section = 0;
 
         printf("请选择角色：\n");
@@ -267,12 +265,11 @@ void login() {
         fgets(password, MAX_LENGTH, stdin);
         password[strcspn(password, "\n")] = 0; // 去除fgets捕获的换行符
 
-        string encryptedPassword;
         xorEncryptDecrypt(password, strlen(password), encryptedPassword); // 加密用户密码
         system(SYSTEM_CLEAR);
 
         // 验证登录
-        if (verifyLogin(username, password, section)) {
+        if (verifyLogin(username, encryptedPassword, section)) {
             printf("登录成功！欢迎, %s!\n", username);
             return;
         } else {
