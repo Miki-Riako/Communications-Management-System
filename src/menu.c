@@ -65,7 +65,7 @@ void managerMenuWidget() {
 void employeeMenuWidget() {
     while(true) {
         printf("\n\n通信管理系统\n\n");
-        printf("您好！业务员%s\n", User);
+        printf("您好，业务员%s！\n", User);
         printf("1. 信息查询\n");
         printf("2. 信息排序\n");
         printf("3. 信息统计\n");

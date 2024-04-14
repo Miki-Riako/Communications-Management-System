@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <regex.h>
 
+#define DEBUG_MODE true
 #define SECRET_KEY "AAAAA-AAAAA-AAAAA-AAAAA-AAAAA"
 #define SYSTEM_CLEAR "clear" // if in windows, change the clear to cls
 

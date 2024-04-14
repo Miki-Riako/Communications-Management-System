@@ -2,24 +2,24 @@
 
 // 全局函数
 bool isEmpty(const char *input);
+bool isOneChar(const char *input);
 void clearBuffer();
 void getInput(char *input, int buffer_size);
+void infoInput(char *input, int buffer_size, const char *prompt);
+bool isSameString(const char *str1, const char *str2);
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool matchRegex(const char *password);
+bool matchMail(const char *email);
+bool matchPhone(const char *phone);
 
 // 检验输入是否为空
-bool isEmpty(const char *input) {
-    return (strlen(input) == 0);
-}
+bool isEmpty(const char *input) { return (strlen(input) == 0); }
 
-bool isOneChar(const char *input) {
-    return (strlen(input) == 1);
-}
+// 检验输入是否为单个字符
+bool isOneChar(const char *input) { return (strlen(input) == 1); }
 
 // 清除缓冲区
-void clearBuffer() {
-    while (getchar() != '\n');
-}
+void clearBuffer() { while (getchar() != '\n'); }
 
 // 获取字符串
 void getInput(char *input, int buffer_size) {
@@ -30,10 +30,20 @@ void getInput(char *input, int buffer_size) {
     }
 }
 
-// 是相同的字符串
-bool isSameString(const char *str1, const char *str2) {
-    return (strcmp(str1, str2) == 0);
+// 信息写入
+void infoInput(char *input, int buffer_size, const char *prompt) {
+    printf("%s", prompt);
+    if (fgets(input, buffer_size, stdin) == NULL) {
+        printf("错误：无法读取输入。\n");
+        strcpy(input, " "); // 安全处理
+        return;
+    }
+    input[strcspn(input, "\n")] = 0;  // 移除尾部的换行符
+    if (input[0] == '\0') strcpy(input, " ");
 }
+
+// 是相同的字符串
+bool isSameString(const char *str1, const char *str2) { return (strcmp(str1, str2) == 0); }
 
 // XOR 加密/解密算法
 void xorEncryptDecrypt(const char *input, size_t length, char *output) {
@@ -78,3 +88,44 @@ bool matchRegex(const char *password) {
     return (count >= 2);
 }
 
+// 检查邮箱的正则表达式
+bool matchMail(const char *email) {
+    regex_t regex;
+    int ret;
+    char msgbuf[100];
+
+    // 编译正则表达式
+    ret = regcomp(&regex, "^[A-Za-z0-9]+([.-_][A-Za-z0-9]+)*@[A-Za-z0-9]+([-.][A-Za-z0-9]+)*\\.[A-Za-z]{2,5}$", REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex\n");
+        return false;
+    }
+
+    // 执行匹配
+    ret = regexec(&regex, email, 0, NULL, 0);
+    if (!ret) {
+        regfree(&regex);
+        return true;
+    } else if (ret == REG_NOMATCH) {
+        regfree(&regex);
+        return false;
+    } else {
+        regerror(ret, &regex, msgbuf, sizeof(msgbuf));
+        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        regfree(&regex);
+        return false;
+    }
+}
+
+// 检查电话的正则表达式
+bool matchPhone(const char *phone) {
+    if (phone == NULL) return false;
+
+    while (*phone != '\0') {
+        if (!isdigit((unsigned char)*phone) && *phone != '-' && *phone != '+' && *phone != ',') {
+            return false;  // 如果字符不是数字也不是连字符，则返回false
+        }
+        ++phone;
+    }
+    return true;  // 所有字符都是数字或连字符
+}

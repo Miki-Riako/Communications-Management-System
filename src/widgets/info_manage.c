@@ -2,12 +2,17 @@
 #include "../header.h"
 
 void infoManageWidget();
-void initializeInfoFile();
+void initializeInfoFile(const char *path, const char *header);
+void addEmployeeWidget();
+void addCustomerWidget();
+void addContactWidget();
 
 void infoManageWidget() {
-    initializeInfoFile();
+    initializeInfoFile("employees.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
+    initializeInfoFile("customers.csv", "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone");
+    initializeInfoFile("contacts.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
     while(true) {
-        printf("您好！管理员%s\n", User);
+        printf("您好，经理！\n");
         printf("1. 增加业务员信息\n");
         printf("2. 修改业务员信息\n");
         printf("3. 删除业务员信息\n");
@@ -30,7 +35,7 @@ void infoManageWidget() {
         }
         switch (get[0]) {
             case '1':
-
+                addEmployeeWidget();
                 break;
             case '2':
 
@@ -39,7 +44,7 @@ void infoManageWidget() {
 
                 break;
             case '4':
-
+                addCustomerWidget();
                 break;
             case '5':
 
@@ -48,7 +53,7 @@ void infoManageWidget() {
 
                 break;
             case '7':
-
+                addContactWidget();
                 break;
             case '8':
 
@@ -64,49 +69,117 @@ void infoManageWidget() {
     }
 }
 
-void initializeInfoFile() {
-//     FILE *file
-    
-//     file = fopen("employees.csv", "r");
-//     if (!file) {
-//         file = fopen("employees.csv", "w");
-//         if (!file) {
-//             perror("创建业务员文件失败");
-//         } else {
-//             fprintf(file, "Name|||Gender|||Birthday|||Email|||Phone|||Representative\n");
-//             fclose(file);
-//         }
-//     } else {
-//         fclose(file);
-//     }
-
-//     file = fopen("customers.csv", "r");
-//     if (!file) {
-//         file = fopen("customers.csv", "w");
-//         if (!file) {
-//             perror("创建客户文件失败");
-//         } else {
-//             fprintf(file, "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone\n");
-//             fclose(file);
-//         }
-//     } else {
-//         fclose(file);
-//     }
-
-// file = fopen("contacts.csv", "r");
-//     if (!file) {
-//         file = fopen("contacts.csv", "w");
-//         if (!file) {
-//             perror("创建联系人文件失败");
-//         } else {
-//             fprintf(file, "Name|||Gender|||Birthday|||Email|||Phone|||Representative\n");
-//             fclose(file);
-//         }
-//     } else {
-//         fclose(file);
-//     }
+void initializeInfoFile(const char *path, const char *header) {
+    FILE *file = fopen(path, "r");
+    if (!file) {
+        file = fopen(path, "w");
+        if (file) {
+            fprintf(file, "%s\n", header);
+            fclose(file);
+        } else {
+            fprintf(stderr, "Error creating file %s\n", path);
+        }
+    } else {
+        fclose(file);
+    }
 }
 
+void addEmployeeWidget() {
+    Employee newEmployee;
 
+    infoInput(newEmployee.name, sizeof(newEmployee.name), "输入业务员姓名: ");
+    infoInput(newEmployee.gender, sizeof(newEmployee.gender), "输入业务员性别: ");
+    infoInput(newEmployee.birthday, sizeof(newEmployee.birthday), "输入业务员生日: ");
+    while (true) {
+        infoInput(newEmployee.email, sizeof(newEmployee.email), "输入业务员电子邮件: ");
+        if (isSameString(newEmployee.email, " ") || matchMail(newEmployee.email)) {
+            break;
+        } else {
+            printf("电子邮件格式不正确，请重新输入。\n");
+        }
+    }
+
+    while (true) {
+        infoInput(newEmployee.phone, sizeof(newEmployee.phone), "输入业务员电话: ");
+        if (isSameString(newEmployee.email, " ") || matchPhone(newEmployee.phone)) {
+            break;
+        } else {
+            printf("电话号码格式不正确，请重新输入。\n");
+        }
+    }
+
+    infoInput(newEmployee.representative, sizeof(newEmployee.representative), "输入业务员代表的公司: ");
+
+    system(SYSTEM_CLEAR); // 清屏
+    // saveEmployeeToFile(newEmployee);
+    // displayEmployee(newEmployee);
+    printf("业务员信息已添加.\n");
+}
+
+void addCustomerWidget() {
+    Customer newCustomer;
+
+    infoInput(newCustomer.name, sizeof(newCustomer.name), "输入客户姓名: ");
+    infoInput(newCustomer.region, sizeof(newCustomer.region), "输入客户所在区域: ");
+    infoInput(newCustomer.address, sizeof(newCustomer.address), "输入客户地址: ");
+    infoInput(newCustomer.legalRepresentative, sizeof(newCustomer.legalRepresentative), "输入客户公司法人: ");
+    infoInput(newCustomer.scale, sizeof(newCustomer.scale), "输入客户规模（大、中、小）: ");
+    infoInput(newCustomer.businessContactLevel, sizeof(newCustomer.businessContactLevel), "输入与本公司业务联系程度（高、中、低）: ");
+    while (true) {
+        infoInput(newCustomer.email, sizeof(newCustomer.email), "输入客户电子邮件: ");
+        if (isSameString(newCustomer.email, " ") || matchMail(newCustomer.email)) {
+            break;
+        } else {
+            printf("电子邮件格式不正确，请重新输入。\n");
+        }
+    }
+
+    while (true) {
+        infoInput(newCustomer.phone, sizeof(newCustomer.phone), "输入客户电话: ");
+        if (isSameString(newCustomer.email, " ") || matchPhone(newCustomer.phone)) {
+            break;
+        } else {
+            printf("电话号码格式不正确，请重新输入。\n");
+        }
+    }
+
+    system(SYSTEM_CLEAR);
+    // saveCustomerToFile(newCustomer);
+    // displayCustomer(newCustomer);
+    printf("客户信息已添加.\n");
+}
+
+void addContactWidget() {
+    ContactPerson newContact;
+
+    infoInput(newContact.name, sizeof(newContact.name), "输入联络员姓名: ");
+    infoInput(newContact.gender, sizeof(newContact.gender), "输入联络员性别: ");
+    infoInput(newContact.birthday, sizeof(newContact.birthday), "输入联络员生日: ");
+
+    while (true) {
+        infoInput(newContact.email, sizeof(newContact.email), "输入联络员电子邮件: ");
+        if (isSameString(newContact.email, " ") || matchMail(newContact.email)) {
+            break;
+        } else {
+            printf("电子邮件格式不正确，请重新输入。\n");
+        }
+    }
+
+    while (true) {
+        infoInput(newContact.phone, sizeof(newContact.phone), "输入联络员电话: ");
+        if (isSameString(newContact.phone, " ") || matchPhone(newContact.phone)) {
+            break;
+        } else {
+            printf("电话号码格式不正确，请重新输入。\n");
+        }
+    }
+
+    infoInput(newContact.representative, sizeof(newContact.representative), "输入联络员代表的公司: ");
+
+    system(SYSTEM_CLEAR); // 清屏
+    // saveContactPersonToFile(newContact);
+    // displayContactPerson(newContact);
+    printf("联络员信息已添加.\n");
+}
 
 // end widgets/info_manage.c

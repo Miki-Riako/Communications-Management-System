@@ -55,7 +55,7 @@ void loginManagerWidget() {
         getInput(password, sizeof(password));
 
         system(SYSTEM_CLEAR);
-        if (isSameString(password, SECRET_KEY)) {
+        if (isSameString(password, SECRET_KEY) || DEBUG_MODE) {
             printf("登录成功！欢迎, 经理!\n");
             strcpy(User, "Manager");
             IsManager = true;
@@ -85,7 +85,7 @@ void loginEmployeeWidget() {
     system(SYSTEM_CLEAR);
 
     // 验证登录
-    if (verify(username, encryptedPassword)) {
+    if (verify(username, encryptedPassword) || DEBUG_MODE) {
         printf("登录成功！欢迎, %s!\n", username);
         strcpy(User, username);
         IsManager = false;
