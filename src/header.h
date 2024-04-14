@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include <regex.h>
 
-#define SECRET_KEY "secret_key_secret_key_secret_key_secret_key_secret_key"
+#define SECRET_KEY "AAAAA-AAAAA-AAAAA-AAAAA-AAAAA"
 #define SYSTEM_CLEAR "clear" // if in windows, change the clear to cls
 
 #define MAX_LENGTH 255
@@ -30,7 +30,7 @@ typedef struct {
     char birthday[MAX_LENGTH];                // 联络员生日
     char email[MAX_LENGTH];                   // 联络员邮箱
     char phone[MAX_LENGTH];                   // 联络员联络电话
-    char representative[MAX_LENGTH];          // 联络员代表业务员
+    char representative[MAX_LENGTH];          // 联络员代表的公司
 } ContactPerson;
 typedef struct {
     char name[MAX_LENGTH];                    // 业务员名称
@@ -38,7 +38,7 @@ typedef struct {
     char birthday[MAX_LENGTH];                // 业务员生日
     char email[MAX_LENGTH];                   // 业务员邮箱
     char phone[MAX_LENGTH];                   // 业务员联络电话
-    char representative[MAX_LENGTH];          // 业务员代表联络员
+    char representative[MAX_LENGTH];          // 业务员联络员公司
 } Employee;
 typedef struct {
     char companyName[MAX_LENGTH];             // 客户公司名称

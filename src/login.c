@@ -3,7 +3,8 @@
 #include "menu.c"
 
 void startWidget();
-void loginWidget();
+void loginManagerWidget();
+void loginEmployeeWidget();
 void registerWidget();
 void initializeUser();
 bool verify(const char *username, const char *password);
@@ -11,16 +12,15 @@ bool verify(const char *username, const char *password);
 void startWidget() {
     initializeUser();
     while (true) {
-        char get[MAX_LENGTH];
-
         printf("登入中...\n");
         printf("请选择角色：\n");
         printf("1. 公司经理\n");
         printf("2. 公司业务员\n");
-        printf("3. 注册用户\n");
+        printf("3. 注册业务员\n");
         printf("4. 退出程序\n");
         printf("请输入选择的角色数字（1-4）：");
 
+        char get[MAX_LENGTH];
         getInput(get, sizeof(get));
         system(SYSTEM_CLEAR);
 
@@ -30,12 +30,10 @@ void startWidget() {
         }
         switch (get[0]) {
         case '1':
-            IsManager = true;
-            loginWidget();
+            loginManagerWidget();
             break;
         case '2':
-            IsManager = false;
-            loginWidget();
+            loginEmployeeWidget();
             break;
         case '3':
             registerWidget();
@@ -49,7 +47,29 @@ void startWidget() {
     }
 }
 
-void loginWidget() {
+void loginManagerWidget() {
+    for (int i = 0; i < 3; ++i) {
+        char password[MAX_LENGTH];
+
+        printf("请输入公司密钥：");
+        getInput(password, sizeof(password));
+
+        system(SYSTEM_CLEAR);
+        if (isSameString(password, SECRET_KEY)) {
+            printf("登录成功！欢迎, 经理!\n");
+            strcpy(User, "Manager");
+            IsManager = true;
+            managerMenuWidget();
+            return;
+        } else {
+            printf("登录失败，密码错误。还剩下%d次机会。\n", 3 - i);
+        }
+    }
+    printf("尝试使用密钥登录失败，系统关闭。\n");
+    exit(0);
+}
+
+void loginEmployeeWidget() {
     char username[MAX_LENGTH];
     char password[MAX_LENGTH];
     char encryptedPassword[MAX_LENGTH * 2];
@@ -68,11 +88,8 @@ void loginWidget() {
     if (verify(username, encryptedPassword)) {
         printf("登录成功！欢迎, %s!\n", username);
         strcpy(User, username);
-        if (IsManager) {
-            managerMenuWidget();
-        } else {
-            employeeMenuWidget();
-        }
+        IsManager = false;
+        employeeMenuWidget();
         return;
     } else {
         printf("登录失败，用户名或密码错误。\n");
@@ -113,22 +130,7 @@ void registerWidget() {
         }
     }
 
-    while (true) {
-        printf("请选择角色：\n");
-        printf("1. 公司经理\n");
-        printf("2. 公司业务员\n");
-        printf("请输入角色数字（1-2）：");
-        getInput(role, sizeof(role));
-        system(SYSTEM_CLEAR);
-        if (isOneChar(role)) {
-            break;
-        } else {
-            printf("无效的角色，请重新选择。\n");
-        }
-    }
-    const char *filename = (role[0] == '1') ? "manager_user.csv" : "employee_user.csv";
-
-    file = fopen(filename, "r");
+    file = fopen("user.csv", "r");
     if (!file) {
         perror("打开文件失败");
         return;
@@ -152,7 +154,7 @@ void registerWidget() {
     }
 
     // 用户不存在，添加新用户
-    file = fopen(filename, "a");
+    file = fopen("user.csv", "a");
     if (!file) {
         perror("打开文件失败");
         return;
@@ -164,33 +166,16 @@ void registerWidget() {
 }
 
 void initializeUser() {
-    FILE *file;
-
-    file = fopen("manager_user.csv", "r");
+    FILE *file = fopen("user.csv", "r");
     if (!file) {
         // 文件不存在，创建新文件
-        file = fopen("manager_user.csv", "w");
+        file = fopen("user.csv", "w");
         if (!file) {
-            perror("创建 managers.csv 文件失败");
+            perror("创建 user.csv 文件失败");
         } else {
             fclose(file);
         }
     } else {
-        // 文件已存在，只关闭文件流
-        fclose(file);
-    }
-
-    file = fopen("employee_user.csv", "r");
-    if (!file) {
-        // 文件不存在，创建新文件
-        file = fopen("employee_user.csv", "w");
-        if (!file) {
-            perror("创建 employee_user.csv 文件失败");
-        } else {
-            fclose(file);
-        }
-    } else {
-        // 文件已存在，只关闭文件流
         fclose(file);
     }
 }
@@ -198,11 +183,10 @@ void initializeUser() {
 bool verify(const char *username, const char *password) {
     FILE *file;
     char line[MAX_LENGTH * 3];
-    const char *filename = (IsManager) ? "manager_user.csv" : "employee_user.csv";
     const char *delimiter = "|||";
     char *delimiter_pos;
 
-    file = fopen(filename, "r");
+    file = fopen("user.csv", "r");
     if (!file) {
         perror("打开文件失败");
         return false;

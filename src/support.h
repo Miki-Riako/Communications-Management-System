@@ -30,6 +30,11 @@ void getInput(char *input, int buffer_size) {
     }
 }
 
+// 是相同的字符串
+bool isSameString(const char *str1, const char *str2) {
+    return (strcmp(str1, str2) == 0);
+}
+
 // XOR 加密/解密算法
 void xorEncryptDecrypt(const char *input, size_t length, char *output) {
     if (input == NULL || output == NULL) {

@@ -1,5 +1,5 @@
 // menu.c
-#include "header.h"
+#include "info_manage.c"
 
 void managerMenuWidget();
 void employeeMenuWidget();
@@ -7,7 +7,6 @@ void exitSystem();
 
 void managerMenuWidget() {
     while(true) {
-        system(SYSTEM_CLEAR);
         printf("\n\n通信管理系统\n\n");
         printf("您好！管理员%s\n", User);
         printf("1. 信息管理\n");
@@ -20,8 +19,9 @@ void managerMenuWidget() {
         printf("8. 系统维护\n");
         printf("9. 退出系统\n");
         printf("请选择一个操作（1-9）：");
+
         char get[MAX_LENGTH];
-        scanf("%254s", get);
+        getInput(get, sizeof(get));
         system(SYSTEM_CLEAR);
 
         if (!isOneChar(get)) {
@@ -30,7 +30,7 @@ void managerMenuWidget() {
         }
         switch(get[0]) {
         case '1':
-            
+            infoManageWidget()
             break;
         case '2':
             
@@ -64,7 +64,6 @@ void managerMenuWidget() {
 
 void employeeMenuWidget() {
     while(true) {
-        system(SYSTEM_CLEAR);
         printf("\n\n通信管理系统\n\n");
         printf("您好！业务员%s\n", User);
         printf("1. 信息查询\n");
@@ -75,8 +74,9 @@ void employeeMenuWidget() {
         printf("6. 系统维护\n");
         printf("7. 退出系统\n");
         printf("请选择一个操作（1-7）：");
+
         char get[MAX_LENGTH];
-        scanf("%254s", get);
+        getInput(get, sizeof(get));
         system(SYSTEM_CLEAR);
 
         if (!isOneChar(get)) {
