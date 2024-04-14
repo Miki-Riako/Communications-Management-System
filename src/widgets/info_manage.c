@@ -174,15 +174,12 @@ void addContact() {
 }
 
 void changeEmployee(){
-    
 }
 
 void changeCustomer(){
-
 }
 
 void changeContact(){
-
 }
 
 void saveEmployeeToFile(Employee employee) {

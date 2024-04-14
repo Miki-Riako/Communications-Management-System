@@ -164,6 +164,16 @@ void registerWidget() {
     fclose(file);
 
     printf("用户注册成功.\n");
+    printf("要现在就添加用户的信息吗？（Y?）\n");
+    char get[MAX_LENGTH];
+    getInput(get, sizeof(get));
+    if (get[0] == 'Y' || get[0] == 'y') {
+        Employee newEmployee;
+        addEntry(1, "employees.csv", "请输入业务员姓名：", &newEmployee, NULL, NULL);
+        saveEmployeeToFile(newEmployee);
+        displayEmployee(newEmployee);
+        printf("业务员信息已添加。\n");
+    }
 }
 
 bool verify(const char *username, const char *password) {

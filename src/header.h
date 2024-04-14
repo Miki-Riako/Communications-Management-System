@@ -53,5 +53,8 @@ typedef struct {
 char User[MAX_LENGTH];
 bool IsManager = false;
 
-#include "support.h"
+#include "libs/String.h"
+#include "libs/BasciIO.h"
+#include "libs/Regex.h"
+
 #endif
