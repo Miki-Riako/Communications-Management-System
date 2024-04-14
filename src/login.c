@@ -108,9 +108,11 @@ void registerWidget() {
     while (true) {
         printf("请输入用户名：");
         getInput(username, sizeof(username));
-
         if (isEmpty(username)) {
             printf("用户名不能为空。\n");
+            continue;
+        } else if (alreadyExists("user.csv", username)) {
+            printf("用户已存在.\n");
             continue;
         } else {
             break;

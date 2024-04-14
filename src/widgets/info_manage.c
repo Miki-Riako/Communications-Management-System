@@ -80,7 +80,14 @@ void infoManageWidget() {
 void addEmployeeWidget() {
     Employee newEmployee;
 
-    inputTheName(newEmployee.name, sizeof(newEmployee.name), "输入业务员姓名: ");
+    while (true) {
+        inputTheName(newEmployee.name, sizeof(newEmployee.name), "输入业务员姓名: ");
+        if (!alreadyExists("employees.csv", newEmployee.name)) {
+            break;
+        } else {
+            printf("该业务员已存在，请重新输入。\n");
+        }
+    }
     infoInput(newEmployee.gender, sizeof(newEmployee.gender), "输入业务员性别: ");
     infoInput(newEmployee.birthday, sizeof(newEmployee.birthday), "输入业务员生日: ");
     while (true) {
@@ -112,7 +119,14 @@ void addEmployeeWidget() {
 void addCustomerWidget() {
     Customer newCustomer;
 
-    inputTheName(newCustomer.name, sizeof(newCustomer.name), "输入客户姓名: ");
+    while (true) {
+        inputTheName(newCustomer.name, sizeof(newCustomer.name), "输入客户姓名: ");
+        if (!alreadyExists("customers.csv", newCustomer.name)) {
+            break;
+        } else {
+            printf("该客户已存在，请重新输入。\n");
+        }
+    }
     infoInput(newCustomer.region, sizeof(newCustomer.region), "输入客户所在区域: ");
     infoInput(newCustomer.address, sizeof(newCustomer.address), "输入客户地址: ");
     infoInput(newCustomer.legalRepresentative, sizeof(newCustomer.legalRepresentative), "输入客户公司法人: ");
@@ -145,7 +159,14 @@ void addCustomerWidget() {
 void addContactWidget() {
     ContactPerson newContact;
 
-    inputTheName(newContact.name, sizeof(newContact.name), "输入联络员姓名: ");
+    while (true) {
+        inputTheName(newContact.name, sizeof(newContact.name), "输入联络员姓名: ");
+        if (!alreadyExists("contacts.csv", newContact.name)) {
+            break;
+        } else {
+            printf("该联络员已存在，请重新输入。\n");
+        }
+    }
     infoInput(newContact.gender, sizeof(newContact.gender), "输入联络员性别: ");
     infoInput(newContact.birthday, sizeof(newContact.birthday), "输入联络员生日: ");
 

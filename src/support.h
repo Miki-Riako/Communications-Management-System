@@ -8,6 +8,7 @@ void getInput(char *input, int buffer_size);
 void infoInput(char *input, int buffer_size, const char *prompt);
 bool isSameString(const char *str1, const char *str2);
 void inputTheName(char *name, int buffer_size, const char *prompt);
+bool alreadyExists(const char *filename, const char *username);
 void initializeInfoFile(const char *path, const char *header);
 void removeRecord(const char *filename, const char *prompt);
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
@@ -60,6 +61,28 @@ void inputTheName(char *name, int buffer_size, const char *prompt) {
     }
 }
 
+// 用户是否已经存在
+bool alreadyExists(const char *filename, const char *name) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("打开文件失败");
+        return false;
+    }
+
+    char line[MAX_LENGTH * 4];
+    bool exists = false;
+    while (fgets(line, sizeof(line), file)) {
+        char file_username[MAX_LENGTH];
+        sscanf(line, "%254[^|||]", file_username);
+        if (strcmp(name, file_username) == 0) {
+            exists = true;
+            break;
+        }
+    }
+    fclose(file);
+    return exists;
+}
+
 // 初始化创建文件
 void initializeInfoFile(const char *path, const char *header) {
     FILE *file = fopen(path, "r");
@@ -82,11 +105,15 @@ void removeRecord(const char *filename, const char *prompt) {
     char buffer[MAX_LENGTH];
     FILE *fp, *fp_temp;
 
-    printf("%s", prompt); // 显示删除提示信息
     while (true) {
+        printf("%s", prompt); // 显示删除提示信息
         getInput(delName, sizeof(delName));
         if (!isEmpty(delName)) {
-            break;
+            if (alreadyExists(filename, delName)) {
+                break;
+            } else {
+                printf("记录不存在！\n");
+            }
         } else {
             printf("请输入一个有效的名字。\n");
         }
@@ -106,8 +133,9 @@ void removeRecord(const char *filename, const char *prompt) {
     }
 
     while (fgets(buffer, MAX_LENGTH, fp) != NULL) {
-        // 确保不是仅仅因为名字的一部分才匹配
-        if (!strstr(buffer, delName) || strstr(buffer, delName) != buffer) {
+        // 检查是否包含要删除的用户名
+        char* found = strstr(buffer, delName);
+        if (found != buffer) { // 确保是从行首开始匹配用户名
             fprintf(fp_temp, "%s", buffer);
         }
     }
