@@ -5,6 +5,7 @@ void manageCustomer();
 void initializeCustomerFile();
 void addCustomer();
 void viewCustomers();
+void removeCustomer();
 bool matchMail(const char *email);
 bool matchPhone(const char *phone);
 void saveCustomerToFile(Customer customer);
@@ -17,8 +18,14 @@ void manageCustomer() {
         printf("\n管理客户信息\n");
         printf("1. 添加客户信息\n");
         printf("2. 查看客户信息\n");
-        printf("3. 返回\n");
-        printf("请选择操作（1-3）：");
+        printf("3. 删除客户信息\n");
+        printf("4. 添加客户联络员信息\n");
+        printf("5. 查看客户联络员信息\n");
+        printf("6. 删除客户联络员信息\n");
+        printf("7. 添加业务员员信息\n");
+        printf("8. 查看业务员信息\n");
+        printf("9. 返回\n");
+        printf("请选择操作（1-9）：");
         scanf("%d", &choice);
         system(SYSTEM_CLEAR);
 
@@ -30,6 +37,9 @@ void manageCustomer() {
                 viewCustomers();
                 break;
             case 3:
+                removeCustomer();
+                break;
+            case 9:
                 return;  // 返回主菜单
             default:
                 printf("无效的选项，请重新输入。\n");
@@ -171,6 +181,63 @@ void viewCustomers() {
     }
 
     fclose(file);
+}
+
+void removeCustomer() {
+    char delName[MAX_LENGTH];
+    
+    while (getchar() != '\n'); // 清空缓冲区
+    
+    printf("输入要删除的客户姓名: ");
+    fgets(delName, sizeof(delName), stdin);
+    delName[strcspn(delName, "\n")] = 0;  // Remove newline character
+
+    FILE *file = fopen("customers.csv", "r");
+    if (!file) {
+        printf("无法打开文件或文件不存在。\n");
+        return;
+    }
+
+    FILE *tempFile = fopen("temp.csv", "w");
+    if (!tempFile) {
+        printf("无法创建临时文件。\n");
+        fclose(file);
+        return;
+    }
+
+    char buffer[MAX_LENGTH * 8];
+    bool found = false;
+    bool isFirstLine = true;
+
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        if (isFirstLine) {
+            // 始终写入标题行到临时文件
+            fputs(buffer, tempFile);
+            isFirstLine = false;
+            continue;
+        }
+        char *name = strtok(buffer, "|||");
+        if (name && strcmp(name, delName) != 0) {
+            fputs(buffer, tempFile); // 只有当名字不匹配时才写入临时文件
+        } else {
+            found = true; // 找到并不复制该行，即实现了删除效果
+        }
+    }
+
+    fclose(file);
+    fclose(tempFile);
+
+    // 如果没有找到要删除的名字，不替换文件
+    if (found) {
+        // 删除原文件并重命名临时文件
+        remove("customers.csv");
+        rename("temp.csv", "customers.csv");
+        printf("客户信息已删除。\n");
+    } else {
+        // 删除创建的临时文件，因为没有进行删除操作
+        remove("temp.csv");
+        printf("未找到指定客户信息。\n");
+    }
 }
 
 bool matchMail(const char *email) {

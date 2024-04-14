@@ -81,9 +81,9 @@ void setSystem() {
             printf("2. 未开启储存至数据库，点击开启\n");
         }
         if (isStoredInFile) {
-            printf("3. 已开启储存至文件，点击关闭\n");
+            printf("3. 已开启储存至本地文件，点击关闭\n");
         } else {
-            printf("3. 未开启储存至文件，点击开启\n");
+            printf("3. 未开启储存至本地文件，点击开启\n");
         }
         if (isBackupEnabled) {
             printf("4. 已开启备份功能，点击关闭\n");
