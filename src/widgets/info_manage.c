@@ -1,5 +1,5 @@
 // widgets/info_manage.c
-#include "../header.c"
+#include "../header.h"
 
 void infoManageWidget();
 void initializeInfoFile();
@@ -65,46 +65,46 @@ void infoManageWidget() {
 }
 
 void initializeInfoFile() {
-    FILE *file
+//     FILE *file
     
-    file = fopen("employees.csv", "r");
-    if (!file) {
-        file = fopen("employees.csv", "w");
-        if (!file) {
-            perror("创建业务员文件失败");
-        } else {
-            fprintf(file, "Name|||Gender|||Birthday|||Email|||Phone|||Representative\n");
-            fclose(file);
-        }
-    } else {
-        fclose(file);
-    }
+//     file = fopen("employees.csv", "r");
+//     if (!file) {
+//         file = fopen("employees.csv", "w");
+//         if (!file) {
+//             perror("创建业务员文件失败");
+//         } else {
+//             fprintf(file, "Name|||Gender|||Birthday|||Email|||Phone|||Representative\n");
+//             fclose(file);
+//         }
+//     } else {
+//         fclose(file);
+//     }
 
-    file = fopen("customers.csv", "r");
-    if (!file) {
-        file = fopen("customers.csv", "w");
-        if (!file) {
-            perror("创建客户文件失败");
-        } else {
-            fprintf(file, "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone\n");
-            fclose(file);
-        }
-    } else {
-        fclose(file);
-    }
+//     file = fopen("customers.csv", "r");
+//     if (!file) {
+//         file = fopen("customers.csv", "w");
+//         if (!file) {
+//             perror("创建客户文件失败");
+//         } else {
+//             fprintf(file, "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone\n");
+//             fclose(file);
+//         }
+//     } else {
+//         fclose(file);
+//     }
 
-file = fopen("contacts.csv", "r");
-    if (!file) {
-        file = fopen("contacts.csv", "w");
-        if (!file) {
-            perror("创建联系人文件失败");
-        } else {
-            fprintf(file, "Name|||Gender|||Birthday|||Email|||Phone|||Representative\n");
-            fclose(file);
-        }
-    } else {
-        fclose(file);
-    }
+// file = fopen("contacts.csv", "r");
+//     if (!file) {
+//         file = fopen("contacts.csv", "w");
+//         if (!file) {
+//             perror("创建联系人文件失败");
+//         } else {
+//             fprintf(file, "Name|||Gender|||Birthday|||Email|||Phone|||Representative\n");
+//             fclose(file);
+//         }
+//     } else {
+//         fclose(file);
+//     }
 }
 
 

@@ -1,5 +1,5 @@
 // menu.c
-#include "info_manage.c"
+#include "widgets/info_manage.c"
 
 void managerMenuWidget();
 void employeeMenuWidget();
@@ -8,7 +8,7 @@ void exitSystem();
 void managerMenuWidget() {
     while(true) {
         printf("\n\n通信管理系统\n\n");
-        printf("您好！管理员%s\n", User);
+        printf("您好，经理！\n");
         printf("1. 信息管理\n");
         printf("2. 客户分配\n");
         printf("3. 分组管理\n");
@@ -30,7 +30,7 @@ void managerMenuWidget() {
         }
         switch(get[0]) {
         case '1':
-            infoManageWidget()
+            infoManageWidget();
             break;
         case '2':
             
