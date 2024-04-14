@@ -1,9 +1,7 @@
 // main.c
 #include "login.c"
-#include "addcustomer.c"
-#include "viewcustomers.c"
-#include "addcommunicationrecord.c"
-#include "viewcommunicationrecords.c"
+#include "changecustomer.c"
+#include "changecommunicationrecord.c"
 
 #include "setsystem.c"
 
@@ -17,15 +15,13 @@ int main(void) {
     while(true) {
         bool flag = false;
         printf("\n\n通信管理系统\n\n");
-        printf("1. 添加客户信息\n");
-        printf("2. 查看客户信息\n");
-        printf("3. 添加通信记录\n");
-        printf("4. 查看通信记录\n");
-        printf("5. 查询信息\n");
-        printf("6. 统计信息\n");
-        printf("7. 设置\n");
-        printf("8. 退出系统\n");
-        printf("请选择一个操作（1-8）：");
+        printf("1. 修改客户信息\n");
+        printf("2. 修改通信记录\n");
+        printf("3. 查询信息\n");
+        printf("4. 统计信息\n");
+        printf("5. 设置\n");
+        printf("6. 退出系统\n");
+        printf("请选择一个操作（1-6）：");
         string choice;
         scanf("%254s", choice);
         system(SYSTEM_CLEAR);
@@ -35,31 +31,25 @@ int main(void) {
         }
         switch(choice[0]) {
         case '1':
-            addCustomer();
+            changeCustomer();
             break;
         case '2':
-            viewCustomers();
+            changeCommunicationRecord();
             break;
         case '3':
-            addCommunicationRecord();
-            break;
-        case '4':
-            viewCommunicationRecords();
-            break;
-        case '5':
             // queryInformation();
             break;
-        case '6':
+        case '4':
             // statisticsInformation();
             break;
-        case '7':
+        case '5':
             if (isManager) {
                 setSystem(user);
             } else {
                 printf("无法权限进行设置操作。\n");
             }
             break;
-        case '8':
+        case '6':
             exitSystem();
             return 0;
         default:
