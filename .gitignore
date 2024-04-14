@@ -2,6 +2,9 @@
 *.csv
 *.ini
 
+# Backup
+*.c_backup
+
 # Prerequisites
 *.d
 

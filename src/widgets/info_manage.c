@@ -2,10 +2,15 @@
 #include "../header.h"
 
 void infoManageWidget();
-void initializeInfoFile(const char *path, const char *header);
 void addEmployeeWidget();
 void addCustomerWidget();
 void addContactWidget();
+void saveEmployeeToFile(Employee employee);
+void saveCustomerToFile(Customer customer);
+void saveContactToFile(ContactPerson contact);
+void displayEmployee(Employee employee);
+void displayCustomer(Customer customer);
+void displayContact(ContactPerson contact);
 
 void infoManageWidget() {
     initializeInfoFile("employees.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
@@ -69,21 +74,6 @@ void infoManageWidget() {
     }
 }
 
-void initializeInfoFile(const char *path, const char *header) {
-    FILE *file = fopen(path, "r");
-    if (!file) {
-        file = fopen(path, "w");
-        if (file) {
-            fprintf(file, "%s\n", header);
-            fclose(file);
-        } else {
-            fprintf(stderr, "Error creating file %s\n", path);
-        }
-    } else {
-        fclose(file);
-    }
-}
-
 void addEmployeeWidget() {
     Employee newEmployee;
 
@@ -111,8 +101,8 @@ void addEmployeeWidget() {
     infoInput(newEmployee.representative, sizeof(newEmployee.representative), "输入业务员代表的公司: ");
 
     system(SYSTEM_CLEAR); // 清屏
-    // saveEmployeeToFile(newEmployee);
-    // displayEmployee(newEmployee);
+    saveEmployeeToFile(newEmployee);
+    displayEmployee(newEmployee);
     printf("业务员信息已添加.\n");
 }
 
@@ -144,8 +134,8 @@ void addCustomerWidget() {
     }
 
     system(SYSTEM_CLEAR);
-    // saveCustomerToFile(newCustomer);
-    // displayCustomer(newCustomer);
+    saveCustomerToFile(newCustomer);
+    displayCustomer(newCustomer);
     printf("客户信息已添加.\n");
 }
 
@@ -177,9 +167,94 @@ void addContactWidget() {
     infoInput(newContact.representative, sizeof(newContact.representative), "输入联络员代表的公司: ");
 
     system(SYSTEM_CLEAR); // 清屏
-    // saveContactPersonToFile(newContact);
-    // displayContactPerson(newContact);
+    saveContactToFile(newContact);
+    displayContact(newContact);
     printf("联络员信息已添加.\n");
+}
+
+void saveEmployeeToFile(Employee employee) {
+    FILE *file = fopen("employees.csv", "a");
+    if (!file) {
+        perror("打开文件失败");
+        return;
+    }
+    fprintf(file, "%s|||%s|||%s|||%s|||%s|||%s\n",
+        employee.name,
+        employee.gender,
+        employee.birthday,
+        employee.email,
+        employee.phone,
+        employee.representative
+    );
+    fclose(file);
+}
+
+void saveCustomerToFile(Customer customer) {
+    FILE *file = fopen("customers.csv", "a");
+    if (!file) {
+        perror("打开文件失败");
+        return;
+    }
+    fprintf(file, "%s|||%s|||%s|||%s|||%s|||%s|||%s|||%s\n",
+        customer.name,
+        customer.region,
+        customer.address,
+        customer.legalRepresentative,
+        customer.scale,
+        customer.businessContactLevel,
+        customer.email,
+        customer.phone
+    );
+    fclose(file);
+}
+
+void saveContactToFile(ContactPerson contact) {
+    FILE *file = fopen("contacts.csv", "a");
+    if (!file) {
+        perror("打开文件失败");
+        return;
+    }
+    fprintf(file, "%s|||%s|||%s|||%s|||%s|||%s\n",
+        contact.name,
+        contact.gender,
+        contact.birthday,
+        contact.email,
+        contact.phone,
+        contact.representative
+    );
+    fclose(file);
+}
+
+void displayEmployee(Employee employee) {
+    printf("\n显示业务员信息:\n");
+    printf("姓名: %-20s\n", employee.name);
+    printf("性别: %-10s\n", employee.gender);
+    printf("生日: %-15s\n", employee.birthday);
+    printf("电子邮件: %-25s\n", employee.email);
+    printf("电话: %-15s\n", employee.phone);
+    printf("代表联络公司: %-20s\n", employee.representative);
+}
+
+void displayCustomer(Customer customer) {
+    printf("\n显示客户信息:\n");
+    printf("姓名: %-20s\n", customer.name);
+    printf("区域: %-20s\n", customer.region);
+    printf("地址: %-30s\n", customer.address);
+    printf("法人: %-20s\n", customer.legalRepresentative);
+    printf("规模: %-10s\n", customer.scale);
+    printf("业务联系程度: %-15s\n", customer.businessContactLevel);
+    printf("电子邮件: %-25s\n", customer.email);
+    printf("电话: %-15s\n", customer.phone);
+}
+
+void displayContact(ContactPerson contact) {
+    printf("\n显示联络员信息:\n");
+    printf("姓名: %-20s\n", contact.name);
+    printf("性别: %-10s\n", contact.gender);
+    printf("生日: %-15s\n", contact.birthday);
+    printf("电子邮件: %-25s\n", contact.email);
+    printf("电话: %-15s\n", contact.phone);
+    printf("代表公司: %-20s\n", contact.representative);
 }
 
 // end widgets/info_manage.c

@@ -6,11 +6,10 @@ void startWidget();
 void loginManagerWidget();
 void loginEmployeeWidget();
 void registerWidget();
-void initializeUser();
 bool verify(const char *username, const char *password);
 
 void startWidget() {
-    initializeUser();
+    initializeInfoFile("user.csv", "");
     while (true) {
         printf("登入中...\n");
         printf("请选择角色：\n");
@@ -163,21 +162,6 @@ void registerWidget() {
     fclose(file);
 
     printf("用户注册成功.\n");
-}
-
-void initializeUser() {
-    FILE *file = fopen("user.csv", "r");
-    if (!file) {
-        // 文件不存在，创建新文件
-        file = fopen("user.csv", "w");
-        if (!file) {
-            perror("创建 user.csv 文件失败");
-        } else {
-            fclose(file);
-        }
-    } else {
-        fclose(file);
-    }
 }
 
 bool verify(const char *username, const char *password) {

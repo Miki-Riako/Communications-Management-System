@@ -7,13 +7,14 @@ void clearBuffer();
 void getInput(char *input, int buffer_size);
 void infoInput(char *input, int buffer_size, const char *prompt);
 bool isSameString(const char *str1, const char *str2);
+void initializeInfoFile(const char *path, const char *header);
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);
 bool matchPhone(const char *phone);
 
 // 检验输入是否为空
-bool isEmpty(const char *input) { return (strlen(input) == 0); }
+bool isEmpty(const char *input) { return (input[0] == '\0'); }
 
 // 检验输入是否为单个字符
 bool isOneChar(const char *input) { return (strlen(input) == 1); }
@@ -44,6 +45,22 @@ void infoInput(char *input, int buffer_size, const char *prompt) {
 
 // 是相同的字符串
 bool isSameString(const char *str1, const char *str2) { return (strcmp(str1, str2) == 0); }
+
+// 初始化创建文件
+void initializeInfoFile(const char *path, const char *header) {
+    FILE *file = fopen(path, "r");
+    if (!file) {
+        file = fopen(path, "w");
+        if (file) {
+            if (!isEmpty(header)) fprintf(file, "%s\n", header);
+            fclose(file);
+        } else {
+            fprintf(stderr, "Error creating file %s\n", path);
+        }
+    } else {
+        fclose(file);
+    }
+}
 
 // XOR 加密/解密算法
 void xorEncryptDecrypt(const char *input, size_t length, char *output) {
@@ -129,3 +146,4 @@ bool matchPhone(const char *phone) {
     }
     return true;  // 所有字符都是数字或连字符
 }
+
