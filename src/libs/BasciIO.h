@@ -132,37 +132,22 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
     }
 }
 
-// 删除头标题的行
-void removeRecord(const char *filename, const char *prompt) {
-    char delName[MAX_LENGTH];
+// 不输出内容的remove
+bool removeEntry(const char *filename, const char *delName) {
     char buffer[MAX_LENGTH];
     FILE *fp, *fp_temp;
-
-    while (true) {
-        printf("%s", prompt); // 显示删除提示信息
-        getInput(delName, sizeof(delName));
-        if (!isEmpty(delName)) {
-            if (alreadyExists(filename, delName)) {
-                break;
-            } else {
-                printf("记录不存在！\n");
-            }
-        } else {
-            printf("请输入一个有效的名字。\n");
-        }
-    }
 
     fp = fopen(filename, "r");
     if (!fp) {
         printf("无法打开文件 %s\n", filename);
-        return;
+        return false;
     }
 
     fp_temp = fopen("temp.csv", "w");
     if (!fp_temp) {
         printf("无法创建临时文件\n");
         fclose(fp);
-        return;
+        return false;
     }
 
     while (fgets(buffer, MAX_LENGTH, fp) != NULL) {
@@ -178,7 +163,31 @@ void removeRecord(const char *filename, const char *prompt) {
 
     remove(filename);
     rename("temp.csv", filename);
+    return true;
+}
 
-    printf("记录删除成功。\n");
+// 删除头标题的行
+void removeRecord(const char *filename, const char *prompt) {
+    char delName[MAX_LENGTH];
+
+    while (true) {
+        printf("%s", prompt); // 显示删除提示信息
+        getInput(delName, sizeof(delName));
+        if (!isEmpty(delName)) {
+            if (alreadyExists(filename, delName)) {
+                break;
+            } else {
+                printf("记录不存在！\n");
+            }
+        } else {
+            printf("请输入一个有效的名字。\n");
+        }
+    }
+
+    if (removeEntry(filename, delName)) {
+        printf("记录删除成功。\n");
+    } else {
+        printf("记录删除失败。\n");
+    }
 }
 

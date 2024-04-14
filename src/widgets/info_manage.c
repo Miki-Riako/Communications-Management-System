@@ -46,7 +46,7 @@ void infoManageWidget() {
                 addEmployee();
                 break;
             case '2':
-
+                changeEmployee();
                 break;
             case '3':
                 removeRecord("employees.csv", "输入要删除的业务员姓名: ");
@@ -55,7 +55,7 @@ void infoManageWidget() {
                 addCustomer();
                 break;
             case '5':
-
+                changeCustomer();
                 break;
             case '6':
                 removeRecord("customers.csv", "输入要删除的客户姓名: ");
@@ -64,7 +64,7 @@ void infoManageWidget() {
                 addContact();
                 break;
             case '8':
-
+                changeContact();
                 break;
             case '9':
                 removeRecord("contacts.csv", "输入要删除的联络员姓名: ");
@@ -102,13 +102,141 @@ void addContact() {
 }
 
 void changeEmployee(){
+    char name[MAX_LENGTH];
+    printf("请输入要修改的业务员姓名：");
+    getInput(name, sizeof(name));
 
+    // 检查员工是否存在
+    if (!alreadyExists("employees.csv", name)) {
+        printf("业务员信息未找到。\n");
+        return;
+    }
+
+    // 创建更新用的临时文件
+    FILE *fp = fopen("employees.csv", "r");
+    FILE *fp_temp = fopen("employees_backup.csv", "w");
+    char buffer[MAX_LENGTH];
+
+    while (fgets(buffer, sizeof(buffer), fp)) {
+        char currentName[MAX_LENGTH];
+        sscanf(buffer, "%254[^|||]", currentName);
+        if (strcmp(name, currentName) != 0) {
+            fputs(buffer, fp_temp);
+        }
+    }
+
+    fclose(fp);
+    fclose(fp_temp);
+
+    // 删除原有员工记录
+    if (!removeEntry("employees_backup.csv", name)) {
+        printf("无法删除原有员工记录。\n");
+        return;
+    }
+
+    // 添加更新后的新记录
+    Employee newEmployee;
+    addEntry(1, "employees_backup.csv", "请输入新的业务员姓名：", &newEmployee, NULL, NULL);
+
+    // 移除原文件并将临时文件重命名
+    remove("employees.csv");
+    rename("employees_backup.csv", "employees.csv");
+
+    saveEmployeeToFile(newEmployee);
+    displayEmployee(newEmployee);
+    printf("业务员信息已更新。\n");
 }
 
 void changeCustomer(){
+    char name[MAX_LENGTH];
+    printf("请输入要修改的客户姓名：");
+    getInput(name, sizeof(name));
+
+    // 检查客户是否存在
+    if (!alreadyExists("customers.csv", name)) {
+        printf("客户信息未找到。\n");
+        return;
+    }
+
+    // 创建更新用的临时文件
+    FILE *fp = fopen("customers.csv", "r");
+    FILE *fp_temp = fopen("customers_backup.csv", "w");
+    char buffer[MAX_LENGTH];
+
+    while (fgets(buffer, sizeof(buffer), fp)) {
+        char currentName[MAX_LENGTH];
+        sscanf(buffer, "%254[^|||]", currentName);
+        if (strcmp(name, currentName) != 0) {
+            fputs(buffer, fp_temp);
+        }
+    }
+
+    fclose(fp);
+    fclose(fp_temp);
+
+    // 删除原有客户记录
+    if (!removeEntry("customers_backup.csv", name)) {
+        printf("无法删除原有客户记录。\n");
+        return;
+    }
+
+    // 添加更新后的新记录
+    Customer newCustomer;
+    addEntry(2, "customers_backup.csv", "请输入新的客户姓名：", NULL, &newCustomer, NULL);
+
+    // 移除原文件并将临时文件重命名
+    remove("customers.csv");
+    rename("customers_backup.csv", "customers.csv");
+
+    saveCustomerToFile(newCustomer);
+    displayCustomer(newCustomer);
+    printf("客户信息已更新。\n");
 }
 
 void changeContact(){
+    char name[MAX_LENGTH];
+    printf("请输入要修改的联系人姓名：");
+    getInput(name, sizeof(name));
+
+    // 检查联系人是否存在
+    if (!alreadyExists("contacts.csv", name)) {
+        printf("联系人信息未找到。\n");
+        return;
+    }
+
+    // 创建更新用的临时文件
+    FILE *fp = fopen("contacts.csv", "r");
+    FILE *fp_temp = fopen("contacts_backup.csv", "w");
+    char buffer[MAX_LENGTH];
+
+    while (fgets(buffer, sizeof(buffer), fp)) {
+        char currentName[MAX_LENGTH];
+        sscanf(buffer, "%254[^|||]", currentName);
+        if (strcmp(name, currentName) != 0) {
+            fputs(buffer, fp_temp);
+        }
+    }
+
+    fclose(fp);
+    fclose(fp_temp);
+
+    // 删除原有联系人记录
+    if (!removeEntry("contacts_backup.csv", name)) {
+        printf("无法删除原有联系人记录。\n");
+        return;
+    }
+
+    // 添加更新后的新记录
+    ContactPerson newContact;
+    addEntry(3, "contacts_backup.csv", "请输入新的联系人姓名：", NULL, NULL, &newContact);
+
+    // 移除原文件并将临时文件重命名
+    remove("contacts.csv");
+    rename("contacts_backup.csv", "contacts.csv");
+
+    saveContactToFile(newContact);
+    displayContact(newContact);
+    printf("联系人信息已更新。\n");
 }
 
 void saveEmployeeToFile(Employee employee) {

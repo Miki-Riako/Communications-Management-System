@@ -58,6 +58,7 @@ void inputTheName(char *name, int buffer_size, const char *prompt);
 bool alreadyExists(const char *filename, const char *username);
 void initializeInfoFile(const char *path, const char *header);
 void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact);
+bool removeEntry(const char *filename, const char *delName);
 void removeRecord(const char *filename, const char *prompt);
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool matchRegex(const char *password);
