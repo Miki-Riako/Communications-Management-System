@@ -2,12 +2,13 @@
 #include "../header.h"
 
 void infoManageWidget();
-void addEmployeeWidget();
-void addCustomerWidget();
-void addContactWidget();
-void changeEmployeeWidget();
-void changeCustomerWidget();
-void changeContactWidget();
+void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact);
+void addEmployee();
+void addCustomer();
+void addContact();
+void changeEmployee();
+void changeCustomer();
+void changeContact();
 void saveEmployeeToFile(Employee employee);
 void saveCustomerToFile(Customer customer);
 void saveContactToFile(ContactPerson contact);
@@ -43,7 +44,7 @@ void infoManageWidget() {
         }
         switch (get[0]) {
             case '1':
-                addEmployeeWidget();
+                addEmployee();
                 break;
             case '2':
 
@@ -52,7 +53,7 @@ void infoManageWidget() {
                 removeRecord("employees.csv", "输入要删除的业务员姓名: ");
                 break;
             case '4':
-                addCustomerWidget();
+                addCustomer();
                 break;
             case '5':
 
@@ -61,7 +62,7 @@ void infoManageWidget() {
                 removeRecord("customers.csv", "输入要删除的客户姓名: ");
                 break;
             case '7':
-                addContactWidget();
+                addContact();
                 break;
             case '8':
 
@@ -77,22 +78,36 @@ void infoManageWidget() {
     }
 }
 
-void addEmployeeWidget() {
-    Employee newEmployee;
+void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact) {
+    char userName[MAX_LENGTH];
+    char gender[MAX_LENGTH];
+    char birthday[MAX_LENGTH];
+    char email[MAX_LENGTH];
+    char phone[MAX_LENGTH];
 
     while (true) {
-        inputTheName(newEmployee.name, sizeof(newEmployee.name), "输入业务员姓名: ");
-        if (!alreadyExists("employees.csv", newEmployee.name)) {
+        inputTheName(userName, sizeof(userName), prompt);
+        if (!alreadyExists(filename, userName)) {
             break;
         } else {
-            printf("该业务员已存在，请重新输入。\n");
+            printf("姓名已存在，请重新输入。\n");
         }
     }
-    infoInput(newEmployee.gender, sizeof(newEmployee.gender), "输入业务员性别: ");
-    infoInput(newEmployee.birthday, sizeof(newEmployee.birthday), "输入业务员生日: ");
+
+    if (section == 2) {
+        infoInput(customer->region, sizeof(customer->region), "输入客户所在区域: ");
+        infoInput(customer->address, sizeof(customer->address), "输入客户地址: ");
+        infoInput(customer->legalRepresentative, sizeof(customer->legalRepresentative), "输入客户公司法人: ");
+        infoInput(customer->scale, sizeof(customer->scale), "输入客户规模（大、中、小）: ");
+        infoInput(customer->businessContactLevel, sizeof(customer->businessContactLevel), "输入与本公司业务联系程度（高、中、低）: ");
+    } else { // section == 1 || section == 3
+        infoInput(gender, sizeof(gender), "输入业性别: ");
+        infoInput(birthday, sizeof(birthday), "输入生日: ");
+    }
+
     while (true) {
-        infoInput(newEmployee.email, sizeof(newEmployee.email), "输入业务员电子邮件: ");
-        if (isSameString(newEmployee.email, " ") || matchMail(newEmployee.email)) {
+        infoInput(email, sizeof(email), "输入客户电子邮件: ");
+        if (isSameString(email, " ") || matchMail(email)) {
             break;
         } else {
             printf("电子邮件格式不正确，请重新输入。\n");
@@ -100,111 +115,73 @@ void addEmployeeWidget() {
     }
 
     while (true) {
-        infoInput(newEmployee.phone, sizeof(newEmployee.phone), "输入业务员电话: ");
-        if (isSameString(newEmployee.phone, " ") || matchPhone(newEmployee.phone)) {
+        infoInput(phone, sizeof(phone), "输入客户电话: ");
+        if (isSameString(phone, " ") || matchPhone(phone)) {
             break;
         } else {
             printf("电话号码格式不正确，请重新输入。\n");
         }
     }
 
-    infoInput(newEmployee.representative, sizeof(newEmployee.representative), "输入业务员代表的公司: ");
+    switch (section) {
+    case 1:
+        strcpy(employee->name, userName);
+        strcpy(employee->email, email);
+        strcpy(employee->phone, phone);
+        infoInput(employee->representative, sizeof(employee->representative), "输入业务员代表的公司: ");
+        system(SYSTEM_CLEAR);
+        break;
+    case 2:
+        strcpy(customer->name, userName);
+        strcpy(customer->email, email);
+        strcpy(customer->phone, phone);
+        system(SYSTEM_CLEAR);
+        break;
+    case 3:
+        strcpy(contact->name, userName);
+        strcpy(contact->email, email);
+        strcpy(contact->phone, phone);
+        infoInput(contact->representative, sizeof(contact->representative), "输入联络员代表的公司: ");
+        system(SYSTEM_CLEAR);
+        break;
+    default:
+        return;
+    }
+}
 
-    system(SYSTEM_CLEAR); // 清屏
+void addEmployee() {
+    Employee newEmployee;
+    addEntry(1, "employees.csv", "请输入业务员姓名：", &newEmployee, NULL, NULL);
     saveEmployeeToFile(newEmployee);
     displayEmployee(newEmployee);
     printf("业务员信息已添加。\n");
 }
 
-void addCustomerWidget() {
+void addCustomer() {
     Customer newCustomer;
-
-    while (true) {
-        inputTheName(newCustomer.name, sizeof(newCustomer.name), "输入客户姓名: ");
-        if (!alreadyExists("customers.csv", newCustomer.name)) {
-            break;
-        } else {
-            printf("该客户已存在，请重新输入。\n");
-        }
-    }
-    infoInput(newCustomer.region, sizeof(newCustomer.region), "输入客户所在区域: ");
-    infoInput(newCustomer.address, sizeof(newCustomer.address), "输入客户地址: ");
-    infoInput(newCustomer.legalRepresentative, sizeof(newCustomer.legalRepresentative), "输入客户公司法人: ");
-    infoInput(newCustomer.scale, sizeof(newCustomer.scale), "输入客户规模（大、中、小）: ");
-    infoInput(newCustomer.businessContactLevel, sizeof(newCustomer.businessContactLevel), "输入与本公司业务联系程度（高、中、低）: ");
-    while (true) {
-        infoInput(newCustomer.email, sizeof(newCustomer.email), "输入客户电子邮件: ");
-        if (isSameString(newCustomer.email, " ") || matchMail(newCustomer.email)) {
-            break;
-        } else {
-            printf("电子邮件格式不正确，请重新输入。\n");
-        }
-    }
-
-    while (true) {
-        infoInput(newCustomer.phone, sizeof(newCustomer.phone), "输入客户电话: ");
-        if (isSameString(newCustomer.phone, " ") || matchPhone(newCustomer.phone)) {
-            break;
-        } else {
-            printf("电话号码格式不正确，请重新输入。\n");
-        }
-    }
-
-    system(SYSTEM_CLEAR);
+    addEntry(2, "customers.csv", "请输入客户姓名：",NULL, &newCustomer, NULL);
     saveCustomerToFile(newCustomer);
     displayCustomer(newCustomer);
-    printf("业务员信息已添加。\n");
+    printf("客户信息已添加。\n");
 }
 
-void addContactWidget() {
+void addContact() {
     ContactPerson newContact;
-
-    while (true) {
-        inputTheName(newContact.name, sizeof(newContact.name), "输入联络员姓名: ");
-        if (!alreadyExists("contacts.csv", newContact.name)) {
-            break;
-        } else {
-            printf("该联络员已存在，请重新输入。\n");
-        }
-    }
-    infoInput(newContact.gender, sizeof(newContact.gender), "输入联络员性别: ");
-    infoInput(newContact.birthday, sizeof(newContact.birthday), "输入联络员生日: ");
-
-    while (true) {
-        infoInput(newContact.email, sizeof(newContact.email), "输入联络员电子邮件: ");
-        if (isSameString(newContact.email, " ") || matchMail(newContact.email)) {
-            break;
-        } else {
-            printf("电子邮件格式不正确，请重新输入。\n");
-        }
-    }
-
-    while (true) {
-        infoInput(newContact.phone, sizeof(newContact.phone), "输入联络员电话: ");
-        if (isSameString(newContact.phone, " ") || matchPhone(newContact.phone)) {
-            break;
-        } else {
-            printf("电话号码格式不正确，请重新输入。\n");
-        }
-    }
-
-    infoInput(newContact.representative, sizeof(newContact.representative), "输入联络员代表的公司: ");
-
-    system(SYSTEM_CLEAR); // 清屏
+    addEntry(3, "contacts.csv", "请输入联络员姓名：", NULL, NULL, &newContact);
     saveContactToFile(newContact);
     displayContact(newContact);
-    printf("业务员信息已添加。\n");
+    printf("联络员信息已添加。\n");
 }
 
-void changeEmployeeWidget(){
+void changeEmployee(){
+    
+}
+
+void changeCustomer(){
 
 }
 
-void changeCustomerWidget(){
-
-}
-
-void changeContactWidget(){
+void changeContact(){
 
 }
 
