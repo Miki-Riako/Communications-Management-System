@@ -53,13 +53,12 @@ typedef struct {
 char User[MAX_LENGTH];
 bool IsManager = false;
 
-void infoInput(char *input, int buffer_size, const char *prompt);
-void inputTheName(char *name, int buffer_size, const char *prompt);
 bool alreadyExists(const char *filename, const char *username);
+bool lineExists(const char *filename, const char *lineToCheck);
 void initializeInfoFile(const char *path, const char *header);
-void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact);
 bool removeEntry(const char *filename, const char *delName);
 void removeRecord(const char *filename, const char *prompt);
+void writeLineToFile(const char *filename, const char *data);
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);
@@ -69,6 +68,10 @@ bool isOneChar(const char *input);
 void clearBuffer();
 void getInput(char *input, int buffer_size);
 bool isSameString(const char *str1, const char *str2);
+void infoInput(char *input, int buffer_size, const char *prompt);
+void inputTheName(char *name, int buffer_size, const char *prompt);
+void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact);
+void addColumn(char *fullLine, const char *newOne);
 
 #include "libs/String.c"
 #include "libs/BasciIO.c"

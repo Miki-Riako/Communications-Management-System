@@ -240,56 +240,44 @@ void changeContact(){
 }
 
 void saveEmployeeToFile(Employee employee) {
-    FILE *file = fopen("employees.csv", "a");
-    if (!file) {
-        perror("打开文件失败");
-        return;
-    }
-    fprintf(file, "%s|||%s|||%s|||%s|||%s|||%s\n",
-        employee.name,
-        employee.gender,
-        employee.birthday,
-        employee.email,
-        employee.phone,
-        employee.representative
-    );
-    fclose(file);
+    char fullLine[6 * MAX_LENGTH + 15];
+    
+    strcpy(fullLine, employee.name);
+    addColumn(fullLine, employee.gender);
+    addColumn(fullLine, employee.birthday);
+    addColumn(fullLine, employee.email);
+    addColumn(fullLine, employee.phone);
+    addColumn(fullLine, employee.representative);
+    
+    writeLineToFile("employees.csv", fullLine);
 }
 
 void saveCustomerToFile(Customer customer) {
-    FILE *file = fopen("customers.csv", "a");
-    if (!file) {
-        perror("打开文件失败");
-        return;
-    }
-    fprintf(file, "%s|||%s|||%s|||%s|||%s|||%s|||%s|||%s\n",
-        customer.name,
-        customer.region,
-        customer.address,
-        customer.legalRepresentative,
-        customer.scale,
-        customer.businessContactLevel,
-        customer.email,
-        customer.phone
-    );
-    fclose(file);
+    char fullLine[8 * MAX_LENGTH + 21];
+    
+    strcpy(fullLine, customer.name);
+    addColumn(fullLine, customer.region);
+    addColumn(fullLine, customer.address);
+    addColumn(fullLine, customer.legalRepresentative);
+    addColumn(fullLine, customer.scale);
+    addColumn(fullLine, customer.businessContactLevel);
+    addColumn(fullLine, customer.email);
+    addColumn(fullLine, customer.phone);
+
+    writeLineToFile("customers.csv", fullLine);
 }
 
 void saveContactToFile(ContactPerson contact) {
-    FILE *file = fopen("contacts.csv", "a");
-    if (!file) {
-        perror("打开文件失败");
-        return;
-    }
-    fprintf(file, "%s|||%s|||%s|||%s|||%s|||%s\n",
-        contact.name,
-        contact.gender,
-        contact.birthday,
-        contact.email,
-        contact.phone,
-        contact.representative
-    );
-    fclose(file);
+    char fullLine[6 * MAX_LENGTH + 15];
+    
+    strcpy(fullLine, contact.name);
+    addColumn(fullLine, contact.gender);
+    addColumn(fullLine, contact.birthday);
+    addColumn(fullLine, contact.email);
+    addColumn(fullLine, contact.phone);
+    addColumn(fullLine, contact.representative);
+
+    writeLineToFile("contacts.csv", fullLine);
 }
 
 void displayEmployee(Employee employee) {

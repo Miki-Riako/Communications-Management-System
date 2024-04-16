@@ -138,32 +138,17 @@ void registerWidget() {
     }
 
     // 检查用户名是否已存在
-    bool userExists = false;
-    while (fgets(line, sizeof(line), file)) {
-        char file_username[MAX_LENGTH];
-        sscanf(line, "%254[^|||]", file_username);
-        if (strcmp(username, file_username) == 0) {
-            userExists = true;
-            break;
-        }
-    }
-    fclose(file);
-
-    if (userExists) {
+    if (alreadyExists("user.csv", username)) {
         printf("用户已存在.\n");
         return;
     }
 
-    // 用户不存在，添加新用户
-    file = fopen("user.csv", "a");
-    if (!file) {
-        perror("打开文件失败");
-        return;
-    }
-    fprintf(file, "%s|||%s\n", username, encryptedPassword); // 写入新的用户信息
-    fclose(file);
-
+    char fullLine[MAX_LENGTH * 3 + 4];
+    strcpy(fullLine, username);
+    addColumn(fullLine, encryptedPassword);
+    writeLineToFile("user.csv", fullLine);
     printf("用户注册成功.\n");
+
     printf("要现在就添加用户的信息吗？（Y?）\n");
     char get[MAX_LENGTH];
     getInput(get, sizeof(get));
@@ -174,6 +159,7 @@ void registerWidget() {
         displayEmployee(newEmployee);
         printf("业务员信息已添加。\n");
     }
+    system(SYSTEM_CLEAR);
 }
 
 bool verify(const char *username, const char *password) {

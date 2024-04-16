@@ -34,7 +34,7 @@ void managerMenuWidget() {
             infoManageWidget();
             break;
         case '2':
-            
+            customerAssignWidget();
             break;
         case '3':
             
