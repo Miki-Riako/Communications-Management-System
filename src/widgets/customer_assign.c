@@ -3,7 +3,7 @@
 
 void customerAssignWidget();
 void addAssignment();
-void modifyAssignment();
+void changeAssignment();
 void removeAssignment();
 void displayAssignment();
 
@@ -32,13 +32,13 @@ void customerAssignWidget() {
             addAssignment();
             break;
         case '2':
-            
+            changeAssignment();
             break;
         case '3':
-            
+            removeAssignment();
             break;
         case '4':
-            
+            displayAssignment();
             break;
         case '5':
             return;
@@ -68,24 +68,86 @@ void addAssignment() {
     }
 }
 
-// Modifies an existing customer assignment
 void changeAssignment() {
-    printf("实现修改客户分配的逻辑。\n");
-    // Implement the logic to modify an existing customer assignment
+    char oldEmployeeName[MAX_LENGTH], oldCustomerName[MAX_LENGTH];
+    char newEmployeeName[MAX_LENGTH], newCustomerName[MAX_LENGTH];
+    char oldLine[MAX_LENGTH * 2 + 4];
+    char newLine[MAX_LENGTH * 2 + 4];
+
+    // 获取原始业务员和客户的名称
+    inputTheName(oldEmployeeName, sizeof(oldEmployeeName), "请输入原始业务员的名称：");
+    inputTheName(oldCustomerName, sizeof(oldCustomerName), "请输入原始客户的名称：");
+
+    strcpy(oldLine, oldEmployeeName);
+    addColumn(oldLine, oldCustomerName);
+
+    // 检查原始组合是否存在
+    if (!lineExists("assignments.csv", oldLine)) {
+        printf("分配不存在：%s -> %s\n", oldEmployeeName, oldCustomerName);
+        return;
+    }
+
+    // 获取新业务员和客户的名称
+    inputTheName(newEmployeeName, sizeof(newEmployeeName), "请输入新的业务员的名称：");
+    inputTheName(newCustomerName, sizeof(newCustomerName), "请输入新的客户的名称：");
+
+    strcpy(newLine, newEmployeeName);
+    addColumn(newLine, newCustomerName);
+
+    // 删除原始组合
+    if (removeLineInFile("assignments.csv", oldLine)) {
+        // 添加新组合
+        writeLineToFile("assignments.csv", newLine);
+        printf("成功更新分配：%s -> %s\n", newEmployeeName, newCustomerName);
+    } else {
+        printf("更新分配失败。\n");
+    }
 }
 
-// Deletes an existing customer assignment
 void removeAssignment() {
-    printf("实现删除客户分配的逻辑。\n");
-    // Implement the logic to delete an existing customer assignment
+    char employeeName[MAX_LENGTH], customerName[MAX_LENGTH];
+    char fullLine[MAX_LENGTH * 2 + 4];
+
+    inputTheName(employeeName, sizeof(employeeName), "请输入业务员的名称：");
+    inputTheName(customerName, sizeof(customerName), "请输入客户的名称：");
+
+    strcpy(fullLine, employeeName);
+    addColumn(fullLine, customerName);
+
+    if (!lineExists("assignments.csv", fullLine)) {
+        printf("未找到该分配：%s -> %s\n", employeeName, customerName);
+    } else {
+        // 删除分配
+        if (removeLineInFile("assignments.csv", fullLine)) {
+            printf("客户分配删除成功：%s -> %s\n", employeeName, customerName);
+        } else {
+            printf("客户分配删除失败。\n");
+        }
+    }
 }
 
-// Displays customers assigned to an employee
 void displayAssignment() {
-    printf("显示分配给业务员的客户。\n");
-    // Implement the logic to display customers assigned to an employee
+    FILE *file = fopen("assignments.csv", "r");
+    if (!file) {
+        perror("打开文件失败");
+        return;
+    }
+
+    char line[MAX_LENGTH];
+    printf("当前的业务员和客户配对如下：\n");
+
+    while (fgets(line, sizeof(line), file)) {
+        char *delimiter = strstr(line, "|||");
+        if (delimiter != NULL) {
+            *delimiter = '\0';  // 将分隔符替换为字符串终结符，从而分割字符串
+            printf("%s -> %s", line, delimiter + 3); // 输出前后部分
+        } else {
+            printf("格式错误： %s\n", line);
+        }
+    }
+
+
+    fclose(file);
 }
-
-
 
 // end widgets/customer_assign.c

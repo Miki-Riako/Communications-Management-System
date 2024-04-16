@@ -59,6 +59,7 @@ void initializeInfoFile(const char *path, const char *header);
 bool removeEntry(const char *filename, const char *delName);
 void removeRecord(const char *filename, const char *prompt);
 void writeLineToFile(const char *filename, const char *data);
+bool removeLineInFile(const char *filename, const char *data);
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);

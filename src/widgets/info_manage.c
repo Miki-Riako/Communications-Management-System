@@ -30,7 +30,7 @@ void infoManageWidget() {
         printf("7. 增加客户联络员信息\n");
         printf("8. 修改客户联络员信息\n");
         printf("9. 删除客户联络员信息\n");
-        printf("0. 退出系统\n");
+        printf("0. 返回\n");
         printf("请选择一个操作（0-9）：");
 
         char get[MAX_LENGTH];

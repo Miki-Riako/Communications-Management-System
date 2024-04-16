@@ -60,7 +60,6 @@ void initializeInfoFile(const char *path, const char *header) {
 
 // 不输出内容的remove
 bool removeEntry(const char *filename, const char *delName) {
-    char buffer[MAX_LENGTH];
     FILE *fp, *fp_temp;
 
     fp = fopen(filename, "r");
@@ -76,6 +75,7 @@ bool removeEntry(const char *filename, const char *delName) {
         return false;
     }
 
+    char buffer[MAX_LENGTH];
     while (fgets(buffer, MAX_LENGTH, fp) != NULL) {
         // 检查是否包含要删除的用户名
         char* found = strstr(buffer, delName);
@@ -126,4 +126,47 @@ void writeLineToFile(const char *filename, const char *data) {
     }
     fprintf(file, "%s\n", data);
     fclose(file);
+}
+
+// 将一行删除
+bool removeLineInFile(const char *filename, const char *data) {
+    bool found = false;
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("打开文件失败");
+        return false;
+    }
+
+    // 创建一个临时文件
+    FILE *tempFile = fopen("temp.csv", "w");
+    if (!tempFile) {
+        perror("创建临时文件失败");
+        fclose(file);
+        return false;
+    }
+
+    char buffer[8 * MAX_LENGTH];
+    while (fgets(buffer, sizeof(buffer), file)) {
+        buffer[strcspn(buffer, "\n")] = 0;
+        if (strcmp(buffer, data) != 0) {
+            fprintf(tempFile, "%s\n", buffer);
+        } else {
+            found = true;
+        }
+    }
+
+    fclose(file);
+    fclose(tempFile);
+
+    if (remove(filename) != 0) {
+        perror("删除原始文件失败");
+        return false;
+    }
+
+    if (rename("temp.csv", filename) != 0) {
+        perror("重命名临时文件失败");
+        return false;
+    }
+
+    return found;
 }
