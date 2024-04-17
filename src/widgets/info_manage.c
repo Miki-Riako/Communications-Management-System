@@ -20,7 +20,7 @@ void infoManageWidget() {
     initializeInfoFile("customers.csv", "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone");
     initializeInfoFile("contacts.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
     while(true) {
-        printf("\n您好，经理！\n");
+        printf("\n信息管理\n");
         printf("1. 增加业务员信息\n");
         printf("2. 修改业务员信息\n");
         printf("3. 删除业务员信息\n");

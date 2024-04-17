@@ -82,3 +82,83 @@ bool matchPhone(const char *phone) {
     }
     return true;  // 所有字符都是数字或连字符
 }
+
+// 检查日期的正则表达式
+bool matchDate(const char *date) {
+    regex_t regex;
+    int ret;
+    char msgbuf[100];
+
+    // YYYY-MM-DD
+    ret = regcomp(&regex, "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex\n");
+        return false;
+    }
+
+    ret = regexec(&regex, date, 0, NULL, 0);
+    if (!ret) {
+        regfree(&regex);
+        return true;
+    } else if (ret == REG_NOMATCH) {
+        regfree(&regex);
+        return false;
+    } else {
+        regerror(ret, &regex, msgbuf, sizeof(msgbuf));
+        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        regfree(&regex);
+        return false;
+    }
+}
+
+// 检查日期时间的正则表达式
+bool matchTime(const char *time) {
+    regex_t regex;
+    int ret;
+    char msgbuf[100];
+
+    // HH:MM:SS
+    ret = regcomp(&regex, "^[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$", REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex for time\n");
+        return false;
+    }
+
+    ret = regexec(&regex, time, 0, NULL, 0);
+    regfree(&regex);  // 释放正则表达式
+    if (!ret) {
+        if (atoi(time) < 24) { // 验证小时部分是否小于24
+            return true;
+        }
+        return false;
+    } else if (ret == REG_NOMATCH) {
+        return false;
+    } else {
+        regerror(ret, &regex, msgbuf, sizeof(msgbuf));
+        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        return false;
+    }
+}
+
+// 检查持续时间的正则表达式
+bool matchDuration(const char *duration) {
+    regex_t regex;
+    int ret;
+    char msgbuf[100];
+
+    // 编译正则表达式
+    ret = regcomp(&regex, "^[0-9]+(\\.[0-9]+)?$", REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex for duration\n");
+        return false;
+    }
+
+    // 执行匹配
+    ret = regexec(&regex, duration, 0, NULL, 0);
+    regfree(&regex);  // 释放正则表达式
+    if (ret == 0) {
+        return true; // 匹配成功
+    } else {
+        return false; // 匹配失败
+    }
+}

@@ -48,7 +48,7 @@ typedef struct {
     char time[MAX_LENGTH];                    // 时间 HH:MM:SS
     char duration[MAX_LENGTH];                // 通信时长（分钟）
     char content[MAX_LENGTH];                 // 通信内容
-} CommunicationRecord;
+} Record;
 
 char User[MAX_LENGTH];
 bool IsManager = false;
@@ -64,6 +64,9 @@ void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);
 bool matchPhone(const char *phone);
+bool matchDate(const char *date);
+bool matchTime(const char *time);
+bool matchDuration(const char *duration);
 bool isEmpty(const char *input);
 bool isOneChar(const char *input);
 void clearBuffer();
