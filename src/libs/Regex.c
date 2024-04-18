@@ -83,6 +83,24 @@ bool matchPhone(const char *phone) {
     return true;  // 所有字符都是数字或连字符
 }
 
+// 检查程度的正则表达式
+bool matchScale(const char *scale) {
+    // 检查是否为空字符串，因为输入不能是空的
+    if (scale == NULL || scale[0] == '\0') return false;
+
+    // 比较输入是否为 "大"、"中" 或 "小"
+    return (strcmp(scale, "大") == 0 || strcmp(scale, "中") == 0 || strcmp(scale, "小") == 0);
+}
+
+// 检查等级的正则表达式
+bool matchContactLevel(const char *contactLevel) {
+    // 检查是否为空字符串，因为输入不能是空的
+    if (contactLevel == NULL || contactLevel[0] == '\0') return false;
+
+    // 比较输入是否为 "高"、"中" 或 "低"
+    return (strcmp(contactLevel, "高") == 0 || strcmp(contactLevel, "中") == 0 || strcmp(contactLevel, "低") == 0);
+}
+
 // 检查日期的正则表达式
 bool matchDate(const char *date) {
     regex_t regex;

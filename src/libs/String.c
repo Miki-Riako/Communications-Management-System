@@ -65,8 +65,22 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
         infoInput(customer->region, sizeof(customer->region), "输入客户所在区域: ");
         infoInput(customer->address, sizeof(customer->address), "输入客户地址: ");
         infoInput(customer->legalRepresentative, sizeof(customer->legalRepresentative), "输入客户公司法人: ");
-        infoInput(customer->scale, sizeof(customer->scale), "输入客户规模（大、中、小）: ");
-        infoInput(customer->businessContactLevel, sizeof(customer->businessContactLevel), "输入与本公司业务联系程度（高、中、低）: ");
+        while (true) {
+            infoInput(customer->scale, sizeof(customer->scale), "输入客户规模（大、中、小）: ");
+            if (!isSameString(customer->scale, " ") || matchScale(customer->scale)) {
+                break;
+            } else {
+                printf("客户规模格式不正确，请重新输入。\n");
+            }
+        }
+        while (true) {
+            infoInput(customer->businessContactLevel, sizeof(customer->businessContactLevel), "输入与本公司业务联系程度（高、中、低）: ");
+            if (!isSameString(customer->businessContactLevel, " ") || matchContactLevel(customer->businessContactLevel)) {
+                break;
+            } else {
+                printf("客户业务联系程度格式不正确，请重新输入。\n");
+            }
+        }
     } else { // section == 1 || section == 3
         infoInput(gender, sizeof(gender), "输入性别: ");
         infoInput(birthday, sizeof(birthday), "输入生日: ");

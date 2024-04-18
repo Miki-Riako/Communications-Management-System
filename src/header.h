@@ -64,6 +64,8 @@ void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);
 bool matchPhone(const char *phone);
+bool matchScale(const char *scale);
+bool matchContactLevel(const char *contactLevel);
 bool matchDate(const char *date);
 bool matchTime(const char *time);
 bool matchDuration(const char *duration);

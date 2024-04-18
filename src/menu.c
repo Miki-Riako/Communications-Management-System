@@ -1,6 +1,7 @@
 // menu.c
 #include "widgets/info_manage.c"
 #include "widgets/customer_assign.c"
+#include "widgets/group_manage.c"
 #include "widgets/records_manage.c"
 
 void managerMenuWidget();
@@ -38,7 +39,7 @@ void managerMenuWidget() {
             customerAssignWidget();
             break;
         case '3':
-            
+            groupManageWidget();
             break;
         case '4':
             
