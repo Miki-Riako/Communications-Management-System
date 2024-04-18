@@ -170,3 +170,55 @@ bool removeLineInFile(const char *filename, const char *data) {
 
     return found;
 }
+
+// 从文件中复制行
+void copyLine(const char *sourceFilename, const char *destinationFilename, const char *columnName, const char *targetValue) {
+    FILE *source = fopen(sourceFilename, "r");
+    FILE *destination = fopen(destinationFilename, "a"); // 追加模式打开或创建文件
+
+    if (!source || !destination) {
+        perror("文件打开失败");
+        if (source) fclose(source);
+        if (destination) fclose(destination);
+        return;
+    }
+
+    char line[MAX_LENGTH * 8];
+    int columnIndex = -1;
+    char header[MAX_LENGTH * 8];
+    if (fgets(line, sizeof(line), source)) { // 读取标题行
+        char *token = strtok(line, "|||");
+        int currentColumn = 0;
+        while (token) {
+            if (strcmp(token, columnName) == 0) {
+                columnIndex = currentColumn;
+                break;
+            }
+            ++currentColumn;
+            token = strtok(NULL, "|||");
+        }
+    }
+
+    if (columnIndex == -1) {
+        // printf("列 '%s' 在文件中未找到。\n", columnName);
+    } else {
+        while (fgets(line, sizeof(line), source)) {
+            char copyOfLine[1024];
+            strcpy(copyOfLine, line);  // 复制整行以备后用
+            char *values[10];  // 假设列不超过10列
+            char *token = strtok(line, "|||");
+            int currentColumn = 0;
+            while (token && currentColumn < 10) {
+                values[currentColumn++] = token;
+                token = strtok(NULL, "|||");
+            }
+            if (currentColumn > columnIndex && strcmp(values[columnIndex], targetValue) == 0) {
+                fputs(copyOfLine, destination);  // 将整行写入目标文件
+            }
+        }
+        // printf("已将匹配的行复制到 '%s'。\n", destinationFilename);
+    }
+
+    fclose(source);
+    fclose(destination);
+}

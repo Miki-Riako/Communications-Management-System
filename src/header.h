@@ -11,9 +11,21 @@
 
 #define DEBUG_MODE true
 #define SECRET_KEY "AAAAA-AAAAA-AAAAA-AAAAA-AAAAA"
-#define SYSTEM_CLEAR "clear" // if in windows, change the clear to cls
-
 #define MAX_LENGTH 255
+
+#ifdef _WIN32
+    // In windows
+    #include <direct.h>
+    #define SYSTEM_CLEAR "cls"
+    #define CREATE_DIRECTORY(path) (_mkdir(path))
+    
+#else
+    // In Unix
+    #include <sys/stat.h>
+    #include <sys/types.h>
+    #define SYSTEM_CLEAR "clear"
+    #define CREATE_DIRECTORY(path) (mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH))
+#endif
 
 typedef struct {
     char name[MAX_LENGTH];                    // 客户名称
@@ -60,6 +72,7 @@ bool removeEntry(const char *filename, const char *delName);
 void removeRecord(const char *filename, const char *prompt);
 void writeLineToFile(const char *filename, const char *data);
 bool removeLineInFile(const char *filename, const char *data);
+void copyLine(const char *sourceFilename, const char *destinationFilename, const char *columnName, const char *targetValue);
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);

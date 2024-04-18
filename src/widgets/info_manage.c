@@ -42,37 +42,37 @@ void infoManageWidget() {
             continue;  // 继续循环等待有效输入
         }
         switch (get[0]) {
-            case '1':
-                addEmployee();
-                break;
-            case '2':
-                changeEmployee();
-                break;
-            case '3':
-                removeRecord("employees.csv", "输入要删除的业务员姓名: ");
-                break;
-            case '4':
-                addCustomer();
-                break;
-            case '5':
-                changeCustomer();
-                break;
-            case '6':
-                removeRecord("customers.csv", "输入要删除的客户姓名: ");
-                break;
-            case '7':
-                addContact();
-                break;
-            case '8':
-                changeContact();
-                break;
-            case '9':
-                removeRecord("contacts.csv", "输入要删除的联络员姓名: ");
-                break;
-            case '0':
-                return;  // 返回主菜单
-            default:
-                printf("无效的选项，请重新输入。\n");
+        case '1':
+            addEmployee();
+            break;
+        case '2':
+            changeEmployee();
+            break;
+        case '3':
+            removeRecord("employees.csv", "输入要删除的业务员姓名: ");
+            break;
+        case '4':
+            addCustomer();
+            break;
+        case '5':
+            changeCustomer();
+            break;
+        case '6':
+            removeRecord("customers.csv", "输入要删除的客户姓名: ");
+            break;
+        case '7':
+            addContact();
+            break;
+        case '8':
+            changeContact();
+            break;
+        case '9':
+            removeRecord("contacts.csv", "输入要删除的联络员姓名: ");
+            break;
+        case '0':
+            return;  // 返回主菜单
+        default:
+            printf("无效的选项，请重新输入。\n");
         }
     }
 }
