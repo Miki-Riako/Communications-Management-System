@@ -132,10 +132,8 @@ void displayAssignment() {
         perror("打开文件失败");
         return;
     }
-
     char line[MAX_LENGTH];
     printf("当前的业务员和客户配对如下：\n");
-
     while (fgets(line, sizeof(line), file)) {
         char *delimiter = strstr(line, "|||");
         if (delimiter != NULL) {
@@ -145,8 +143,6 @@ void displayAssignment() {
             printf("格式错误： %s\n", line);
         }
     }
-
-
     fclose(file);
 }
 

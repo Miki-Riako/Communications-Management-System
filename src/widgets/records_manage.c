@@ -3,6 +3,8 @@
 
 void recordsManageWidget();
 void addRecord();
+void changeRecord();
+void showRecord();
 void displayRecord(Record record);
 
 void recordsManageWidget() {
@@ -28,10 +30,10 @@ void recordsManageWidget() {
             addRecord();
             break;
         case '2':
-            // changeRecord();
+            changeRecord();
             break;
         case '3':
-            // showRecord();
+            showRecord();
             break;
         case '4':
             return;
@@ -91,6 +93,104 @@ void addRecord() {
     system(SYSTEM_CLEAR);
     displayRecord(record);
     printf("通信记录已成功添加。\n");
+}
+
+void changeRecord() {
+    char companyName[MAX_LENGTH], contactName[MAX_LENGTH];
+    char newCompanyName[MAX_LENGTH], newContactName[MAX_LENGTH], newDate[MAX_LENGTH], newTime[MAX_LENGTH], newDuration[MAX_LENGTH], newContent[MAX_LENGTH];
+    char line[MAX_LENGTH * 8];
+    char originalLine[MAX_LENGTH * 8]; // 保存原始行
+    bool found = false;
+
+    inputTheName(companyName, sizeof(companyName), "请输入要修改的客户公司名称：");
+    inputTheName(contactName, sizeof(contactName), "请输入要修改的客户联络员名称：");
+
+    FILE *file = fopen("records.csv", "r");
+    FILE *tempFile = fopen("records_backup.csv", "w");
+    if (!file || !tempFile) {
+        perror("文件打开失败");
+        return;
+    }
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        strcpy(originalLine, line); // 保存原始行
+        char *fields[7], *token;
+        int i = 0;
+        token = strtok(line, "|||");
+        while (token != NULL && i < 7) {
+            fields[i++] = token;
+            token = strtok(NULL, "|||");
+        }
+        if (i == 7 && strcmp(fields[0], User) == 0 && strcmp(fields[1], companyName) == 0 && strcmp(fields[2], contactName) == 0) {
+            found = true;
+            printf("找到记录，输入新的值:\n");
+            inputTheName(newCompanyName, sizeof(newCompanyName), "请输入新的客户公司名称：");
+            inputTheName(newContactName, sizeof(newContactName), "请输入新的客户联络员名称：");
+            while (true) {
+                infoInput(newDate, sizeof(newDate), "请输入新的日期 (YYYY-MM-DD)：");
+                if (isSameString(newDate, " ") || matchDate(newDate)) {
+                    break;
+                } else {
+                    printf("无效的日期格式，请重新输入。\n");
+                }
+            }
+            while (true) {
+                infoInput(newTime, sizeof(newTime), "请输入新的时间 (HH:MM:SS)：");
+                if (isSameString(newTime, " ") || matchTime(newTime)) {
+                    break;
+                } else {
+                    printf("无效的时间格式，请重新输入。\n");
+                }
+            }
+            while (true) {
+                infoInput(newDuration, sizeof(newDuration), "请输入新的通信时长（分钟）：");
+                if (isSameString(newDuration, " ") || matchDuration(newDuration)) {
+                    break;
+                } else {
+                    printf("无效的通信时长，请重新输入。\n");
+                }
+            }
+            snprintf(originalLine, sizeof(originalLine), "%s|||%s|||%s|||%s|||%s|||%s|||%s\n", User, newCompanyName, newContactName, newDate, newTime, newDuration, newContent);
+        }
+        fputs(originalLine, tempFile); // 总是写回临时文件
+    }
+    fclose(file);
+    fclose(tempFile);
+
+    // 替换原文件
+    remove("records.csv");
+    rename("records_backup.csv", "records.csv");
+
+    if (!found) {
+        printf("没有找到相应的记录。\n");
+    } else {
+        printf("记录已成功更新。\n");
+    }
+}
+
+void showRecord() {
+    FILE *file = fopen("records.csv", "r");
+    if (!file) {
+        perror("无法打开记录文件");
+        return;
+    }
+    char line[MAX_LENGTH];
+    printf("当前用户 %s 的通信记录如下：\n", User);
+    
+    printf("公司客户名 - 联络员 - 日期 - 时间 - 时长 - 内容\n");
+    while (fgets(line, sizeof(line), file)) {
+        char *currentUser = strtok(line, "|||");
+        if (currentUser != NULL && strcmp(currentUser, User) == 0) {  // 确保当前行属于当前用户
+            char *companyName = strtok(NULL, "|||");
+            char *contactName = strtok(NULL, "|||");
+            char *date = strtok(NULL, "|||");
+            char *time = strtok(NULL, "|||");
+            char *duration = strtok(NULL, "|||");
+            char *content = strtok(NULL, "|||");
+            printf("%s - %s - %s - %s - %s - %s", companyName, contactName, date, time, duration, content);
+        }
+    }
+    fclose(file);
 }
 
 void displayRecord(Record record) {

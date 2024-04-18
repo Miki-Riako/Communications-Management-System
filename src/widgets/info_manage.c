@@ -103,8 +103,7 @@ void addContact() {
 
 void changeEmployee(){
     char name[MAX_LENGTH];
-    printf("请输入要修改的业务员姓名：");
-    getInput(name, sizeof(name));
+    inputTheName(name, sizeof(name), "请输入要修改的业务员姓名：");
 
     // 检查员工是否存在
     if (!alreadyExists("employees.csv", name)) {
