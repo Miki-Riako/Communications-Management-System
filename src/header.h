@@ -16,14 +16,19 @@
 #ifdef _WIN32
     // In windows
     #include <direct.h>
+    #include <io.h>
     #define SYSTEM_CLEAR "cls"
+    #define ACCESS _access
+    #define F_OK 0
     #define CREATE_DIRECTORY(path) (_mkdir(path))
     
 #else
     // In Unix
     #include <sys/stat.h>
     #include <sys/types.h>
+    #include <unistd.h>
     #define SYSTEM_CLEAR "clear"
+    #define ACCESS access
     #define CREATE_DIRECTORY(path) (mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH))
 #endif
 

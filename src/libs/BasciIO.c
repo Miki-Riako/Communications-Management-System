@@ -51,7 +51,7 @@ void initializeInfoFile(const char *path, const char *header) {
             if (!isEmpty(header)) fprintf(file, "%s\n", header);
             fclose(file);
         } else {
-            fprintf(stderr, "Error creating file %s\n", path);
+            fprintf(stderr, "创建文件 %s 出现错误。\n", path);
         }
     } else {
         fclose(file);

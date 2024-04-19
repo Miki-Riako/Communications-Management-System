@@ -12,7 +12,7 @@ void getInput(char *input, int buffer_size) {
     if (fgets(input, buffer_size, stdin) != NULL) {
         input[strcspn(input, "\n")] = 0; // 去除 fgets 捕获的换行符
     } else {
-        fprintf(stderr, "Error reading input.\n");
+        fprintf(stderr, "读取字符串出错。\n");
     }
 }
 

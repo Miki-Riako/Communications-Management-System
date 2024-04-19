@@ -1,7 +1,7 @@
 // XOR 加密/解密算法
 void xorEncryptDecrypt(const char *input, size_t length, char *output) {
     if (input == NULL || output == NULL) {
-        fprintf(stderr, "Null pointer passed to xorEncryptDecrypt function.\n");
+        fprintf(stderr, "无数据输入。\n");
         return;
     }
 
@@ -10,7 +10,7 @@ void xorEncryptDecrypt(const char *input, size_t length, char *output) {
     size_t key_length = strlen(encryptionKey);
 
     if (key_length == 0) {
-        fprintf(stderr, "Encryption key is empty.\n");
+        fprintf(stderr, "空错误。\n");
         return;
     }
 
@@ -50,7 +50,7 @@ bool matchMail(const char *email) {
     // 编译正则表达式
     ret = regcomp(&regex, "^[A-Za-z0-9]+([.-_][A-Za-z0-9]+)*@[A-Za-z0-9]+([-.][A-Za-z0-9]+)*\\.[A-Za-z]{2,5}$", REG_EXTENDED);
     if (ret) {
-        fprintf(stderr, "Could not compile regex\n");
+        fprintf(stderr, "编译正则表达式失败。\n");
         return false;
     }
 
@@ -64,7 +64,7 @@ bool matchMail(const char *email) {
         return false;
     } else {
         regerror(ret, &regex, msgbuf, sizeof(msgbuf));
-        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        fprintf(stderr, "匹配时出现错误: %s\n", msgbuf);
         regfree(&regex);
         return false;
     }
@@ -110,7 +110,7 @@ bool matchDate(const char *date) {
     // YYYY-MM-DD
     ret = regcomp(&regex, "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", REG_EXTENDED);
     if (ret) {
-        fprintf(stderr, "Could not compile regex\n");
+        fprintf(stderr, "编译正则表达式失败。\n");
         return false;
     }
 
@@ -123,7 +123,7 @@ bool matchDate(const char *date) {
         return false;
     } else {
         regerror(ret, &regex, msgbuf, sizeof(msgbuf));
-        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        fprintf(stderr, "匹配时出现错误: %s\n", msgbuf);
         regfree(&regex);
         return false;
     }
@@ -138,7 +138,7 @@ bool matchTime(const char *time) {
     // HH:MM:SS
     ret = regcomp(&regex, "^[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$", REG_EXTENDED);
     if (ret) {
-        fprintf(stderr, "Could not compile regex for time\n");
+        fprintf(stderr, "编译正则表达式失败。\n");
         return false;
     }
 
@@ -153,7 +153,7 @@ bool matchTime(const char *time) {
         return false;
     } else {
         regerror(ret, &regex, msgbuf, sizeof(msgbuf));
-        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        fprintf(stderr, "匹配时出现错误: %s\n", msgbuf);
         return false;
     }
 }
@@ -167,7 +167,7 @@ bool matchDuration(const char *duration) {
     // 编译正则表达式
     ret = regcomp(&regex, "^[0-9]+(\\.[0-9]+)?$", REG_EXTENDED);
     if (ret) {
-        fprintf(stderr, "Could not compile regex for duration\n");
+        fprintf(stderr, "编译正则表达式失败。\n");
         return false;
     }
 
