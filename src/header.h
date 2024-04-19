@@ -79,6 +79,7 @@ void writeLineToFile(const char *filename, const char *data);
 bool removeLineInFile(const char *filename, const char *data);
 void copyLine(const char *sourceFilename, const char *destinationFilename, const char *columnName, const char *targetValue);
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
+bool verify(const char *username, const char *password);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);
 bool matchPhone(const char *phone);

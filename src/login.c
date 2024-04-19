@@ -6,7 +6,6 @@ void startWidget();
 void loginManagerWidget();
 void loginEmployeeWidget();
 void registerWidget();
-bool verify(const char *username, const char *password);
 
 void startWidget() {
     initializeInfoFile("user.csv", "");
@@ -70,7 +69,7 @@ void loginManagerWidget() {
 
 void loginEmployeeWidget() {
     char username[MAX_LENGTH];
-    char password[MAX_LENGTH];
+    char password[MAX_LENGTH], confirmPassword[MAX_LENGTH];
     char encryptedPassword[MAX_LENGTH * 2];
 
     // 获取用户输入
@@ -99,15 +98,14 @@ void registerWidget() {
     FILE *file;
     char line[MAX_LENGTH * 3];
     char username[MAX_LENGTH];
-    char password[MAX_LENGTH];
+    char password[MAX_LENGTH], confirmPassword[MAX_LENGTH];
     char encryptedPassword[MAX_LENGTH * 2];
     char role[MAX_LENGTH];
 
     printf("创建新用户.\n");
 
     while (true) {
-        printf("请输入用户名：");
-        getInput(username, sizeof(username));
+        infoInput(username, sizeof(username), "请输入用户名：");
         if (isEmpty(username)) {
             printf("用户名不能为空。\n");
             continue;
@@ -120,14 +118,19 @@ void registerWidget() {
     }
 
     while (true) {
-        printf("请输入密码：");
-        getInput(password, sizeof(password));
+        infoInput(password, sizeof(password), "请输入新密码：");
+        if (!matchRegex(password)) {
+            printf("密码不符合要求。必须至少8个字符且包含大写字母、小写字母、数字、标点符号中的两种。\n");
+            continue;
+        }
 
-        if (matchRegex(password)) {
+        infoInput(confirmPassword, sizeof(confirmPassword), "请再次输入新密码以确认：");
+        if (!isSameString(password, confirmPassword)) {
+            printf("两次输入的密码不匹配。\n");
+            continue;
+        } else {
             xorEncryptDecrypt(password, strlen(password), encryptedPassword);
             break;
-        } else {
-            printf("密码不符合要求。必须至少8个字符且包含大写字母、小写字母、数字、标点符号中的两种。\n");
         }
     }
 
@@ -160,48 +163,6 @@ void registerWidget() {
         printf("业务员信息已添加。\n");
     }
     system(SYSTEM_CLEAR);
-}
-
-bool verify(const char *username, const char *password) {
-    FILE *file;
-    char line[MAX_LENGTH * 3];
-    const char *delimiter = "|||";
-    char *delimiter_pos;
-
-    file = fopen("user.csv", "r");
-    if (!file) {
-        perror("打开文件失败");
-        return false;
-    }
-
-    while (fgets(line, sizeof(line), file)) {
-        char file_username[MAX_LENGTH], file_password[MAX_LENGTH];
-
-        // 找到分隔符位置
-        delimiter_pos = strstr(line, delimiter);
-        if (delimiter_pos) {
-            // 从行中提取用户名
-            *delimiter_pos = '\0';  // 切断字符串，结束用户名部分
-            strncpy(file_username, line, MAX_LENGTH - 1);
-            file_username[MAX_LENGTH - 1] = '\0';
-
-            // 提取密码，跳过分隔符
-            strncpy(file_password, delimiter_pos + strlen(delimiter), MAX_LENGTH - 1);
-            file_password[MAX_LENGTH - 1] = '\0';
-
-            // 删除密码末尾的可能的换行符
-            file_password[strcspn(file_password, "\n")] = '\0';
-
-            // 比较用户名和密码
-            if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
-                fclose(file);
-                return true; // 找到匹配项
-            }
-        }
-    }
-
-    fclose(file);
-    return false; // 未找到匹配项
 }
 
 // end login.c

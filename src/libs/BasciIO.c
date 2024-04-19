@@ -222,3 +222,29 @@ void copyLine(const char *sourceFilename, const char *destinationFilename, const
     fclose(source);
     fclose(destination);
 }
+
+// 复制文件
+bool copyFile(const char *sourcePath, const char *destinationPath) {
+    FILE *src = fopen(sourcePath, "rb");
+    if (!src) {
+        perror("打开源文件失败");
+        return false;
+    }
+
+    FILE *dst = fopen(destinationPath, "wb");
+    if (!dst) {
+        perror("创建备份文件失败");
+        fclose(src);
+        return false;
+    }
+
+    char buffer[1024];
+    size_t bytesRead;
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), src)) > 0) {
+        fwrite(buffer, 1, bytesRead, dst);
+    }
+
+    fclose(src);
+    fclose(dst);
+    return true;
+}

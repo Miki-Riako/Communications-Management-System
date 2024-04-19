@@ -244,7 +244,47 @@ void removeGroup() {
 
 void showGroups() {
     printf("查看所有分组...\n");
-    // 实现查看所有分组的逻辑
+
+    char groupName[MAX_LENGTH];
+    char filename[MAX_LENGTH + 20];  // 留足空间以存放路径和文件名
+
+    printf("请输入要查看的分组名称：");
+    getInput(groupName, sizeof(groupName));
+
+    snprintf(filename, sizeof(filename), "groups/%s.csv", groupName);
+
+    // 检查文件是否存在
+    if (ACCESS(filename, F_OK) == -1) {
+        printf("分组 '%s' 不存在。\n", groupName);
+        return;
+    }
+
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("打开文件失败");
+        return;
+    }
+
+    char line[MAX_LENGTH];
+    printf("\n分组 '%s' 的成员如下：\n", groupName);
+    // 读取文件内容并显示
+    while (fgets(line, sizeof(line), file)) {
+        // 去除可能的换行符
+        line[strcspn(line, "\n")] = 0;
+
+        // 打印每一行数据
+        char *token = strtok(line, "|||");
+        while (token != NULL) {
+            printf("%s ", token);
+            token = strtok(NULL, "|||");
+            if (token != NULL) {
+                printf("- ");
+            }
+        }
+        printf("\n");
+    }
+
+    fclose(file);
 }
 
 void divideCustomer() {
@@ -253,6 +293,12 @@ void divideCustomer() {
     char groupFilename[MAX_LENGTH + 12];
 
     infoInput(customerName, sizeof(customerName), "请输入客户名以进行分组：");
+
+    if (!alreadyExists("customers.csv", customerName)) {
+        printf("客户 '%s' 不存在!\n", customerName);
+        return;
+    }
+
     infoInput(groupName, sizeof(groupName), "请输入目标分组名称：");
     snprintf(groupFilename, sizeof(groupFilename), "groups/%s.csv", groupName);
 

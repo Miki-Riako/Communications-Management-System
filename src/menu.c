@@ -4,6 +4,8 @@
 #include "widgets/group_manage.c"
 #include "widgets/records_manage.c"
 
+#include "widgets/system_setting.c"
+
 void managerMenuWidget();
 void employeeMenuWidget();
 void exitSystem();
@@ -54,7 +56,7 @@ void managerMenuWidget() {
             
             break;
         case '8':
-            
+            systemSettingWidget();
             break;
         case '9':
             exitSystem();
@@ -103,7 +105,7 @@ void employeeMenuWidget() {
             
             break;
         case '6':
-
+            systemSettingWidget();
             break;
         case '7':
             exitSystem();
