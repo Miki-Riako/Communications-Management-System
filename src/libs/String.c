@@ -67,7 +67,7 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
         infoInput(customer->legalRepresentative, sizeof(customer->legalRepresentative), "输入客户公司法人: ");
         while (true) {
             infoInput(customer->scale, sizeof(customer->scale), "输入客户规模（大、中、小）: ");
-            if (!isSameString(customer->scale, " ") || matchScale(customer->scale)) {
+            if (isSameString(customer->scale, " ") || matchScale(customer->scale)) {
                 break;
             } else {
                 printf("客户规模格式不正确，请重新输入。\n");
@@ -75,7 +75,7 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
         }
         while (true) {
             infoInput(customer->businessContactLevel, sizeof(customer->businessContactLevel), "输入与本公司业务联系程度（高、中、低）: ");
-            if (!isSameString(customer->businessContactLevel, " ") || matchContactLevel(customer->businessContactLevel)) {
+            if (isSameString(customer->businessContactLevel, " ") || matchContactLevel(customer->businessContactLevel)) {
                 break;
             } else {
                 printf("客户业务联系程度格式不正确，请重新输入。\n");
