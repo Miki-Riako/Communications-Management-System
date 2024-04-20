@@ -264,27 +264,20 @@ void loadFile(head_node *head) {
         loadCustomers("customers.csv", head);
         loadContactPersons("contacts.csv", head);
         loadEmployees("employees.csv", head);
-        loadRecords("records.csv", head);
     }
     // 非管理员只加载其负责的客户数据
     FILE *assignmentsFile = fopen("assignments.csv", "r");
     if (assignmentsFile) {
         char line[5 * MAX_LENGTH];
-        char *token = NULL;
         while (fgets(line, sizeof(line), assignmentsFile)) {
-            char *employee = strtok(line, "|||");
-            char *customer = strtok(NULL, "\n");
-
-            token = strtok(NULL, "|||\n\r");
-            if (token) {
-                cleanField(token);
-                strcpy(customer, token);
-            }
-
+            char *employee = splitLine(line, "|||", 0);
+            char *customer = splitLine(line, "|||", 1);
             if (isSameString(employee, User)) {
                 // 找到对应客户，加载其信息
                 loadCustomerData("customers.csv", customer, head);
             }
+            free(employee);
+            free(customer);
         }
         fclose(assignmentsFile);
     }
@@ -473,6 +466,12 @@ void loadRecords(const char *filename, head_node *head) {
     }
 }
 
-
+// 初始化所有文件
+void initializeAll() {
+    initializeInfoFile("assignments.csv", "Employee|||Customer");
+    initializeInfoFile("employees.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
+    initializeInfoFile("customers.csv", "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone");
+    initializeInfoFile("contacts.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
+}
 
 

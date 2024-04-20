@@ -16,6 +16,40 @@ void getInput(char *input, int buffer_size) {
     }
 }
 
+// 切割函数但是会手动分配内存（少用）
+char *splitLine(char *input, const char *delim, int num) {
+    int count = 0;
+    const char *start = input;
+    const char *end = input;
+
+    // 遍历整个字符串
+    while (*end != '\0') {
+        if (strncmp(end, delim, strlen(delim)) == 0) {
+            if (count == num) {
+                // 在找到的分割点处截断，返回起始部分
+                int length = end - start;
+                char *result = malloc(length + 1); // 分配内存
+                if (result == NULL) return NULL; // 检查内存分配是否成功
+                memcpy(result, start, length); // 复制内容
+                result[length] = '\0'; // 设置结束符
+                return result;
+            }
+            ++count; // 增加计数器
+            end += strlen(delim); // 跳过分隔符
+            start = end; // 更新开始位置
+        } else {
+            ++end; // 移动到下一个字符
+        }
+    }
+
+    // 处理最后一段
+    if (count == num) {
+        return strdup(start); // 返回剩余部分的副本
+    }
+
+    return "";
+}
+
 // 是相同的字符串
 bool isSameString(const char *str1, const char *str2) { return (strcmp(str1, str2) == 0); }
 
@@ -24,7 +58,7 @@ void cleanField(char *field) {
     char *end = field + strlen(field) - 1;
     while (end > field && (isspace((unsigned char)*end) || *end == '|' || *end == '\n' || *end == '\r')) {
         *end = '\0';
-        end--;
+        --end;
     }
 }
 // 信息写入

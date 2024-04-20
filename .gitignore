@@ -1,7 +1,8 @@
 .vscode
 *.csv
 *.ini
-
+*.exe
+build/*
 # Backup
 *.c_backup
 *.h_backup

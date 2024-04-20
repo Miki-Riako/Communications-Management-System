@@ -48,6 +48,7 @@ void loadCustomerData(const char *filename, const char *customerName, head_node 
 void loadCustomers(const char *filename, head_node *head);
 void loadContactPersons(const char *filename, head_node *head);
 void loadEmployees(const char *filename, head_node *head);
+void initializeAll();
 
 void loadRecords(const char *filename, head_node *head);
 void appendNode_cus(head_node *head, Customer customer);
@@ -75,6 +76,7 @@ bool isEmpty(const char *input);
 bool isOneChar(const char *input);
 void clearBuffer();
 void getInput(char *input, int buffer_size);
+char *splitLine(char *input, const char *delim, int num);
 bool isSameString(const char *str1, const char *str2);
 void cleanField(char *field);
 void infoInput(char *input, int buffer_size, const char *prompt);
@@ -88,10 +90,10 @@ void printNode_rec(node_rec *node);
 void printNodeList(head_node *node, int choice);
 int beforeInfo(head_node *head, const char *prompt);
 
-#include "libs/Algorithms.c"
-#include "libs/BasciIO.c"
-#include "libs/Memory.c"
-#include "libs/Regex.c"
-#include "libs/String.c"
+#include "libs/Algorithms.h"
+#include "libs/BasciIO.h"
+#include "libs/Memory.h"
+#include "libs/Regex.h"
+#include "libs/String.h"
 
 #endif

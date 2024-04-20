@@ -5,6 +5,7 @@ void infoSortWidget();
 void defaultSort(head_node *head);
 
 void infoSortWidget() {
+    initializeAll();
     printf("正在加载中，请您耐心等待。\n");
     head_node *head = (head_node *)malloc(sizeof(head_node));  // 分配内存
     if (!head) {
