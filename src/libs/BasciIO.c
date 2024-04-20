@@ -349,8 +349,14 @@ void loadCustomers(const char *filename, head_node *head) {
         strcpy(customer.businessContactLevel, token);
         if (!(token = strtok(NULL, "|||"))) continue;
         strcpy(customer.email, token);
-        if (!(token = strtok(NULL, "\n"))) continue;
-        strcpy(customer.phone, token);
+
+        // 处理电话号码，确保去除后续所有非必要字符
+        token = strtok(NULL, "|||\n\r"); // 修改这里以处理可能的多余分隔符
+        if (token) {
+            cleanField(token); // 一个新的函数用来清除字段中多余的分隔符和空白字符
+            strcpy(customer.phone, token);
+        }
+        
         appendNode_cus(head, customer);
     }
     fclose(file);
@@ -376,8 +382,13 @@ void loadContactPersons(const char *filename, head_node *head) {
         strcpy(contact.email, token);
         if (!(token = strtok(NULL, "|||"))) continue;
         strcpy(contact.phone, token);
-        if (!(token = strtok(NULL, "\n"))) continue;
-        strcpy(contact.representative, token);
+
+        token = strtok(NULL, "|||\n\r");
+        if (token) {
+            cleanField(token);
+            strcpy(contact.representative, token);
+        }
+
         appendNode_ctp(head, contact);
     }
     fclose(file);
@@ -405,8 +416,12 @@ void loadEmployees(const char *filename, head_node *head) {
         strcpy(employee.email, token);
         if (!(token = strtok(NULL, "|||"))) continue;
         strcpy(employee.phone, token);
-        if (!(token = strtok(NULL, "\n"))) continue;
-        strcpy(employee.representative, token);
+
+        token = strtok(NULL, "|||\n\r");
+        if (token) {
+            cleanField(token);
+            strcpy(employee.representative, token);
+        }
 
         appendNode_emp(head, employee);
     }
@@ -423,6 +438,8 @@ void loadRecords(const char *filename, head_node *head) {
         Record record;
         char *token = strtok(line, "|||");
         if (!token) continue;
+        strcpy(record.user, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
         strcpy(record.companyName, token);
         if (!(token = strtok(NULL, "|||"))) continue;
         strcpy(record.contactName, token);
@@ -432,8 +449,13 @@ void loadRecords(const char *filename, head_node *head) {
         strcpy(record.time, token);
         if (!(token = strtok(NULL, "|||"))) continue;
         strcpy(record.duration, token);
-        if (!(token = strtok(NULL, "\n"))) continue;
-        strcpy(record.content, token);
+
+        token = strtok(NULL, "|||\n\r");
+        if (token) {
+            cleanField(token);
+            strcpy(record.content, token);
+        }
+
         appendNode_rec(head, record);
     }
 }

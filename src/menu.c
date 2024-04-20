@@ -4,6 +4,7 @@
 #include "widgets/group_manage.c"
 #include "widgets/records_manage.c"
 #include "widgets/info_enquiry.c"
+#include "widgets/info_sort.c"
 
 #include "widgets/system_setting.c"
 
@@ -19,7 +20,7 @@ void managerMenuWidget() {
         printf("2. 客户分配\n");
         printf("3. 分组管理\n");
         printf("4. 信息查询\n");
-        printf("5. 信息排序\n");
+        printf("5. 信息排序显示\n");
         printf("6. 信息统计\n");
         printf("7. 通信记录分析\n");
         printf("8. 系统维护\n");
@@ -48,7 +49,7 @@ void managerMenuWidget() {
             infoEnquiryWidget();
             break;
         case '5':
-            
+            infoSortWidget();
             break;
         case '6':
             
@@ -94,7 +95,7 @@ void employeeMenuWidget() {
             infoEnquiryWidget();
             break;
         case '2':
-            
+            infoSortWidget();
             break;
         case '3':
             

@@ -19,6 +19,14 @@ void getInput(char *input, int buffer_size) {
 // 是相同的字符串
 bool isSameString(const char *str1, const char *str2) { return (strcmp(str1, str2) == 0); }
 
+// 这个函数负责去除字段末尾可能的分隔符和空白字符
+void cleanField(char *field) {
+    char *end = field + strlen(field) - 1;
+    while (end > field && (isspace((unsigned char)*end) || *end == '|' || *end == '\n' || *end == '\r')) {
+        *end = '\0';
+        end--;
+    }
+}
 // 信息写入
 void infoInput(char *input, int buffer_size, const char *prompt) {
     printf("%s", prompt);
@@ -138,4 +146,61 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
 void addColumn(char *fullLine, const char *newOne) {
     strcat(fullLine, "|||");
     strcat(fullLine, newOne);
+}
+
+// 显示一个小菜单
+int beforeInfo(head_node *head, const char *prompt) {
+    char get[MAX_LENGTH];
+    if (IsManager) {
+        printf("请选择%s的数据类型：\n", prompt);
+        printf("1. 客户\n");
+        printf("2. 联络人\n");
+        printf("3. 业务员\n");
+        printf("输入选项：");
+
+        char get[MAX_LENGTH];
+        getInput(get, sizeof(get));
+        system(SYSTEM_CLEAR);
+        
+        if (!isOneChar(get)) {
+            printf("无效的选择\n");
+            return -1;
+        }
+    } else {
+        get[0] = '1';
+    }
+
+    switch (get[0]) {
+    case '1':
+        if (head->is_cus) {
+            return 0;
+        } else {
+            printf("无法%s客户信息。\n", prompt);
+            return -1;
+        }
+    case '2':
+        if (IsManager && head->is_ctp) {
+            return 1;
+        } else {
+            printf("无法%s联络人信息。\n", prompt);
+            return -1;
+        }
+    case '3':
+        if (IsManager && head->is_emp) {
+            return 2;
+        } else {
+            printf("无法%s业务员信息。\n", prompt);
+            return -1;
+        }
+    // case '4':
+    //     if (IsManager && head->is_rec) {
+    //         return 3;
+    //     } else {
+    //         printf("无法%s记录信息。\n", prompt);
+    //         return -1;
+    //     }
+    default:
+        printf("无效的选择。\n");
+        return -1;
+    }
 }

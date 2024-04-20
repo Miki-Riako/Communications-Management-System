@@ -76,10 +76,12 @@ bool isOneChar(const char *input);
 void clearBuffer();
 void getInput(char *input, int buffer_size);
 bool isSameString(const char *str1, const char *str2);
+void cleanField(char *field);
 void infoInput(char *input, int buffer_size, const char *prompt);
 void inputTheName(char *name, int buffer_size, const char *prompt);
 void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact);
 void addColumn(char *fullLine, const char *newOne);
+int beforeInfo(head_node *head, const char *prompt);
 
 #include "libs/Algorithms.c"
 #include "libs/BasciIO.c"

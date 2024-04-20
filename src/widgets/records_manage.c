@@ -46,6 +46,7 @@ void recordsManageWidget() {
 
 void addRecord() {
     Record record;
+    strcpy(record.user, User);
 
     printf("添加新的通信记录。\n");
     

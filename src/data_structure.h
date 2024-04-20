@@ -26,6 +26,7 @@ typedef struct {
     char representative[MAX_LENGTH];          // 业务员联络员公司
 } Employee;
 typedef struct {
+    char user[MAX_LENGTH];                    // 用户
     char companyName[MAX_LENGTH];             // 客户公司名称
     char contactName[MAX_LENGTH];             // 客户联络员名称
     char date[MAX_LENGTH];                    // 日期 YYYY-MM-DD
