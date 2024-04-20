@@ -1,3 +1,5 @@
+// String.c
+#include "../header.h"
 // 检验输入是否为空
 bool isEmpty(const char *input) { return (input[0] == '\0'); }
 
@@ -16,8 +18,51 @@ void getInput(char *input, int buffer_size) {
     }
 }
 
+// 切割函数但是会手动分配内存（少用）
+char *splitLine(char *input, const char *delim, int num) {
+    int count = 0;
+    const char *start = input;
+    const char *end = input;
+
+    // 遍历整个字符串
+    while (*end != '\0') {
+        if (strncmp(end, delim, strlen(delim)) == 0) {
+            if (count == num) {
+                // 在找到的分割点处截断，返回起始部分
+                int length = end - start;
+                char *result = malloc(length + 1); // 分配内存
+                if (result == NULL) return NULL; // 检查内存分配是否成功
+                memcpy(result, start, length); // 复制内容
+                result[length] = '\0'; // 设置结束符
+                return result;
+            }
+            ++count; // 增加计数器
+            end += strlen(delim); // 跳过分隔符
+            start = end; // 更新开始位置
+        } else {
+            ++end; // 移动到下一个字符
+        }
+    }
+
+    // 处理最后一段
+    if (count == num) {
+        return strdup(start); // 返回剩余部分的副本
+    }
+
+    return "";
+}
+
 // 是相同的字符串
 bool isSameString(const char *str1, const char *str2) { return (strcmp(str1, str2) == 0); }
+
+// 这个函数负责去除字段末尾可能的分隔符和空白字符
+void cleanField(char *field) {
+    char *end = field + strlen(field) - 1;
+    while (end > field && (isspace((unsigned char)*end) || *end == '|' || *end == '\n' || *end == '\r')) {
+        *end = '\0';
+        --end;
+    }
+}
 
 // 信息写入
 void infoInput(char *input, int buffer_size, const char *prompt) {
@@ -59,18 +104,20 @@ typedef struct {
     GtkWidget *contact_level_entry;
     GtkWidget *representative_entry;
     GtkWidget *save_entry_button;
+    GtkWidget *cancel_button;
     int section;
     const char *filename;
     Employee *employee;
     Customer *customer;
     ContactPerson *contact;
 } EntryWidgets;
-
+EntryWidgets entryWidgets;
 static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets);
+static void on_cancel_save_clicked(GtkWidget *widget, EntryWidgets *entryWidgets);
 
 // 添加新的用户实例
 void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact) {
-    EntryWidgets entryWidgets;
+    gtk_init(NULL, NULL);
     entryWidgets.section = section;
     entryWidgets.filename = filename;
     entryWidgets.employee = employee;
@@ -85,7 +132,8 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
     
     entryWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(entryWidgets.window), entryWidgets.grid);
-    
+    gtk_widget_set_halign(entryWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(entryWidgets.grid, GTK_ALIGN_CENTER);
     // 公共字段
     entryWidgets.name_entry = gtk_entry_new();
     gtk_grid_attach(GTK_GRID(entryWidgets.grid), gtk_label_new("姓名:"), 0, 0, 1, 1);
@@ -116,6 +164,11 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
         // 保存按钮
         entryWidgets.save_entry_button = gtk_button_new_with_label("保存");
         g_signal_connect(entryWidgets.save_entry_button, "clicked", G_CALLBACK(on_save_entry_clicked), &entryWidgets);
+        gtk_grid_attach(GTK_GRID(entryWidgets.grid), entryWidgets.save_entry_button, 0, 6, 1, 1);
+
+        // 取消按钮
+        entryWidgets.save_entry_button = gtk_button_new_with_label("取消");
+        g_signal_connect(entryWidgets.save_entry_button, "clicked", G_CALLBACK(on_cancel_save_clicked), &entryWidgets);
         gtk_grid_attach(GTK_GRID(entryWidgets.grid), entryWidgets.save_entry_button, 1, 6, 1, 1);
     } else if(entryWidgets.section == 2) {
         entryWidgets.region_entry = gtk_entry_new();
@@ -149,6 +202,11 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
         // 保存按钮
         entryWidgets.save_entry_button = gtk_button_new_with_label("保存");
         g_signal_connect(entryWidgets.save_entry_button, "clicked", G_CALLBACK(on_save_entry_clicked), &entryWidgets);
+        gtk_grid_attach(GTK_GRID(entryWidgets.grid), entryWidgets.save_entry_button, 0, 8, 1, 1);
+
+        // 取消按钮
+        entryWidgets.save_entry_button = gtk_button_new_with_label("取消");
+        g_signal_connect(entryWidgets.save_entry_button, "clicked", G_CALLBACK(on_cancel_save_clicked), &entryWidgets);
         gtk_grid_attach(GTK_GRID(entryWidgets.grid), entryWidgets.save_entry_button, 1, 8, 1, 1);
     } else if(entryWidgets.section == 3) {
         entryWidgets.gender_entry = gtk_entry_new();
@@ -174,7 +232,13 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
         // 保存按钮
         entryWidgets.save_entry_button = gtk_button_new_with_label("保存");
         g_signal_connect(entryWidgets.save_entry_button, "clicked", G_CALLBACK(on_save_entry_clicked), &entryWidgets);
+        gtk_grid_attach(GTK_GRID(entryWidgets.grid), entryWidgets.save_entry_button, 0, 6, 1, 1);
+
+        // 取消按钮
+        entryWidgets.save_entry_button = gtk_button_new_with_label("取消");
+        g_signal_connect(entryWidgets.save_entry_button, "clicked", G_CALLBACK(on_cancel_save_clicked), &entryWidgets);
         gtk_grid_attach(GTK_GRID(entryWidgets.grid), entryWidgets.save_entry_button, 1, 6, 1, 1);
+
     }
     else {
         GtkWidget *dialog = gtk_message_dialog_new(NULL,
@@ -187,12 +251,8 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
         return;
     }
 
-    
-
-
-
     gtk_widget_show_all(entryWidgets.window);
-
+    gtk_main();
 }
 
 static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets) { 
@@ -303,14 +363,15 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
         strncpy(entryWidgets->employee->representative,representative_const,MAX_LENGTH);
         entryWidgets->employee->representative[strcspn(entryWidgets->employee->representative, "\n")] = 0;
         if (isEmpty(entryWidgets->employee->representative)) strcpy(entryWidgets->employee->representative, " ");
-        
-        system(SYSTEM_CLEAR);
+        saveEmployeeToFile(*entryWidgets->employee);
+        displayEmployee(*entryWidgets->employee);
         break;
     case 2:
         strcpy(entryWidgets->customer->name, userName);
         strcpy(entryWidgets->customer->email, email);
         strcpy(entryWidgets->customer->phone, phone);
-        system(SYSTEM_CLEAR);
+        saveCustomerToFile(*entryWidgets->customer);
+        displayCustomer(*entryWidgets->customer);
         break;
     case 3:
         strcpy(entryWidgets->contact->name, userName);
@@ -323,15 +384,193 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
         strncpy(entryWidgets->contact->representative,representative_const,MAX_LENGTH);
         entryWidgets->contact->representative[strcspn(entryWidgets->contact->representative, "\n")] = 0;
         if (isEmpty(entryWidgets->contact->representative)) strcpy(entryWidgets->contact->representative, " ");
-        system(SYSTEM_CLEAR);
+        saveContactToFile(*entryWidgets->contact);
+        displayContact(*entryWidgets->contact);
         break;
     default:
         return;
     }
+    gtk_widget_hide(entryWidgets->window);
+    return;
+}
+
+void on_cancel_save_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
+{
+    gtk_widget_hide(entryWidgets->window);
 }
 
 // 增加后一列
 void addColumn(char *fullLine, const char *newOne) {
     strcat(fullLine, "|||");
     strcat(fullLine, newOne);
+}
+
+// 打印客户信息
+void printNode_cus(node_cus *node) {
+    printf("%s - %s - %s - %s - %s - %s - %s - %s\n", 
+        node->customer.name,
+        node->customer.region,
+        node->customer.address, 
+        node->customer.legalRepresentative,
+        node->customer.scale, 
+        node->customer.businessContactLevel,
+        node->customer.email,
+        node->customer.phone
+    );
+}
+
+// 打印联络人信息
+void printNode_ctp(node_ctp *node) {
+    printf("%s - %s - %s - %s - %s - %s\n", 
+        node->contactPerson.name,
+        node->contactPerson.gender,
+        node->contactPerson.birthday, 
+        node->contactPerson.email,
+        node->contactPerson.phone,
+        node->contactPerson.representative
+    );
+}
+
+// 打印业务员信息
+void printNode_emp(node_emp *node) {
+    printf("%s - %s - %s - %s - %s - %s\n", 
+        node->employee.name,
+        node->employee.gender,
+        node->employee.birthday, 
+        node->employee.email,
+        node->employee.phone,
+        node->employee.representative
+    );
+}
+
+// 打印通信记录信息
+void printNode_rec(node_rec *node) {
+    printf("%s - %s - %s - %s - %s - %s - %s\n", 
+        node->record.user,
+        node->record.companyName,
+        node->record.contactName,
+        node->record.date, 
+        node->record.time,
+        node->record.duration,
+        node->record.content
+    );
+}
+
+// 显示一个小菜单
+int beforeInfo(head_node *head, const char *prompt) {
+    char get[MAX_LENGTH];
+    if (IsManager) {
+        printf("请选择%s的数据类型：\n", prompt);
+        printf("1. 客户\n");
+        printf("2. 联络人\n");
+        printf("3. 业务员\n");
+        printf("输入选项：");
+
+        char get[MAX_LENGTH];
+        getInput(get, sizeof(get));
+        system(SYSTEM_CLEAR);
+        
+        if (!isOneChar(get)) {
+            printf("无效的选择\n");
+            return -1;
+        }
+    } else {
+        get[0] = '1';
+    }
+
+    switch (get[0]) {
+    case '1':
+        if (head->is_cus) {
+            return 0;
+        } else {
+            printf("无法%s客户信息。\n", prompt);
+            return -1;
+        }
+    case '2':
+        if (IsManager && head->is_ctp) {
+            return 1;
+        } else {
+            printf("无法%s联络人信息。\n", prompt);
+            return -1;
+        }
+    case '3':
+        if (IsManager && head->is_emp) {
+            return 2;
+        } else {
+            printf("无法%s业务员信息。\n", prompt);
+            return -1;
+        }
+    // case '4':
+    //     if (IsManager && head->is_rec) {
+    //         return 3;
+    //     } else {
+    //         printf("无法%s记录信息。\n", prompt);
+    //         return -1;
+    //     }
+    default:
+        printf("无效的选择。\n");
+        return -1;
+    }
+}
+
+// 打印需要的链表内容
+void printNodeList(head_node *head, int choice) {
+    if (head == NULL || head->is_empty) {
+        printf("没有可显示的数据。\n");
+        return;
+    }
+
+    switch (choice) {
+    case 0:  // 客户信息
+        if (head->is_cus) {
+            node_cus *current = head->next_cus;
+            printf("客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n");
+            while (current != NULL) {
+                printNode_cus(current);
+                current = current->next;
+            }
+        } else {
+            printf("没有可显示的客户信息。\n");
+        }
+        break;
+    case 1:  // 联络人信息
+        if (head->is_ctp) {
+            node_ctp *current = head->next_ctp;
+            printf("联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+            while (current != NULL) {
+                printNode_ctp(current);
+                current = current->next;
+            }
+        } else {
+            printf("没有可显示的联络人信息。\n");
+        }
+        break;
+    case 2:  // 业务员信息
+        if (head->is_emp) {
+            node_emp *current = head->next_emp;
+            printf("业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+            while (current != NULL) {
+                printNode_emp(current);
+                current = current->next;
+            }
+        } else {
+            printf("没有可显示的业务员信息。\n");
+        }
+        break;
+    case 3:  // 通信记录
+        if (head->is_rec) {
+            node_rec *current = head->next_rec;
+            printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
+            while (current != NULL) {
+                printNode_rec(current);
+                current = current->next;
+            }
+        } else {
+            printf("没有可显示的通信记录信息。\n");
+        }
+        break;
+    default:
+        printf("无效的选项。\n");
+        break;
+    }
 }

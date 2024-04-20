@@ -1,52 +1,83 @@
 // widgets/customer_assign.c
 #include "../header.h"
 
-void customerAssignWidget();
-void addAssignment();
-void changeAssignment();
-void removeAssignment();
-void displayAssignment();
+
 
 // Main widget for customer assignment management
 void customerAssignWidget() {
     initializeInfoFile("assignments.csv", "Employee|||Customer");
-    while (true) {
-        printf("\n客户分配管理\n");
-        printf("1. 分配客户\n");
-        printf("2. 修改客户分配\n");
-        printf("3. 删除客户分配\n");
-        printf("4. 查看分配的客户\n");
-        printf("5. 返回\n");
-        printf("请选择操作（1-5）：");
+    
+    customerAssignWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(customerAssignWidgets.window), "通信管理系统 - 经理菜单 - 客户分配管理");
+    gtk_window_set_default_size(GTK_WINDOW(customerAssignWidgets.window), 500, 400);
+    gtk_container_set_border_width(GTK_CONTAINER(customerAssignWidgets.window), 10);
+    gtk_window_set_position(GTK_WINDOW(customerAssignWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
+    g_signal_connect(customerAssignWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-        char get[MAX_LENGTH];
-        getInput(get, sizeof(get));
-        system(SYSTEM_CLEAR);
+    customerAssignWidgets.grid = gtk_grid_new();
+    gtk_container_add(GTK_CONTAINER(customerAssignWidgets.window), customerAssignWidgets.grid);
+    gtk_widget_set_halign(customerAssignWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(customerAssignWidgets.grid, GTK_ALIGN_CENTER);
 
-        if (!isOneChar(get)) {
-            printf("无效的选择，请重新输入。\n");
-            continue;
-        }
-        switch (get[0]) {
-        case '1':
-            addAssignment();
-            break;
-        case '2':
-            changeAssignment();
-            break;
-        case '3':
-            removeAssignment();
-            break;
-        case '4':
-            displayAssignment();
-            break;
-        case '5':
-            return;
-        default:
-            printf("无效的选项，请重新输入。\n");
-            break;
-        }
-    }
+    customerAssignWidgets.addAssignment_btn = gtk_button_new_with_label("分配客户");
+    g_signal_connect(customerAssignWidgets.addAssignment_btn, "clicked", G_CALLBACK(on_addAssignment_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(customerAssignWidgets.grid), customerAssignWidgets.addAssignment_btn, 0, 0, 2, 1);
+
+    customerAssignWidgets.changeAssignment_btn = gtk_button_new_with_label("修改客户分配");
+    g_signal_connect(customerAssignWidgets.changeAssignment_btn, "clicked", G_CALLBACK(on_changeAssignment_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(customerAssignWidgets.grid), customerAssignWidgets.changeAssignment_btn, 0, 1, 2, 1);
+
+    customerAssignWidgets.removeAssignment_btn = gtk_button_new_with_label("删除客户分配");
+    g_signal_connect(customerAssignWidgets.removeAssignment_btn, "clicked", G_CALLBACK(on_removeAssignment_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(customerAssignWidgets.grid), customerAssignWidgets.removeAssignment_btn, 0, 2, 2, 1);
+
+    customerAssignWidgets.displayAssignment_btn = gtk_button_new_with_label("查看分配的客户");
+    g_signal_connect(customerAssignWidgets.displayAssignment_btn, "clicked", G_CALLBACK(on_displayAssignment_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(customerAssignWidgets.grid), customerAssignWidgets.displayAssignment_btn, 0, 3, 2, 1);
+
+    customerAssignWidgets.backToManagerMenu_btn = gtk_button_new_with_label("返回");
+    g_signal_connect(customerAssignWidgets.backToManagerMenu_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(customerAssignWidgets.grid), customerAssignWidgets.backToManagerMenu_btn, 0, 4, 2, 1);
+    
+    gtk_widget_show_all(customerAssignWidgets.window);
+    gtk_main();
+    // while (true) {
+    //     printf("\n客户分配管理\n");
+    //     printf("1. 分配客户\n");
+    //     printf("2. 修改客户分配\n");
+    //     printf("3. 删除客户分配\n");
+    //     printf("4. 查看分配的客户\n");
+    //     printf("5. 返回\n");
+    //     printf("请选择操作（1-5）：");
+
+    //     char get[MAX_LENGTH];
+    //     getInput(get, sizeof(get));
+    //     system(SYSTEM_CLEAR);
+
+    //     if (!isOneChar(get)) {
+    //         printf("无效的选择，请重新输入。\n");
+    //         continue;
+    //     }
+    //     switch (get[0]) {
+    //     case '1':
+    //         addAssignment();
+    //         break;
+    //     case '2':
+    //         changeAssignment();
+    //         break;
+    //     case '3':
+    //         removeAssignment();
+    //         break;
+    //     case '4':
+    //         displayAssignment();
+    //         break;
+    //     case '5':
+    //         return;
+    //     default:
+    //         printf("无效的选项，请重新输入。\n");
+    //         break;
+    //     }
+    // }
 }
 
 void addAssignment() {
@@ -146,4 +177,20 @@ void displayAssignment() {
     fclose(file);
 }
 
+static void on_addAssignment_clicked(GtkWidget *widget, gpointer data) {
+    addAssignment();
+}
+static void on_changeAssignment_clicked(GtkWidget *widget, gpointer data) {
+    changeAssignment();
+}
+static void on_removeAssignment_clicked(GtkWidget *widget, gpointer data) {
+    removeAssignment();
+}
+static void on_displayAssignment_clicked(GtkWidget *widget, gpointer data) {
+    displayAssignment();
+}
+static void on_backToManagerMenu_clicked(GtkWidget *widget, gpointer data) {
+    gtk_widget_destroy(customerAssignWidgets.window);
+    gtk_widget_show(managerMenuWidgets.window);
+}
 // end widgets/customer_assign.c

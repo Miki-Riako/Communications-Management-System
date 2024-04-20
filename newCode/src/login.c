@@ -1,71 +1,10 @@
 // login.c
 #include "header.h"
-#include "menu.c"
-
-typedef struct {
-    GtkWidget *window;
-    GtkWidget *grid;
-    GtkWidget *loginManager_btn;
-    GtkWidget *loginEmployee_btn;
-    GtkWidget *register_btn;
-    GtkWidget *quit_btn;
-} StartWidgets;
-StartWidgets startWidgets;
-
-typedef struct {
-    GtkWidget *window;
-    GtkWidget *grid;
-    GtkWidget *label;
-    GtkWidget *password_entry;
-    GtkWidget *confirmLoginManager_btn;
-    GtkWidget *backToStart_btn;
-    int chance;
-} LoginManagerWidgets;
-LoginManagerWidgets loginManagerWidgets;
-
-typedef struct {
-    GtkWidget *window;
-    GtkWidget *grid;
-    GtkWidget *username_label;
-    GtkWidget *username_entry;
-    GtkWidget *password_label;
-    GtkWidget *password_entry;
-    GtkWidget *confirmLoginManager_btn;
-    GtkWidget *backToStart_btn;
-}LoginEmployeeWidgets;
-LoginEmployeeWidgets loginEmployeeWidgets;
-
-typedef struct {
-    GtkWidget *window;
-    GtkWidget *grid;
-    GtkWidget *username_label;
-    GtkWidget *username_entry;
-    GtkWidget *password_label;
-    GtkWidget *password_entry;
-    GtkWidget *confirmRegister_btn;
-    GtkWidget *backToStart_btn;
-}RegisterWidgets;
-RegisterWidgets registerWidgets;
-
-static void on_loginManager_clicked(GtkWidget *widget, gpointer data);
-static void on_loginEmployee_clicked(GtkWidget *widget, gpointer data);
-static void on_register_clicked(GtkWidget *widget, gpointer data);
-static void on_quit_clicked(GtkWidget *widget, gpointer data);
-
-static void on_confirm_loginManager_clicked(GtkWidget *widget, gpointer data);
-static void on_backtoStart_clicked(GtkWidget *widget, gpointer data);
-
-static void on_confirm_loginEmployee_clicked(GtkWidget *widget, gpointer data);
-
-static void on_confirm_Register_clicked(GtkWidget *widget, gpointer data);
-
-void startWidget();
-void loginManagerWidget();
-void loginEmployeeWidget();
-void registerWidget();
-bool verify(const char *username, const char *password);
+bool IsManager = false;
+char User[MAX_LENGTH];
 
 void startWidget() {
+    gtk_init(NULL, NULL);
     initializeInfoFile("user.csv", "");
     startWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(startWidgets.window), "开始界面");
@@ -97,16 +36,17 @@ void startWidget() {
     
      
     gtk_widget_show_all(startWidgets.window);
+    gtk_main();
 }
 
 void loginManagerWidget() {
-
+    gtk_init(NULL, NULL);
     loginManagerWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(loginManagerWidgets.window), "经理登录界面");
     gtk_window_set_default_size(GTK_WINDOW(loginManagerWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(loginManagerWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(loginManagerWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(loginManagerWidgets.window, "destroy", G_CALLBACK(on_backtoStart_clicked), NULL);
+    g_signal_connect(loginManagerWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
     loginManagerWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(loginManagerWidgets.window), loginManagerWidgets.grid);
@@ -130,15 +70,17 @@ void loginManagerWidget() {
     gtk_grid_attach(GTK_GRID(loginManagerWidgets.grid), loginManagerWidgets.backToStart_btn, 1, 2, 1, 1);
     
     gtk_widget_show_all(loginManagerWidgets.window);
+    gtk_main();
 }
 
 void loginEmployeeWidget() {
+    gtk_init(NULL, NULL);
     loginEmployeeWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(loginEmployeeWidgets.window), "业务员登录界面");
     gtk_window_set_default_size(GTK_WINDOW(loginEmployeeWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(loginEmployeeWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(loginEmployeeWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(loginEmployeeWidgets.window, "destroy", G_CALLBACK(on_backtoStart_clicked), NULL);
+    g_signal_connect(loginEmployeeWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
     loginEmployeeWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(loginEmployeeWidgets.window), loginEmployeeWidgets.grid);
@@ -165,10 +107,11 @@ void loginEmployeeWidget() {
     gtk_grid_attach(GTK_GRID(loginEmployeeWidgets.grid), loginEmployeeWidgets.backToStart_btn, 1, 2, 1, 1);
     
     gtk_widget_show_all(loginEmployeeWidgets.window);
-    
+    gtk_main();
 }
 
 void registerWidget() {
+    gtk_init(NULL, NULL);
     registerWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(registerWidgets.window), "用户注册界面");
     gtk_window_set_default_size(GTK_WINDOW(registerWidgets.window), 500, 400);
@@ -201,50 +144,8 @@ void registerWidget() {
     gtk_grid_attach(GTK_GRID(registerWidgets.grid), registerWidgets.backToStart_btn, 1, 2, 1, 1);
     
     gtk_widget_show_all(registerWidgets.window);
+    gtk_main();
 }
-
-bool verify(const char *username, const char *password) {
-    FILE *file;
-    char line[MAX_LENGTH * 3];
-    const char *delimiter = "|||";
-    char *delimiter_pos;
-
-    file = fopen("user.csv", "r");
-    if (!file) {
-        perror("打开文件失败");
-        return false;
-    }
-
-    while (fgets(line, sizeof(line), file)) {
-        char file_username[MAX_LENGTH], file_password[MAX_LENGTH];
-
-        // 找到分隔符位置
-        delimiter_pos = strstr(line, delimiter);
-        if (delimiter_pos) {
-            // 从行中提取用户名
-            *delimiter_pos = '\0';  // 切断字符串，结束用户名部分
-            strncpy(file_username, line, MAX_LENGTH - 1);
-            file_username[MAX_LENGTH - 1] = '\0';
-
-            // 提取密码，跳过分隔符
-            strncpy(file_password, delimiter_pos + strlen(delimiter), MAX_LENGTH - 1);
-            file_password[MAX_LENGTH - 1] = '\0';
-
-            // 删除密码末尾的可能的换行符
-            file_password[strcspn(file_password, "\n")] = '\0';
-
-            // 比较用户名和密码
-            if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
-                fclose(file);
-                return true; // 找到匹配项
-            }
-        }
-    }
-
-    fclose(file);
-    return false; // 未找到匹配项
-}
-
 
 static void on_loginManager_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(startWidgets.window);
@@ -259,7 +160,7 @@ static void on_register_clicked(GtkWidget *widget, gpointer data) {
     registerWidget();
 }
 static void on_quit_clicked(GtkWidget *widget, gpointer data) {
-    gtk_widget_destroy(startWidgets.window);
+    gtk_widget_hide(startWidgets.window);
     printf("程序已退出。\n");
     exit(0);
 }
@@ -267,7 +168,13 @@ static void on_quit_clicked(GtkWidget *widget, gpointer data) {
 
 static void on_confirm_loginManager_clicked(GtkWidget *widget, gpointer data) {
     if(!loginManagerWidgets.chance) {
-        printf("尝试使用密钥登录失败，系统关闭。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(loginEmployeeWidgets.window),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_OK,
+                                                   "尝试使用密钥登录失败，系统关闭。");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         exit(0);
     }
     const char *password_const = gtk_entry_get_text(GTK_ENTRY(loginManagerWidgets.password_entry));
@@ -275,45 +182,79 @@ static void on_confirm_loginManager_clicked(GtkWidget *widget, gpointer data) {
     strncpy(password,password_const,MAX_LENGTH);
     password[strcspn(password, "\n")] = 0;
     if(isSameString(password, SECRET_KEY) || DEBUG_MODE) {
-        printf("登录成功！欢迎, 经理!\n");
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(loginEmployeeWidgets.window),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_INFO,
+                                                   GTK_BUTTONS_OK,
+                                                   "登录成功！欢迎, 经理!");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         strcpy(User, "Manager");
         IsManager = true;
+        gtk_widget_destroy(loginManagerWidgets.window);
         managerMenuWidget();
+        return;  
     } else {
         loginManagerWidgets.chance--;
-        printf("登录失败，密码错误。还剩下%d次机会。\n", loginManagerWidgets.chance);
+        // 创建消息对话框，先不设置具体的消息内容
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                "登录失败");
+
+        // 设置带格式的次级文本
+        gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
+                                                "密码错误。还剩下 %d 次机会。", loginManagerWidgets.chance);
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        return;
     }
 }
 static void on_backtoStart_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_show(startWidgets.window);
-    gtk_widget_destroy(GTK_WIDGET(data));  
+    gtk_widget_destroy((GtkWidget*)data);  
 }
 
 static void on_confirm_loginEmployee_clicked(GtkWidget *widget, gpointer data) {
     char encryptedPassword[MAX_LENGTH * 2];
-    const char *username_const = gtk_entry_get_text(GTK_ENTRY(registerWidgets.username_entry));
-    const char *password_const = gtk_entry_get_text(GTK_ENTRY(registerWidgets.password_entry));
+    const char *username_const = gtk_entry_get_text(GTK_ENTRY(loginEmployeeWidgets.username_entry));
+    const char *password_const = gtk_entry_get_text(GTK_ENTRY(loginEmployeeWidgets.password_entry));
     char username[MAX_LENGTH];
     char password[MAX_LENGTH];
 
     strncpy(username,username_const,MAX_LENGTH);
     username[strcspn(username, "\n")] = 0;
+    if (isEmpty(username)) strcpy(username, " ");
     strncpy(password,password_const,MAX_LENGTH);
     password[strcspn(password, "\n")] = 0;
+    if (isEmpty(password)) strcpy(password, " ");
     
     xorEncryptDecrypt(password, strlen(password), encryptedPassword); // 加密用户密码
-
-    system(SYSTEM_CLEAR);
-
+    
     // 验证登录
     if (verify(username, encryptedPassword) || DEBUG_MODE) {
-        printf("登录成功！欢迎, %s!\n", username);
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(loginEmployeeWidgets.window),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_INFO,
+                                                   GTK_BUTTONS_OK,
+                                                   "登录成功！");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         strcpy(User, username);
         IsManager = false;
-        employeeMenuWidget();
+        gtk_widget_destroy(loginEmployeeWidgets.window);
+        employeeMenuWidget();    
         return;
     } else {
-        printf("登录失败，用户名或密码错误。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(loginEmployeeWidgets.window),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_OK,
+                                                   "登录失败，用户名或密码错误。");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        return;
     }
 }
 
@@ -391,8 +332,9 @@ static void on_confirm_Register_clicked(GtkWidget *widget, gpointer data) {
     if (response == GTK_RESPONSE_YES) {
         Employee newEmployee;
         addEntry(1, "employees.csv", "请输入业务员姓名：", &newEmployee, NULL, NULL);
-        saveEmployeeToFile(newEmployee);
-        displayEmployee(newEmployee);
+        
+        // saveEmployeeToFile(newEmployee);
+        // displayEmployee(newEmployee);
     }
     system(SYSTEM_CLEAR);
 }

@@ -1,16 +1,6 @@
 // widgets/group_manage.c
 #include "../header.h"
 
-void createDirectory(const char *path);
-void createGroup(const char *groupName);
-void regionGroup(const char *groupName);
-void scaleGroup(const char *groupName);
-void contactGroup(const char *groupName);
-void addGroup();
-void changeGroup();
-void removeGroup();
-void showGroups();
-
 void groupManageWidget() {
     createDirectory("groups");
     while (true) {

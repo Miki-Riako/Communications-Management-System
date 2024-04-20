@@ -1,12 +1,6 @@
 // widgets/record_manage.c
 #include "../header.h"
 
-void recordsManageWidget();
-void addRecord();
-void changeRecord();
-void showRecord();
-void displayRecord(Record record);
-
 void recordsManageWidget() {
     initializeInfoFile("records.csv", "User|||CompanyName|||ContactName|||Date|||Time|||Duration|||Content");
     while (true) {
@@ -202,6 +196,5 @@ void displayRecord(Record record) {
     printf("通信时长: %s\n", record.duration);
     printf("通信内容: %s\n", record.content);
 }
-
 
 // end widgets/record_manage.c

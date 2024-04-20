@@ -1,3 +1,5 @@
+#include "../header.h"
+
 // XOR 加密/解密算法
 void xorEncryptDecrypt(const char *input, size_t length, char *output) {
     if (input == NULL || output == NULL) {
@@ -179,4 +181,46 @@ bool matchDuration(const char *duration) {
     } else {
         return false; // 匹配失败
     }
+}
+
+bool verify(const char *username, const char *password) {
+    FILE *file;
+    char line[MAX_LENGTH * 3];
+    const char *delimiter = "|||";
+    char *delimiter_pos;
+
+    file = fopen("user.csv", "r");
+    if (!file) {
+        perror("打开文件失败");
+        return false;
+    }
+
+    while (fgets(line, sizeof(line), file)) {
+        char file_username[MAX_LENGTH], file_password[MAX_LENGTH];
+
+        // 找到分隔符位置
+        delimiter_pos = strstr(line, delimiter);
+        if (delimiter_pos) {
+            // 从行中提取用户名
+            *delimiter_pos = '\0';  // 切断字符串，结束用户名部分
+            strncpy(file_username, line, MAX_LENGTH - 1);
+            file_username[MAX_LENGTH - 1] = '\0';
+
+            // 提取密码，跳过分隔符
+            strncpy(file_password, delimiter_pos + strlen(delimiter), MAX_LENGTH - 1);
+            file_password[MAX_LENGTH - 1] = '\0';
+
+            // 删除密码末尾的可能的换行符
+            file_password[strcspn(file_password, "\n")] = '\0';
+
+            // 比较用户名和密码
+            if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
+                fclose(file);
+                return true; // 找到匹配项
+            }
+        }
+    }
+
+    fclose(file);
+    return false; // 未找到匹配项
 }
