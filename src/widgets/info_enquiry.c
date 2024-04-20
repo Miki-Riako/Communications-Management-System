@@ -70,15 +70,7 @@ void simpleQuery(head_node *head) {
         printf("客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n");
         while (cusNode != NULL) {
             if (isSameString(cusNode->customer.name, queryName)) {
-                printf("%s - %s - %s - %s - %s - %s - %s - %s\n", 
-                    cusNode->customer.name,
-                    cusNode->customer.region,
-                    cusNode->customer.address, 
-                    cusNode->customer.legalRepresentative,
-                    cusNode->customer.scale, 
-                    cusNode->customer.businessContactLevel,
-                    cusNode->customer.email,
-                    cusNode->customer.phone);
+                printNode_cus(cusNode);
                 found = true;
             }
             cusNode = cusNode->next;
@@ -90,13 +82,7 @@ void simpleQuery(head_node *head) {
         printf("联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
         while (ctpNode != NULL) {
             if (isSameString(ctpNode->contactPerson.name, queryName)) {
-                printf("%s - %s - %s - %s - %s - %s\n", 
-                    ctpNode->contactPerson.name,
-                    ctpNode->contactPerson.gender,
-                    ctpNode->contactPerson.birthday, 
-                    ctpNode->contactPerson.email,
-                    ctpNode->contactPerson.phone,
-                    ctpNode->contactPerson.representative);
+                printNode_ctp(ctpNode);
                 found = true;
             }
             ctpNode = ctpNode->next;
@@ -108,13 +94,7 @@ void simpleQuery(head_node *head) {
         printf("业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
         while (empNode != NULL) {
             if (isSameString(empNode->employee.name, queryName)) {
-                printf("%s - %s - %s - %s - %s - %s\n", 
-                    empNode->employee.name,
-                    empNode->employee.gender,
-                    empNode->employee.birthday, 
-                    empNode->employee.email,
-                    empNode->employee.phone,
-                    empNode->employee.representative);
+                printNode_emp(empNode);
                 found = true;
             }
             empNode = empNode->next;
@@ -131,14 +111,7 @@ void simpleQuery(head_node *head) {
     //     printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
     //     while (recNode != NULL) {
     //         if (isSameString(recNode->record.companyName, queryName)) {
-    //             printf("%s - %s - %s - %s - %s - %s - %s\n", 
-    //                 recNode->record.user,
-    //                 recNode->record.companyName,
-    //                 recNode->record.contactName,
-    //                 recNode->record.date, 
-    //                 recNode->record.time,
-    //                 recNode->record.duration,
-    //                 recNode->record.content);
+    //             printNode_rec(recNode);
     //             found = true;
     //         }
     //         recNode = recNode->next;

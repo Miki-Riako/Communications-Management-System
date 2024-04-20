@@ -270,10 +270,18 @@ void loadFile(head_node *head) {
     FILE *assignmentsFile = fopen("assignments.csv", "r");
     if (assignmentsFile) {
         char line[5 * MAX_LENGTH];
+        char *token = NULL;
         while (fgets(line, sizeof(line), assignmentsFile)) {
             char *employee = strtok(line, "|||");
             char *customer = strtok(NULL, "\n");
-            if (strcmp(employee, User) == 0) {
+
+            token = strtok(NULL, "|||\n\r");
+            if (token) {
+                cleanField(token);
+                strcpy(customer, token);
+            }
+
+            if (isSameString(employee, User)) {
                 // 找到对应客户，加载其信息
                 loadCustomerData("customers.csv", customer, head);
             }
@@ -314,8 +322,14 @@ void loadCustomerData(const char *filename, const char *customerName, head_node 
             strcpy(customer.businessContactLevel, token);
             if (!(token = strtok(NULL, "|||"))) break;
             strcpy(customer.email, token);
-            if (!(token = strtok(NULL, "\n"))) break;
-            strcpy(customer.phone, token);
+
+            // 处理电话号码，确保去除后续所有非必要字符
+            token = strtok(NULL, "|||\n\r"); // 修改这里以处理可能的多余分隔符
+            if (token) {
+                cleanField(token); // 一个新的函数用来清除字段中多余的分隔符和空白字符
+                strcpy(customer.phone, token);
+            }
+
             appendNode_cus(head, customer);
             break;  // 找到后立即退出循环
         }

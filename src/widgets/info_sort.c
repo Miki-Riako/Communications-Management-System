@@ -59,74 +59,21 @@ void defaultSort(head_node *head) {
     if (which == -1) return;  // 如果选择无效或不允许展示，则返回
 
     switch (which) {
-    case 0: {
-        node_cus *cus = head->next_cus;
+    case 0:
         printf("客户信息列表：\n");
-        printf("名称 - 地区 - 地址 - 法人 - 规模 - 联系程度 - 邮箱 - 电话\n");
-        while (cus != NULL) {
-            printf("%s - %s - %s - %s - %s - %s - %s - %s\n",
-                cus->customer.name,
-                cus->customer.region,
-                cus->customer.address,
-                cus->customer.legalRepresentative,
-                cus->customer.scale,
-                cus->customer.businessContactLevel,
-                cus->customer.email,
-                cus->customer.phone
-            );
-            cus = cus->next;
-        }
         break;
-    } case 1: {
-        node_ctp *ctp = head->next_ctp;
+    case 1:
         printf("联络人信息列表：\n");
-        printf("名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
-        while (ctp != NULL) {
-            printf("%s - %s - %s - %s - %s - %s\n",
-                ctp->contactPerson.name,
-                ctp->contactPerson.gender,
-                ctp->contactPerson.birthday,
-                ctp->contactPerson.email,
-                ctp->contactPerson.phone,
-                ctp->contactPerson.representative
-            );
-            ctp = ctp->next;
-        }
         break;
-    } case 2: {
-        node_emp *emp = head->next_emp;
+    case 2:
         printf("业务员信息列表：\n");
-        printf("名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
-        while (emp != NULL) {
-            printf("%s - %s - %s - %s - %s - %s\n",
-                emp->employee.name,
-                emp->employee.gender,
-                emp->employee.birthday,
-                emp->employee.email,
-                emp->employee.phone,
-                emp->employee.representative
-            );
-            emp = emp->next;
-        }
         break;
-    }}
+    }
+    printNodeList(head, which);
 }
-    // } case 3: {
-    //     node_rec *rec = head->next_rec;
+    // case 3:
     //     printf("通信记录列表：\n");
     //     printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
-    //     while (rec != NULL) {
-    //         printf("%s - %s - %s - %s - %s - %s - %s\n",
-    //             rec->record.user,
-    //             rec->record.companyName,
-    //             rec->record.contactName,
-    //             rec->record.date,
-    //             rec->record.time,
-    //             rec->record.duration,
-    //             rec->record.content
-    //         );
-    //         rec = rec->next;
-    //     }
     //     break;
 
 // end widgets/info_sort.c

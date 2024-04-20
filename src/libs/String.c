@@ -204,3 +204,116 @@ int beforeInfo(head_node *head, const char *prompt) {
         return -1;
     }
 }
+
+// 打印客户信息
+void printNode_cus(node_cus *node) {
+    printf("%s - %s - %s - %s - %s - %s - %s - %s\n", 
+        node->customer.name,
+        node->customer.region,
+        node->customer.address, 
+        node->customer.legalRepresentative,
+        node->customer.scale, 
+        node->customer.businessContactLevel,
+        node->customer.email,
+        node->customer.phone
+    );
+}
+
+// 打印联络人信息
+void printNode_ctp(node_ctp *node) {
+    printf("%s - %s - %s - %s - %s - %s\n", 
+        node->contactPerson.name,
+        node->contactPerson.gender,
+        node->contactPerson.birthday, 
+        node->contactPerson.email,
+        node->contactPerson.phone,
+        node->contactPerson.representative
+    );
+}
+
+// 打印业务员信息
+void printNode_emp(node_emp *node) {
+    printf("%s - %s - %s - %s - %s - %s\n", 
+        node->employee.name,
+        node->employee.gender,
+        node->employee.birthday, 
+        node->employee.email,
+        node->employee.phone,
+        node->employee.representative
+    );
+}
+
+// 打印通信记录信息
+void printNode_rec(node_rec *node) {
+    printf("%s - %s - %s - %s - %s - %s - %s\n", 
+        node->record.user,
+        node->record.companyName,
+        node->record.contactName,
+        node->record.date, 
+        node->record.time,
+        node->record.duration,
+        node->record.content
+    );
+}
+
+// 打印需要的链表内容
+void printNodeList(head_node *head, int choice) {
+    if (head == NULL || head->is_empty) {
+        printf("没有可显示的数据。\n");
+        return;
+    }
+
+    switch (choice) {
+    case 0:  // 客户信息
+        if (head->is_cus) {
+            node_cus *current = head->next_cus;
+            printf("客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n");
+            while (current != NULL) {
+                printNode_cus(current);
+                current = current->next;
+            }
+        } else {
+            printf("没有可显示的客户信息。\n");
+        }
+        break;
+    case 1:  // 联络人信息
+        if (head->is_ctp) {
+            node_ctp *current = head->next_ctp;
+            printf("联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+            while (current != NULL) {
+                printNode_ctp(current);
+                current = current->next;
+            }
+        } else {
+            printf("没有可显示的联络人信息。\n");
+        }
+        break;
+    case 2:  // 业务员信息
+        if (head->is_emp) {
+            node_emp *current = head->next_emp;
+            printf("业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+            while (current != NULL) {
+                printNode_emp(current);
+                current = current->next;
+            }
+        } else {
+            printf("没有可显示的业务员信息。\n");
+        }
+        break;
+    case 3:  // 通信记录
+        if (head->is_rec) {
+            node_rec *current = head->next_rec;
+            printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
+            while (current != NULL) {
+                printNode_rec(current);
+                current = current->next;
+            }
+        } else {
+            printf("没有可显示的通信记录信息。\n");
+        }
+        break;
+    default:
+        printf("无效的选项。\n");
+        break;
+    }
+}
