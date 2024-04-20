@@ -3,6 +3,7 @@
 #include "widgets/customer_assign.c"
 #include "widgets/group_manage.c"
 #include "widgets/records_manage.c"
+#include "widgets/info_enquiry.c"
 
 #include "widgets/system_setting.c"
 
@@ -44,7 +45,7 @@ void managerMenuWidget() {
             groupManageWidget();
             break;
         case '4':
-            
+            infoEnquiryWidget();
             break;
         case '5':
             
@@ -90,7 +91,7 @@ void employeeMenuWidget() {
         }
         switch(get[0]) {
         case '1':
-            
+            infoEnquiryWidget();
             break;
         case '2':
             

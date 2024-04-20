@@ -248,3 +248,196 @@ bool copyFile(const char *sourcePath, const char *destinationPath) {
     fclose(dst);
     return true;
 }
+
+// 加载文件至内存层
+void loadFile(head_node *head) {
+    head->is_empty = true;
+    head->is_cus = false;
+    head->is_ctp = false;
+    head->is_emp = false;
+    head->is_rec = false;
+    head->next_cus = NULL;
+    head->next_ctp = NULL;
+    head->next_emp = NULL;
+    head->next_rec = NULL;
+    if (IsManager) {
+        loadCustomers("customers.csv", head);
+        loadContactPersons("contacts.csv", head);
+        loadEmployees("employees.csv", head);
+        loadRecords("records.csv", head);
+    }
+    // 非管理员只加载其负责的客户数据
+    FILE *assignmentsFile = fopen("assignments.csv", "r");
+    if (assignmentsFile) {
+        char line[5 * MAX_LENGTH];
+        while (fgets(line, sizeof(line), assignmentsFile)) {
+            char *employee = strtok(line, "|||");
+            char *customer = strtok(NULL, "\n");
+            if (strcmp(employee, User) == 0) {
+                // 找到对应客户，加载其信息
+                loadCustomerData("customers.csv", customer, head);
+            }
+        }
+        fclose(assignmentsFile);
+    }
+}
+
+// 实际加载客户数据的函数
+void loadCustomerData(const char *filename, const char *customerName, head_node *head) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("打开客户文件失败");
+        return;
+    }
+
+    // 跳过标题行
+    char line[5 * MAX_LENGTH];
+    fgets(line, sizeof(line), file);
+
+    while (fgets(line, sizeof(line), file)) {
+        Customer customer;
+        char *token = strtok(line, "|||");
+        if (!token) continue; // 跳过解析失败的行
+
+        // 解析客户信息，根据文件中的列顺序
+        strcpy(customer.name, token);
+        if (strcmp(customer.name, customerName) == 0) {
+            if (!(token = strtok(NULL, "|||"))) break;
+            strcpy(customer.region, token);
+            if (!(token = strtok(NULL, "|||"))) break;
+            strcpy(customer.address, token);
+            if (!(token = strtok(NULL, "|||"))) break;
+            strcpy(customer.legalRepresentative, token);
+            if (!(token = strtok(NULL, "|||"))) break;
+            strcpy(customer.scale, token);
+            if (!(token = strtok(NULL, "|||"))) break;
+            strcpy(customer.businessContactLevel, token);
+            if (!(token = strtok(NULL, "|||"))) break;
+            strcpy(customer.email, token);
+            if (!(token = strtok(NULL, "\n"))) break;
+            strcpy(customer.phone, token);
+            appendNode_cus(head, customer);
+            break;  // 找到后立即退出循环
+        }
+    }
+    fclose(file);
+}
+
+// 加载客户的所有数据
+void loadCustomers(const char *filename, head_node *head) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("打开客户文件失败");
+        return;
+    }
+    char line[1024];
+    fgets(line, sizeof(line), file); // 跳过标题行
+    while (fgets(line, sizeof(line), file)) {
+        Customer customer;
+        char *token = strtok(line, "|||");
+        if (!token) continue;
+        strcpy(customer.name, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(customer.region, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(customer.address, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(customer.legalRepresentative, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(customer.scale, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(customer.businessContactLevel, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(customer.email, token);
+        if (!(token = strtok(NULL, "\n"))) continue;
+        strcpy(customer.phone, token);
+        appendNode_cus(head, customer);
+    }
+    fclose(file);
+}
+void loadContactPersons(const char *filename, head_node *head) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("打开联系人文件失败");
+        return;
+    }
+    char line[1024];
+    fgets(line, sizeof(line), file); // 跳过标题行
+    while (fgets(line, sizeof(line), file)) {
+        ContactPerson contact;
+        char *token = strtok(line, "|||");
+        if (!token) continue;
+        strcpy(contact.name, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(contact.gender, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(contact.birthday, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(contact.email, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(contact.phone, token);
+        if (!(token = strtok(NULL, "\n"))) continue;
+        strcpy(contact.representative, token);
+        appendNode_ctp(head, contact);
+    }
+    fclose(file);
+}
+void loadEmployees(const char *filename, head_node *head) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("打开员工文件失败");
+        return;
+    }
+
+    char line[1024];
+    fgets(line, sizeof(line), file); // 跳过标题行
+
+    while (fgets(line, sizeof(line), file)) {
+        Employee employee;
+        char *token = strtok(line, "|||");
+        if (!token) continue;
+        strcpy(employee.name, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(employee.gender, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(employee.birthday, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(employee.email, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(employee.phone, token);
+        if (!(token = strtok(NULL, "\n"))) continue;
+        strcpy(employee.representative, token);
+
+        appendNode_emp(head, employee);
+    }
+}
+void loadRecords(const char *filename, head_node *head) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("打开记录文件失败");
+        return;
+    }
+    char line[1024];
+    fgets(line, sizeof(line), file); // 跳过标题行
+    while (fgets(line, sizeof(line), file)) {
+        Record record;
+        char *token = strtok(line, "|||");
+        if (!token) continue;
+        strcpy(record.companyName, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.contactName, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.date, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.time, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.duration, token);
+        if (!(token = strtok(NULL, "\n"))) continue;
+        strcpy(record.content, token);
+        appendNode_rec(head, record);
+    }
+}
+
+
+
+
