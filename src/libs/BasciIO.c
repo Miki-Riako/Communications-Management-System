@@ -306,7 +306,6 @@ void loadCustomerData(const char *filename, const char *customerName, head_node 
         Customer customer;
         char *token = strtok(line, "|||");
         if (!token) continue; // 跳过解析失败的行
-
         // 解析客户信息，根据文件中的列顺序
         strcpy(customer.name, token);
         if (strcmp(customer.name, customerName) == 0) {
