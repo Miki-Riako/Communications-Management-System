@@ -3,6 +3,7 @@
 
 void infoSortWidget();
 void defaultSort(head_node *head);
+void simpleSort(head_node *head);
 
 void infoSortWidget() {
     initializeAll();
@@ -19,7 +20,7 @@ void infoSortWidget() {
     while (true) {
         printf("信息排序显示系统\n");
         printf("\n请选择数据的排序类型：\n");
-        printf("1. 默认排序\n");
+        printf("1. 显示当前排序\n");
         printf("2. 单一属性排序\n");
         printf("3. 多属性排序\n");
         printf("4. 通信记录排序\n");
@@ -39,6 +40,7 @@ void infoSortWidget() {
             defaultSort(head);
             break;
         case '2':
+            simpleSort(head);
             break;
         case '3':
             break;
@@ -73,7 +75,35 @@ void defaultSort(head_node *head) {
     printNodeList(head, which);
 }
 
+void simpleSort(head_node *head) {
+    int which = beforeInfo(head, "展示");
+    if (which == -1) return;  // 如果选择无效或不允许展示，则返回
 
+    switch (which) {
+    case 0:
+        printf("客户信息列表：\n");
+        break;
+    case 1:
+        printf("联络人信息列表：\n");
+        break;
+    case 2:
+        printf("业务员信息列表：\n");
+        break;
+    }
+    int attributeIndex = selectSearchAttribute(which);
+    if (attributeIndex == -1) return;
+
+    char ascending[MAX_LENGTH];
+    printf("请输入排序方式（1升序/0降序）：");
+    getInput(ascending, sizeof(ascending));
+    if (!isOneChar(ascending)) {
+        printf("无效的排序方式，请重新输入。\n");
+        return;
+    }
+    
+    sort(which, head, attributeIndex, charToInt(ascending[0]));
+    printNodeList(head, which);
+}
 
 
 

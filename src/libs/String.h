@@ -138,7 +138,7 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
     } else { // section == 1 || section == 3
         while (true) {
             infoInput(gender, sizeof(gender), "输入性别: ");
-            if (isSameString(gender, " ") || matchScale(gender)) {
+            if (isSameString(gender, " ") || matchGender(gender)) {
                 break;
             } else {
                 printf("性别格式不正确，请重新输入。\n");
@@ -146,7 +146,7 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
         }
         while (true) {
             infoInput(birthday, sizeof(birthday), "输入生日（YYYY-MM-DD）: ");
-            if (isSameString(birthday, " ") || matchScale(birthday)) {
+            if (isSameString(birthday, " ") || matchDate(birthday)) {
                 break;
             } else {
                 printf("日期格式不正确，请重新输入。\n");
@@ -387,5 +387,32 @@ void printNodeList(head_node *head, int choice) {
     default:
         printf("无效的选项。\n");
         break;
+    }
+}
+
+int selectSearchAttribute(int which) {
+    char index = '0';
+    switch (which) {
+    case 0: // 客户
+        printf("1. 名称\n2. 地区\n3. 地址\n4. 法人\n5. 规模\n6. 联系等级\n7. 邮箱\n8. 电话\n");
+        index = '8';
+        break;
+    case 1: // 联络人
+    case 2: // 业务员
+        printf("1. 名称\n2. 性别\n3. 生日\n4. 邮箱\n5. 电话\n6. 代表公司\n");
+        index = '6';
+        break;
+    case 3: // 通信记录
+        printf("1. 管理用户\n2. 公司名称\n3. 联络人\n4. 日期\n5. 时间\n6. 时长\n7. 通信内容\n");
+        index = '7';
+    default: break;
+    }
+    char get[MAX_LENGTH];
+    infoInput(get, sizeof(get), "请选择属性：\n");
+    if (!isOneChar(get) || get[0] < '1' || get[0] > index) {
+        printf("无效的选择\n");
+        return -1;
+    } else {
+        return charToInt(get[0]) - 1;
     }
 }

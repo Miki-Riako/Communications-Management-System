@@ -2,7 +2,6 @@
 #include "../header.h"
 
 void infoEnquiryWidget();
-int selectSearchAttribute(int which);
 bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how);
 bool howToSearch(const char *toCompare, const char *query, int how);
 void simpleQuery(head_node *head);
@@ -56,28 +55,6 @@ void infoEnquiryWidget() {
             printf("无效的选择，请重新输入。\n");
             break;
         }
-    }
-}
-
-int selectSearchAttribute(int which) {
-    char index = '6';
-    switch (which) {
-    case 0: // 客户
-        printf("1. 名称\n2. 地区\n3. 地址\n4. 法人\n5. 规模\n6. 联系等级\n7. 邮箱\n8. 电话\n");
-        index = '8';
-        break;
-    case 1: // 联络人
-    case 2: // 业务员
-        printf("1. 名称\n2. 性别\n3. 生日\n4. 邮箱\n5. 电话\n6. 代表公司\n");
-        break;
-    }
-    char get[MAX_LENGTH];
-    infoInput(get, sizeof(get), "请选择属性以进行搜索：\n");
-    if (!isOneChar(get) || get[0] < '1' || get[0] > index) {
-        printf("无效的选择\n");
-        return -1;
-    } else {
-        return charToInt(get[0]) - 1;
     }
 }
 
@@ -227,11 +204,7 @@ void simpleQuery(head_node *head) {
     char queryValue[MAX_LENGTH];
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
-
-    if (attributeIndex == -1) {
-        printf("无效的属性选择。\n");
-        return;
-    }
+    if (attributeIndex == -1) return;
 
     // 获取用户想要搜索的值
     infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");

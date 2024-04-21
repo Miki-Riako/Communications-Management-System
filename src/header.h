@@ -34,6 +34,14 @@
 
 #include "data_structure.h"
 
+int mapScaleToPriority(const char *scale);
+int mapContactLevelToPriority(const char *level);
+bool compareNodeCus(node_cus *a, node_cus *b, int attrIndex, bool ascending);
+bool compareNodeCtp(node_ctp *a, node_ctp *b, int attrIndex, bool ascending);
+bool compareNodeEmp(node_emp *a, node_emp *b, int attrIndex, bool ascending);
+bool compareNodeRec(node_rec *a, node_rec *b, int attrIndex, bool ascending);
+void sort(int which, head_node *head, int attrIndex, bool ascending);
+
 bool alreadyExists(const char *filename, const char *username);
 bool lineExists(const char *filename, const char *lineToCheck);
 void initializeInfoFile(const char *path, const char *header);
@@ -103,6 +111,7 @@ void printNode_emp(node_emp *node);
 void printNode_rec(node_rec *node);
 void printNodeList(head_node *node, int choice);
 int beforeInfo(head_node *head, const char *prompt);
+int selectSearchAttribute(int which);
 
 #include "libs/Algorithms.h"
 #include "libs/BasciIO.h"
