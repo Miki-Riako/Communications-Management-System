@@ -26,7 +26,7 @@ void infoSortWidget() {
         printf("2. 单一属性排序\n");
         printf("3. 多属性排序\n");
         printf("4. 返回\n");
-        printf("请输入您的选择（1-4）：");
+        printf("请选择一个操作（1-4）：");
 
         char get[MAX_LENGTH];
         getInput(get, sizeof(get));

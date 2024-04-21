@@ -26,7 +26,7 @@ void infoEnquiryWidget() {
         printf("2. 组合查询\n");
         printf("3. 模糊查询\n");
         printf("4. 返回\n");
-        printf("请选择一个操作：（1-4）");
+        printf("请选择一个操作（1-4）：");
         
         char get[MAX_LENGTH];
         getInput(get, sizeof(get));
