@@ -19,6 +19,15 @@ void getInput(char *input, int buffer_size) {
     }
 }
 
+// 函数用于检查并去除字符串末尾的换行符
+void stripNewline(char *str) {
+    if (str == NULL) return; // 如果字符串为空，直接返回
+    size_t len = strlen(str); // 获取字符串的长度
+    if (len > 0 && str[len - 1] == '\n') { // 如果字符串的最后一个字符是换行符
+        str[len - 1] = '\0'; // 替换为字符串结束符
+    }
+}
+
 // 切割函数但是会手动分配内存（少用）
 char *splitLine(char *input, const char *delim, int num) {
     int count = 0;

@@ -87,6 +87,7 @@ bool isOneChar(const char *input);
 void clearBuffer();
 int charToInt(char c);
 void getInput(char *input, int buffer_size);
+void stripNewline(char *str);
 char *splitLine(char *input, const char *delim, int num);
 bool isSameString(const char *str1, const char *str2);
 void cleanField(char *field);

@@ -265,24 +265,24 @@ void loadFile(head_node *head) {
         loadContactPersons("contacts.csv", head);
         loadEmployees("employees.csv", head);
         return;
-    } else {
-        // 非管理员只加载其负责的客户数据
-        FILE *assignmentsFile = fopen("assignments.csv", "r");
-        if (assignmentsFile) {
-            char line[5 * MAX_LENGTH];
-            while (fgets(line, sizeof(line), assignmentsFile)) {
-                char *employee = splitLine(line, "|||", 0);
-                char *customer = splitLine(line, "|||", 1);
-                if (isSameString(employee, User)) {
-                    // 找到对应客户，加载其信息
-                    loadCustomerData("customers.csv", customer, head);
-                }
-                free(employee);
-                free(customer);
+    }
+    // 非管理员只加载其负责的客户数据
+    FILE *assignmentsFile = fopen("assignments.csv", "r");
+    if (assignmentsFile) {
+        char line[5 * MAX_LENGTH];
+        while (fgets(line, sizeof(line), assignmentsFile)) {
+            stripNewline(line);
+            char *employee = splitLine(line, "|||", 0);
+            char *customer = splitLine(line, "|||", 1);
+            if (isSameString(employee, User)) {
+                // 找到对应客户，加载其信息
+                loadCustomerData("customers.csv", customer, head);
             }
-            fclose(assignmentsFile);
-            return;
+            free(employee);
+            free(customer);
         }
+        fclose(assignmentsFile);
+        return;
     }
 }
 
