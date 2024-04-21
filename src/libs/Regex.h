@@ -83,6 +83,13 @@ bool matchPhone(const char *phone) {
     return true;  // 所有字符都是数字或连字符
 }
 
+// 检查性别的正则表达式
+bool matchGender(const char *gender) {
+    if (gender == NULL) return false;
+
+    return (strcmp(gender, "男") == 0 || strcmp(gender, "女") == 0);
+}
+
 // 检查程度的正则表达式
 bool matchScale(const char *scale) {
     // 检查是否为空字符串，因为输入不能是空的
@@ -181,7 +188,7 @@ bool matchDuration(const char *duration) {
     }
 }
 
-
+// 验证密码
 bool verify(const char *username, const char *password) {
     FILE *file;
     char line[MAX_LENGTH * 3];

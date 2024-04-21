@@ -72,9 +72,17 @@ void defaultSort(head_node *head) {
     }
     printNodeList(head, which);
 }
-    // case 3:
-    //     printf("通信记录列表：\n");
-    //     printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
-    //     break;
+
+
+
+
+
+
+
+
+
+
+
+
 
 // end widgets/info_sort.c

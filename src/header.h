@@ -76,6 +76,7 @@ bool verify(const char *username, const char *password);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);
 bool matchPhone(const char *phone);
+bool matchGender(const char *gender);
 bool matchScale(const char *scale);
 bool matchContactLevel(const char *contactLevel);
 bool matchDate(const char *date);

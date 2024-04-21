@@ -136,8 +136,22 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
             }
         }
     } else { // section == 1 || section == 3
-        infoInput(gender, sizeof(gender), "输入性别: ");
-        infoInput(birthday, sizeof(birthday), "输入生日: ");
+        while (true) {
+            infoInput(gender, sizeof(gender), "输入性别: ");
+            if (isSameString(gender, " ") || matchScale(gender)) {
+                break;
+            } else {
+                printf("性别格式不正确，请重新输入。\n");
+            }
+        }
+        while (true) {
+            infoInput(birthday, sizeof(birthday), "输入生日（YYYY-MM-DD）: ");
+            if (isSameString(birthday, " ") || matchScale(birthday)) {
+                break;
+            } else {
+                printf("日期格式不正确，请重新输入。\n");
+            }
+        }
     }
 
     while (true) {
