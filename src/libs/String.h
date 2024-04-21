@@ -410,7 +410,7 @@ int selectSearchAttribute(int which) {
     char get[MAX_LENGTH];
     infoInput(get, sizeof(get), "请选择属性：\n");
     if (!isOneChar(get) || get[0] < '1' || get[0] > index) {
-        printf("无效的选择\n");
+        printf("无效的选择!\n");
         return -1;
     } else {
         return charToInt(get[0]) - 1;
