@@ -3,7 +3,8 @@
 
 void infoStatisticsWidget();
 void simpleStatistics(head_node *head);
-void countAttribute(head_node *head, int attrIndex, int dataType);
+void combinedStatistics(head_node *head);
+void countAttributes(head_node *head, int attrIndex, int dataType);
 char* getCustomerAttribute(Customer *customer, int attrIndex);
 char* getContactPersonAttribute(ContactPerson *contact, int attrIndex);
 char* getEmployeeAttribute(Employee *employee, int attrIndex);
@@ -38,6 +39,7 @@ void infoStatisticsWidget() {
             simpleStatistics(head);
             break;
         case '2':
+            combinedStatistics(head);
             break;
         case '3':
             break;
@@ -65,48 +67,88 @@ void simpleStatistics(head_node *head) {
         return;
     }
 
-    // 根据所选数据类型和属性进行统计
-    switch (which) {
-        case 0: // 客户
-            countAttribute(head, attrIndex, which);
-            break;
-        case 1: // 联络人
-            countAttribute(head, attrIndex, which);
-            break;
-        case 2: // 业务员
-            countAttribute(head, attrIndex, which);
-            break;
-    }
+    countAttributes(head, attrIndex, which);
 }
 
-void countAttribute(head_node *head, int attrIndex, int dataType) {
-    int count = 0;
+void combinedStatistics(head_node *head) {
+
+}
+
+void countAttributes(head_node *head, int attrIndex, int dataType) {
+    // 用于存储每个唯一值及其出现次数的结构
+
+    AttributeCount counts[MAX_LENGTH];
+    int uniqueCount = 0;
+    bool found;
     char *attributeValue;
-    printf("请输入您想要统计的值：");
-    char value[MAX_LENGTH];
-    getInput(value, sizeof(value));
 
     switch (dataType) {
     case 0: // 客户
         for (node_cus *node = head->next_cus; node != NULL; node = node->next) {
             attributeValue = getCustomerAttribute(&node->customer, attrIndex);
-            if (strcmp(attributeValue, value) == 0) ++count;
+            found = false;
+            for (int i = 0; i < uniqueCount; i++) {
+                if (strcmp(counts[i].value, attributeValue) == 0) {
+                    counts[i].count++;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                strcpy(counts[uniqueCount].value, attributeValue);
+                counts[uniqueCount].count = 1;
+                ++uniqueCount;
+            }
         }
         break;
     case 1: // 联络人
         for (node_ctp *node = head->next_ctp; node != NULL; node = node->next) {
             attributeValue = getContactPersonAttribute(&node->contactPerson, attrIndex);
-            if (strcmp(attributeValue, value) == 0) ++count;
+            found = false;
+            for (int i = 0; i < uniqueCount; i++) {
+                if (strcmp(counts[i].value, attributeValue) == 0) {
+                    counts[i].count++;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                strcpy(counts[uniqueCount].value, attributeValue);
+                counts[uniqueCount].count = 1;
+                ++uniqueCount;
+            }
         }
         break;
     case 2: // 业务员
         for (node_emp *node = head->next_emp; node != NULL; node = node->next) {
             attributeValue = getEmployeeAttribute(&node->employee, attrIndex);
-            if (strcmp(attributeValue, value) == 0) ++count;
+            found = false;
+            for (int i = 0; i < uniqueCount; i++) {
+                if (strcmp(counts[i].value, attributeValue) == 0) {
+                    counts[i].count++;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                strcpy(counts[uniqueCount].value, attributeValue);
+                counts[uniqueCount].count = 1;
+                ++uniqueCount;
+            }
         }
         break;
     }
-    printf("总计符合条件的项数：%d\n", count);
+
+    // 打印统计结果
+    printf("统计结果：\n");
+    for (int i = 0; i < uniqueCount; ++i) {
+        if (isSameString(counts[i].value, " ")) {
+            printf("未输入的空值: %d\n", counts[i].count);
+        } else {
+            printf("%s: %d\n", counts[i].value, counts[i].count);
+        }
+    }
+    printf("统计完毕！\n");
 }
 
 char* getCustomerAttribute(Customer *customer, int attrIndex) {

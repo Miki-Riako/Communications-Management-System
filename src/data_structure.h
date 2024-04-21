@@ -66,6 +66,15 @@ typedef struct head_node{ // 头结点
     node_rec *next_rec;
 } head_node;
 
+
+
+typedef struct { // 键值对
+    char value[MAX_LENGTH];
+    int count;
+} AttributeCount;
+
+
+
 char User[MAX_LENGTH];
 bool IsManager = false;
 
