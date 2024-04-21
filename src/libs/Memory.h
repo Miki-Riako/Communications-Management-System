@@ -1,3 +1,17 @@
+// 初始化头结点
+void initializeHeadNode(head_node *head) {
+    if (head) {
+        head->is_empty = true;
+        head->is_cus = false;
+        head->is_ctp = false;
+        head->is_emp = false;
+        head->is_rec = false;
+        head->next_cus = NULL;
+        head->next_ctp = NULL;
+        head->next_emp = NULL;
+        head->next_rec = NULL;
+    }
+}
 // 创建一个新结点
 void appendNode_cus(head_node *head, Customer customer) {
     node_cus *newNode = (node_cus *)malloc(sizeof(node_cus));

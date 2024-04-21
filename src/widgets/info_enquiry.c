@@ -258,6 +258,8 @@ void combinedQuery(head_node *head) {
         fprintf(stderr, "内存分配失败！\n");
         return;
     }
+    initializeHeadNode(headA);
+    initializeHeadNode(headB);
 
     while (true) {
         char queryValue[MAX_LENGTH];
@@ -281,7 +283,6 @@ void combinedQuery(head_node *head) {
         printHeading(which);
         if (first) {
             found = searchOnes(head, headB, queryValue, attributeIndex, which, charToInt(searchType[0]));
-            first = false;
         } else {
             found = searchOnes(headA, headB, queryValue, attributeIndex, which, charToInt(searchType[0]));
         }
@@ -301,8 +302,11 @@ void combinedQuery(head_node *head) {
             break;
         } else {
             swapLists(&headA, &headB);
-            clearList(headB);
+            if (!first) {
+                clearList(headB);
+            }
         }
+        first = false;
     }
 
     freeAll(headA);
