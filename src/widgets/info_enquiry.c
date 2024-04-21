@@ -6,9 +6,7 @@ int selectSearchAttribute(int which);
 bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how);
 bool howToSearch(const char *toCompare, const char *query, int how);
 void simpleQuery(head_node *head);
-// bool matchNode(void *node, int query, int attrIndex, int which, int method);
 void combinedQuery(head_node *head);
-// void updateTempList(head_node *currentHead, head_node *tempHead, char *query, int attrIndex, int method, int which);
 void fuzzyQuery(head_node *head);
 
 void infoEnquiryWidget() {

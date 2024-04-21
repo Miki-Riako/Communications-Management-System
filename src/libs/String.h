@@ -229,13 +229,6 @@ int beforeInfo(head_node *head, const char *prompt) {
             printf("无法%s业务员信息。\n", prompt);
             return -1;
         }
-    // case '4':
-    //     if (IsManager && head->is_rec) {
-    //         return 3;
-    //     } else {
-    //         printf("无法%s记录信息。\n", prompt);
-    //         return -1;
-    //     }
     default:
         printf("无效的选择。\n");
         return -1;
