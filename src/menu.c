@@ -5,6 +5,7 @@
 #include "widgets/records_manage.c"
 #include "widgets/info_enquiry.c"
 #include "widgets/info_sort.c"
+#include "widgets/info_statistics.c"
 
 #include "widgets/system_setting.c"
 
@@ -52,7 +53,7 @@ void managerMenuWidget() {
             infoSortWidget();
             break;
         case '6':
-            
+            infoStatisticsWidget();
             break;
         case '7':
             
@@ -98,7 +99,7 @@ void employeeMenuWidget() {
             infoSortWidget();
             break;
         case '3':
-            
+            infoStatisticsWidget();
             break;
         case '4':
             recordsManageWidget();
