@@ -1,7 +1,7 @@
 // String.c
 #include "../header.h"
 // 检验输入是否为空
-bool isEmpty(const char *input) { return (input[0] == '\0'); }
+bool isEmpty(const char *input) { return ((input == NULL) ||(input[0] == '\0')); }
 
 // 检验输入是否为单个字符
 bool isOneChar(const char *input) { return (strlen(input) == 1); }
@@ -11,10 +11,41 @@ void clearBuffer() { while (getchar() != '\n'); }
 
 // 获取字符串
 void getInput(char *input, int buffer_size) {
-    if (fgets(input, buffer_size, stdin) != NULL) {
-        input[strcspn(input, "\n")] = 0; // 去除 fgets 捕获的换行符
+    GtkWidget *dialog, *entry, *content_area;
+    GtkEntryBuffer *entry_buffer;
+
+    // 创建一个对话框窗口，带有 OK 和 Cancel 按钮
+    dialog = gtk_dialog_new_with_buttons("Input",
+                                         NULL, // 无父窗口
+                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         "_OK", GTK_RESPONSE_OK,
+                                         "_Cancel", GTK_RESPONSE_CANCEL,
+                                         NULL);
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    // 创建一个文本输入框
+    entry_buffer = gtk_entry_buffer_new(NULL, 0);
+    entry = gtk_entry_new_with_buffer(entry_buffer);
+    gtk_container_add(GTK_CONTAINER(content_area), entry);
+    
+    // 显示所有控件
+    gtk_widget_show_all(dialog);
+
+    // 运行对话框
+    int response = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (response == GTK_RESPONSE_OK) {
+        const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
+        strncpy(input, text, buffer_size - 1);
+        input[buffer_size - 1] = '\0';  // 确保字符串是空终止的
     } else {
-        fprintf(stderr, "Error reading input.\n");
+        fprintf(stderr, "Error reading input or cancelled by user.\n");
+        input[0] = '\0';  // 如果用户取消，返回一个空字符串
+    }
+
+    // 清理
+    gtk_widget_destroy(dialog);
+    while (gtk_events_pending()) {
+        gtk_main_iteration();
     }
 }
 
@@ -66,27 +97,95 @@ void cleanField(char *field) {
 
 // 信息写入
 void infoInput(char *input, int buffer_size, const char *prompt) {
-    printf("%s", prompt);
-    if (fgets(input, buffer_size, stdin) == NULL) {
-        printf("错误：无法读取输入。\n");
+    GtkWidget *dialog, *entry, *label, *content_area;
+
+    // 创建对话框
+    dialog = gtk_dialog_new_with_buttons("Input",
+                                         NULL,  // 没有父窗口
+                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         "_OK", GTK_RESPONSE_OK,
+                                         "_Cancel", GTK_RESPONSE_CANCEL,
+                                         NULL);
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    // 创建输入框和标签
+    entry = gtk_entry_new();
+    label = gtk_label_new(prompt);
+    gtk_container_add(GTK_CONTAINER(content_area), label);
+    gtk_container_add(GTK_CONTAINER(content_area), entry);
+
+    // 显示所有控件
+    gtk_widget_show_all(dialog);
+
+    // 运行对话框并等待用户响应
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+        const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
+        strncpy(input, text, buffer_size - 1);
+        input[buffer_size - 1] = '\0';  // 确保空终止
+    } else {
+        printf("取消输入(input为“ ”)\n");
         strcpy(input, " "); // 安全处理
-        return;
     }
 
-    input[strcspn(input, "\n")] = 0;  // 移除尾部的换行符
-    if (isEmpty(input)) strcpy(input, " ");
+    // 清理和关闭对话框
+    gtk_widget_destroy(dialog);
+    while (gtk_events_pending()) gtk_main_iteration();
 }
 
 // 输入非空姓名
 void inputTheName(char *name, int buffer_size, const char *prompt) {
+    GtkWidget *dialog, *entry, *label, *content_area;
+
+    // 创建对话框
+    dialog = gtk_dialog_new_with_buttons("输入名称",
+                                         NULL,  // 没有父窗口
+                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         "_OK", GTK_RESPONSE_OK,
+                                         "_Cancel", GTK_RESPONSE_CANCEL,
+                                         NULL);
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    // 创建输入框和标签
+    entry = gtk_entry_new();
+    label = gtk_label_new(prompt);
+    gtk_container_add(GTK_CONTAINER(content_area), label);
+    gtk_container_add(GTK_CONTAINER(content_area), entry);
+
+    // 显示所有控件
+    gtk_widget_show_all(dialog);
+
+    // 事件循环
     while (true) {
-        infoInput(name, buffer_size, prompt);
-        if (!isSameString(name, " ")) {
-            break;
+        int response = gtk_dialog_run(GTK_DIALOG(dialog));
+        if (response == GTK_RESPONSE_OK) {
+            const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
+            strncpy(name, text, buffer_size - 1);
+            name[buffer_size - 1] = '\0';  // 确保空终止
+
+            // 去除可能的前后空白字符
+            g_strstrip(name);
+
+            if (name[0] != '\0' && !isSameString(name, " ")) {
+                break;  // 有效输入
+            } else {
+                GtkWidget *error_dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                    GTK_MESSAGE_ERROR,
+                    GTK_BUTTONS_OK,
+                    "请输入一个有效的名字。");
+                gtk_dialog_run(GTK_DIALOG(error_dialog));
+                gtk_widget_destroy(error_dialog);
+            }
         } else {
-            printf("请输入一个有效的名字。\n");
+            // 用户选择取消或关闭对话框
+            printf("取消输入(name为“ ”)\n");
+            strcpy(name, " ");
+            break;
         }
     }
+
+    // 清理
+    gtk_widget_destroy(dialog);
 }
 
 typedef struct {

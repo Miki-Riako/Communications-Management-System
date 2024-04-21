@@ -1,7 +1,7 @@
 // widgets/group_manage.c
 #include "../header.h"
 
-void groupManageWidget() {
+void groupManageWidget(GtkWidget *parent) {
     createDirectory("groups");
 
     groupManageWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -40,9 +40,11 @@ void groupManageWidget() {
     g_signal_connect(groupManageWidgets.adjustCustomer_btn, "clicked", G_CALLBACK(on_adjustCustomer_clicked), NULL);
     gtk_grid_attach(GTK_GRID(groupManageWidgets.grid), groupManageWidgets.adjustCustomer_btn, 0, 5, 2, 1);
 
-
+    WidgetPair *widgetPair = g_slice_new(WidgetPair);
+    widgetPair->parentWindow = parent;
+    widgetPair->currentWindow = groupManageWidgets.window;
     groupManageWidgets.backToManageMenu_btn = gtk_button_new_with_label("返回");
-    g_signal_connect(groupManageWidgets.backToManageMenu_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), groupManageWidgets.window);
+    g_signal_connect(groupManageWidgets.backToManageMenu_btn, "clicked", G_CALLBACK(on_back_clicked), widgetPair);
     gtk_grid_attach(GTK_GRID(groupManageWidgets.grid), groupManageWidgets.backToManageMenu_btn, 0, 6, 2, 1);
     
     gtk_widget_show_all(groupManageWidgets.window);

@@ -115,7 +115,7 @@ void freeNodeList_rec(node_rec *node) {
         free(temp);
     }
 }
-void freeAll(head_node *head) {
+void freeAll(GtkWidget *widget,head_node *head) {
     if (!head) return; // 检查是否已经是空指针
 
     if (head->is_cus) freeNodeList_cus(head->next_cus);

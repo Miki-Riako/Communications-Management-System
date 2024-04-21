@@ -1,7 +1,7 @@
 // widgets/info_manage.c
 #include "../header.h"
 
-void infoManageWidget() {
+void infoManageWidget(GtkWidget *parent) {
     initializeInfoFile("employees.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
     initializeInfoFile("customers.csv", "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone");
     initializeInfoFile("contacts.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
@@ -56,13 +56,15 @@ void infoManageWidget() {
     g_signal_connect(infoManageWidgets.removeContactRecord_btn, "clicked", G_CALLBACK(on_removeContactRecord_clicked), NULL);
     gtk_grid_attach(GTK_GRID(infoManageWidgets.grid), infoManageWidgets.removeContactRecord_btn, 0, 8, 2, 1);
     
-    infoManageWidgets.backToManage_btn = gtk_button_new_with_label("返回");
-    g_signal_connect(infoManageWidgets.backToManage_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), infoManageWidgets.window);
-    gtk_grid_attach(GTK_GRID(infoManageWidgets.grid), infoManageWidgets.backToManage_btn, 0, 9, 2, 1);
+    WidgetPair *widgetPair = g_slice_new(WidgetPair);
+    widgetPair->parentWindow = parent;
+    widgetPair->currentWindow = infoManageWidgets.window;
+    infoManageWidgets.back_btn = gtk_button_new_with_label("返回");
+    g_signal_connect(infoManageWidgets.back_btn, "clicked", G_CALLBACK(on_back_clicked), widgetPair);
+    gtk_grid_attach(GTK_GRID(infoManageWidgets.grid), infoManageWidgets.back_btn, 0, 9, 2, 1);
     
     gtk_widget_show_all(infoManageWidgets.window);
     gtk_main();
-    
 }
 
 void addEmployee() {

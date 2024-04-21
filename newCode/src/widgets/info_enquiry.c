@@ -1,7 +1,7 @@
 // widgets/info_enquiry.c
 #include "../header.h"
 
-void infoEnquiryWidget() {
+void infoEnquiryWidget(GtkWidget *parent) {
     initializeAll();
     GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoEnquiryWidgets.window),
                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -65,9 +65,13 @@ void infoEnquiryWidget() {
     g_signal_connect(infoEnquiryWidgets.fuzzyQuery_btn, "clicked", G_CALLBACK(on_fuzzyQuery_clicked), head);
     gtk_grid_attach(GTK_GRID(infoEnquiryWidgets.grid), infoEnquiryWidgets.fuzzyQuery_btn, 0, 2, 2, 1);
 
-    infoEnquiryWidgets.backToManageMenu_btn = gtk_button_new_with_label("返回");
-    g_signal_connect(infoEnquiryWidgets.backToManageMenu_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), infoEnquiryWidgets.window);
-    gtk_grid_attach(GTK_GRID(infoEnquiryWidgets.grid), infoEnquiryWidgets.backToManageMenu_btn, 0, 3, 2, 1);
+    infoEnquiryWidgets.back_btn = gtk_button_new_with_label("返回");
+
+    WidgetPair *widgetPair = g_slice_new(WidgetPair);
+    widgetPair->parentWindow = parent;
+    widgetPair->currentWindow = infoEnquiryWidgets.window;
+    g_signal_connect(infoEnquiryWidgets.back_btn, "clicked", G_CALLBACK(on_back_clicked), widgetPair);
+    gtk_grid_attach(GTK_GRID(infoEnquiryWidgets.grid), infoEnquiryWidgets.back_btn, 0, 3, 2, 1);
     
     gtk_widget_show_all(infoEnquiryWidgets.window);
     gtk_main();

@@ -59,7 +59,7 @@ void freeNodeList_cus(node_cus *node);
 void freeNodeList_ctp(node_ctp *node);
 void freeNodeList_emp(node_emp *node);
 void freeNodeList_rec(node_rec *node);
-void freeAll(head_node *head);
+void freeAll(GtkWidget *widget,head_node *head);
 
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool verify(const char *username, const char *password);
@@ -89,6 +89,12 @@ void printNode_emp(node_emp *node);
 void printNode_rec(node_rec *node);
 void printNodeList(head_node *node, int choice);
 int beforeInfo(head_node *head, const char *prompt);
+
+// all widget
+void on_back_clicked(GtkWidget *widget, WidgetPair *pair);
+
+void show_info_dialog(GtkWidget *widget, const gchar *message);
+
 
 // login
 void startWidget();
@@ -124,7 +130,7 @@ void on_recordManage_clicked(GtkWidget *widget, gpointer data);
 
 
 // customer_assign
-void customerAssignWidget();
+void customerAssignWidget(GtkWidget *parent);
 void addAssignment();
 void changeAssignment();
 void removeAssignment();
@@ -134,10 +140,9 @@ static void on_addAssignment_clicked(GtkWidget *widget, gpointer data);
 static void on_changeAssignment_clicked(GtkWidget *widget, gpointer data);
 static void on_removeAssignment_clicked(GtkWidget *widget, gpointer data);
 static void on_displayAssignment_clicked(GtkWidget *widget, gpointer data);
-void on_backToManagerMenu_clicked(GtkWidget *widget, gpointer data);
 
 // group_manage
-void groupManageWidget();
+void groupManageWidget(GtkWidget *parent);
 void createDirectory(const char *path);
 void createGroup(const char *groupName);
 void regionGroup(const char *groupName);
@@ -159,7 +164,7 @@ static void on_adjustCustomer_clicked(GtkWidget *widget, gpointer data);
 
 
 // info_manage
-void infoManageWidget();
+void infoManageWidget(GtkWidget *parent);
 void addEmployee();
 void addCustomer();
 void addContact();
@@ -184,7 +189,7 @@ static void on_changeContact_clicked(GtkWidget *widget, gpointer data);
 static void on_removeContactRecord_clicked(GtkWidget *widget, gpointer data);
 
 // info_enquiry
-void infoEnquiryWidget();
+void infoEnquiryWidget(GtkWidget *parent);
 int selectSearchAttribute(int which);
 void simpleQuery(head_node *head);
 void combinedQuery(head_node *head);
@@ -195,18 +200,28 @@ static void on_combinedQuery_clicked(GtkWidget *widget, gpointer data);
 static void on_fuzzyQuery_clicked(GtkWidget *widget, gpointer data);
 
 // info_sort
-void infoSortWidget();
+void infoSortWidget(GtkWidget *parent);
 void defaultSort(head_node *head);
 
+void on_defaultSort_clicked(GtkWidget *widget, gpointer data);
+void on_simpleSort_clicked(GtkWidget *widget, gpointer data);
+void on_combinedSort_clicked(GtkWidget *widget, gpointer data);
+void on_recordSort_clicked(GtkWidget *widget, gpointer data);
+static void on_infoSortBack_clicked(GtkWidget *widget, gpointer data);
+
 // record_manage
-void recordsManageWidget();
+void recordsManageWidget(GtkWidget *parent);
 void addRecord();
 void changeRecord();
 void showRecord();
 void displayRecord(Record record);
 
+void on_addRecord_clicked(GtkWidget *widget, gpointer data);
+void on_changeRecord_clicked(GtkWidget *widget, gpointer data);
+void on_showRecord_clicked(GtkWidget *widget, gpointer data);
+
 // system_setting
-void systemSettingWidget();
+void systemSettingWidget(GtkWidget *parent);
 bool changeUserPassword(const char *username, const char *newEncryptedPassword);
 void changePassword();
 void resetPassword();

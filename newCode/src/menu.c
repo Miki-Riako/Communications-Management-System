@@ -110,26 +110,26 @@ void exitSystem() {
 
 void on_infoManager_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data); 
-    infoManageWidget();
+    infoManageWidget(data);
 }
 
 void on_customerAssign_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data); 
-    customerAssignWidget();
+    customerAssignWidget(data);
 }
 
 void on_groupManage_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data); 
-    groupManageWidget();
+    groupManageWidget(data);
 }
 
 void on_infoEnquiry_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data); 
-    infoEnquiryWidget();
+    infoEnquiryWidget(data);
 }
 void on_infoSort_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data); 
-    infoSortWidget();
+    infoSortWidget(data);
 }
 void on_infoStatistic_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data);
@@ -140,14 +140,14 @@ void on_analysisRecord_clicked(GtkWidget *widget, gpointer data) {
 }
 void on_systemSetting_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data);
-    systemSettingWidget();
+    systemSettingWidget(data);
 }
 void on_exit_clicked(GtkWidget *widget, gpointer data) {
     exitSystem();
 }
 void on_recordManage_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data);
-    recordsManageWidget();
+    recordsManageWidget(data);
 }
 
 // end menu.c

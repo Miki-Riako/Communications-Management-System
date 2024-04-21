@@ -40,6 +40,17 @@ typedef struct {
     char content[MAX_LENGTH];                 // 通信内容
 } Record;
 
+typedef struct {
+    GtkWidget *parentWindow;
+    GtkWidget *currentWindow;
+} WidgetPair;
+
+typedef struct {
+    GtkWindow *parent_window;
+    const gchar *message;
+} DialogData;
+
+
 // login
 typedef struct {
     GtkWidget *window;
@@ -149,7 +160,7 @@ typedef struct {
     GtkWidget *simpleQuery_btn;
     GtkWidget *combinedQuery_btn;
     GtkWidget *fuzzyQuery_btn;
-    GtkWidget *backToManageMenu_btn;
+    GtkWidget *back_btn;
 } InfoEnquiryWidgets;
 InfoEnquiryWidgets infoEnquiryWidgets;
 
@@ -166,9 +177,33 @@ typedef struct {
     GtkWidget *addContact_btn;
     GtkWidget *changeContact_btn;
     GtkWidget *removeContactRecord_btn;
-    GtkWidget *backToManage_btn;
+    GtkWidget *back_btn;
 } InfoManageWidgets;
 InfoManageWidgets infoManageWidgets;
+
+// info_sort
+typedef struct {
+    GtkWidget *window;
+    GtkWidget *grid;
+    GtkWidget *defaultSort_btn;
+    GtkWidget *simpleSort_btn;
+    GtkWidget *combinedSort_btn;
+    GtkWidget *recordSort_btn;
+    GtkWidget *back_btn;
+} InfoSortWidgets;
+InfoSortWidgets infoSortWidgets;
+
+// record_manage
+typedef struct {
+    GtkWidget *window;
+    GtkWidget *grid;
+    GtkWidget *addRecord_btn;
+    GtkWidget *changeRecord_btn;
+    GtkWidget *showRecord_btn;
+    GtkWidget *back_btn;
+} RecordsManageWidgets;
+RecordsManageWidgets recordsManageWidgets;
+
 
 // system_setting
 typedef struct {

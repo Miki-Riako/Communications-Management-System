@@ -1,7 +1,7 @@
 // widgets/system_setting.c
 #include "../header.h"
 
-void systemSettingWidget() {
+void systemSettingWidget(GtkWidget *parent) {
     systemSettingWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(systemSettingWidgets.window), "通信管理系统 - 经理菜单 - 系统设置");
     gtk_window_set_default_size(GTK_WINDOW(systemSettingWidgets.window), 500, 400);
@@ -30,8 +30,11 @@ void systemSettingWidget() {
     g_signal_connect(systemSettingWidgets.restoreData_btn, "clicked", G_CALLBACK(on_restoreData_clicked), NULL);
     gtk_grid_attach(GTK_GRID(systemSettingWidgets.grid), systemSettingWidgets.restoreData_btn, 0, 3, 2, 1);
 
+    WidgetPair *widgetPair = g_slice_new(WidgetPair);
+    widgetPair->parentWindow = parent;
+    widgetPair->currentWindow = systemSettingWidgets.window;
     systemSettingWidgets.backToManageMenu_btn = gtk_button_new_with_label("返回");
-    g_signal_connect(systemSettingWidgets.backToManageMenu_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), systemSettingWidgets.window);
+    g_signal_connect(systemSettingWidgets.backToManageMenu_btn, "clicked", G_CALLBACK(on_back_clicked), widgetPair);
     gtk_grid_attach(GTK_GRID(systemSettingWidgets.grid), systemSettingWidgets.backToManageMenu_btn, 0, 4, 2, 1);
     
     gtk_widget_show_all(systemSettingWidgets.window);
