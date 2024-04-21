@@ -109,16 +109,17 @@ static void on_confirm_Register_clicked(GtkWidget *widget, gpointer data);
 void managerMenuWidget();
 void employeeMenuWidget();
 void exitSystem();
-static void on_infoManager_clicked(GtkWidget *widget, gpointer data);
-static void on_customerAssign_clicked(GtkWidget *widget, gpointer data);
-static void on_groupManage_clicked(GtkWidget *widget, gpointer data);
-static void on_infoInquiry_clicked(GtkWidget *widget, gpointer data);
-static void on_sortedInfoDisplay_clicked(GtkWidget *widget, gpointer data);
-static void on_infoStatistic_clicked(GtkWidget *widget, gpointer data);
-static void on_analysisRecord_clicked(GtkWidget *widget, gpointer data);
-static void on_systemSetting_clicked(GtkWidget *widget, gpointer data);
-static void on_exit_clicked(GtkWidget *widget, gpointer data);
-static void on_recordManage_clicked(GtkWidget *widget, gpointer data);
+void on_infoManager_clicked(GtkWidget *widget, gpointer data);
+void on_customerAssign_clicked(GtkWidget *widget, gpointer data);
+void on_groupManage_clicked(GtkWidget *widget, gpointer data);
+void on_infoEnquiry_clicked(GtkWidget *widget, gpointer data);
+void on_infoSort_clicked(GtkWidget *widget, gpointer data);
+void on_infoStatistic_clicked(GtkWidget *widget, gpointer data);
+void on_analysisRecord_clicked(GtkWidget *widget, gpointer data);
+void on_systemSetting_clicked(GtkWidget *widget, gpointer data);
+void on_exit_clicked(GtkWidget *widget, gpointer data);
+
+void on_recordManage_clicked(GtkWidget *widget, gpointer data);
 
 
 
@@ -133,7 +134,7 @@ static void on_addAssignment_clicked(GtkWidget *widget, gpointer data);
 static void on_changeAssignment_clicked(GtkWidget *widget, gpointer data);
 static void on_removeAssignment_clicked(GtkWidget *widget, gpointer data);
 static void on_displayAssignment_clicked(GtkWidget *widget, gpointer data);
-static void on_backToManagerMenu_clicked(GtkWidget *widget, gpointer data);
+void on_backToManagerMenu_clicked(GtkWidget *widget, gpointer data);
 
 // group_manage
 void groupManageWidget();
@@ -146,6 +147,16 @@ void addGroup();
 void changeGroup();
 void removeGroup();
 void showGroups();
+void divideCustomer();
+void adjustCustomer();
+
+static void on_addGroup_clicked(GtkWidget *widget, gpointer data);
+static void on_changeGroup_clicked(GtkWidget *widget, gpointer data);
+static void on_removeGroup_clicked(GtkWidget *widget, gpointer data);
+static void on_showGroups_clicked(GtkWidget *widget, gpointer data);
+static void on_divideCustomer_clicked(GtkWidget *widget, gpointer data);
+static void on_adjustCustomer_clicked(GtkWidget *widget, gpointer data);
+
 
 // info_manage
 void infoManageWidget();
@@ -171,7 +182,6 @@ static void on_removeCustomerRecord_clicked(GtkWidget *widget, gpointer data);
 static void on_addContact_clicked(GtkWidget *widget, gpointer data);
 static void on_changeContact_clicked(GtkWidget *widget, gpointer data);
 static void on_removeContactRecord_clicked(GtkWidget *widget, gpointer data);
-static void on_backToManage_clicked(GtkWidget *widget, gpointer data);
 
 // info_enquiry
 void infoEnquiryWidget();
@@ -179,6 +189,10 @@ int selectSearchAttribute(int which);
 void simpleQuery(head_node *head);
 void combinedQuery(head_node *head);
 void fuzzyQuery(head_node *head);
+
+static void on_simpleQuery_clicked(GtkWidget *widget, gpointer data);
+static void on_combinedQuery_clicked(GtkWidget *widget, gpointer data);
+static void on_fuzzyQuery_clicked(GtkWidget *widget, gpointer data);
 
 // info_sort
 void infoSortWidget();
@@ -198,5 +212,10 @@ void changePassword();
 void resetPassword();
 void backupData();
 void restoreData();
+
+static void on_changePassword_clicked(GtkWidget *widget, gpointer data);
+static void on_resetPassword_clicked(GtkWidget *widget, gpointer data);
+static void on_backupData_clicked(GtkWidget *widget, gpointer data);
+static void on_restoreData_clicked(GtkWidget *widget, gpointer data);
 
 #endif

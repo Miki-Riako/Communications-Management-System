@@ -8,7 +8,7 @@ CFLAGS=$(pkg-config --cflags gtk+-3.0)
 LIBS=$(pkg-config --libs gtk+-3.0)
 
 # 定义输出文件名
-OUTPUT="main"
+OUTPUT="main.exe"
 
 # 定义源文件
 SOURCES=$(find src -name '*.c')

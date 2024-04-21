@@ -1,8 +1,6 @@
 // widgets/customer_assign.c
 #include "../header.h"
 
-
-
 // Main widget for customer assignment management
 void customerAssignWidget() {
     initializeInfoFile("assignments.csv", "Employee|||Customer");
@@ -36,48 +34,11 @@ void customerAssignWidget() {
     gtk_grid_attach(GTK_GRID(customerAssignWidgets.grid), customerAssignWidgets.displayAssignment_btn, 0, 3, 2, 1);
 
     customerAssignWidgets.backToManagerMenu_btn = gtk_button_new_with_label("返回");
-    g_signal_connect(customerAssignWidgets.backToManagerMenu_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), NULL);
+    g_signal_connect(customerAssignWidgets.backToManagerMenu_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), customerAssignWidgets.window);
     gtk_grid_attach(GTK_GRID(customerAssignWidgets.grid), customerAssignWidgets.backToManagerMenu_btn, 0, 4, 2, 1);
     
     gtk_widget_show_all(customerAssignWidgets.window);
     gtk_main();
-    // while (true) {
-    //     printf("\n客户分配管理\n");
-    //     printf("1. 分配客户\n");
-    //     printf("2. 修改客户分配\n");
-    //     printf("3. 删除客户分配\n");
-    //     printf("4. 查看分配的客户\n");
-    //     printf("5. 返回\n");
-    //     printf("请选择操作（1-5）：");
-
-    //     char get[MAX_LENGTH];
-    //     getInput(get, sizeof(get));
-    //     system(SYSTEM_CLEAR);
-
-    //     if (!isOneChar(get)) {
-    //         printf("无效的选择，请重新输入。\n");
-    //         continue;
-    //     }
-    //     switch (get[0]) {
-    //     case '1':
-    //         addAssignment();
-    //         break;
-    //     case '2':
-    //         changeAssignment();
-    //         break;
-    //     case '3':
-    //         removeAssignment();
-    //         break;
-    //     case '4':
-    //         displayAssignment();
-    //         break;
-    //     case '5':
-    //         return;
-    //     default:
-    //         printf("无效的选项，请重新输入。\n");
-    //         break;
-    //     }
-    // }
 }
 
 void addAssignment() {
@@ -189,8 +150,8 @@ static void on_removeAssignment_clicked(GtkWidget *widget, gpointer data) {
 static void on_displayAssignment_clicked(GtkWidget *widget, gpointer data) {
     displayAssignment();
 }
-static void on_backToManagerMenu_clicked(GtkWidget *widget, gpointer data) {
-    gtk_widget_destroy(customerAssignWidgets.window);
+void on_backToManagerMenu_clicked(GtkWidget *widget, gpointer data) {
+    gtk_widget_destroy(GTK_WIDGET(data));
     gtk_widget_show(managerMenuWidgets.window);
 }
 // end widgets/customer_assign.c

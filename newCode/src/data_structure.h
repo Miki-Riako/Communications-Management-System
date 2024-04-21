@@ -105,8 +105,10 @@ ManagerMenuWidgets managerMenuWidgets;
 typedef struct {
     GtkWidget *window;
     GtkWidget *grid;
+    GtkWidget *infoEnquiry_btn;
+    GtkWidget *infoSort_btn;
     GtkWidget *recordsManage_btn;
-
+    GtkWidget *systemSetting_btn;
     GtkWidget *exit_btn;
 } EmployeeMenuWidgets;
 EmployeeMenuWidgets employeeMenuWidgets;
@@ -122,6 +124,34 @@ typedef struct {
     GtkWidget *backToManagerMenu_btn;
 } CustomerAssignWidgets;
 CustomerAssignWidgets customerAssignWidgets;
+
+// group_manage
+typedef struct {
+    GtkWidget *window;
+    GtkWidget *grid;
+    GtkWidget *addGroup_btn;
+    GtkWidget *changeGroup_btn;
+    GtkWidget *removeGroup_btn;
+    GtkWidget *showGroups_btn;
+    GtkWidget *divideCustomer_btn;
+    GtkWidget *adjustCustomer_btn;
+    GtkWidget *backTo_btn;
+    GtkWidget *changeContact_btn;
+    GtkWidget *removeContactRecord_btn;
+    GtkWidget *backToManageMenu_btn;
+} GroupManageWidgets;
+GroupManageWidgets groupManageWidgets;
+
+// info_enquiry
+typedef struct {
+    GtkWidget *window;
+    GtkWidget *grid;
+    GtkWidget *simpleQuery_btn;
+    GtkWidget *combinedQuery_btn;
+    GtkWidget *fuzzyQuery_btn;
+    GtkWidget *backToManageMenu_btn;
+} InfoEnquiryWidgets;
+InfoEnquiryWidgets infoEnquiryWidgets;
 
 // info_manage
 typedef struct {
@@ -140,7 +170,17 @@ typedef struct {
 } InfoManageWidgets;
 InfoManageWidgets infoManageWidgets;
 
-
+// system_setting
+typedef struct {
+    GtkWidget *window;
+    GtkWidget *grid;
+    GtkWidget *changePassword_btn;
+    GtkWidget *resetPassword_btn;
+    GtkWidget *backupData_btn;
+    GtkWidget *restoreData_btn;
+    GtkWidget *backToManageMenu_btn;
+} SystemSettingWidgets;
+SystemSettingWidgets systemSettingWidgets;
 
 
 

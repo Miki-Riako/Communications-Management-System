@@ -2,41 +2,40 @@
 #include "../header.h"
 
 void systemSettingWidget() {
-    while (true) {
-        printf("\n系统设置\n");
-        printf("1. 密码维护\n");
-        printf("2. 重置业务员密码\n");
-        printf("3. 数据备份\n");
-        printf("4. 数据恢复\n");
-        printf("5. 返回\n");
-        printf("请选择一个操作（1-5）：");
-        char get[MAX_LENGTH];
-        getInput(get, sizeof(get));
-        system(SYSTEM_CLEAR);
-        if (!isOneChar(get)) {
-            printf("无效的选择，请重新输入。\n");
-            continue;
-        }
-        switch(get[0]) {
-        case '1':
-            changePassword();
-            break;
-        case '2':
-            resetPassword();
-            break;
-        case '3':
-            backupData();
-            break;
-        case '4':
-            restoreData();
-            break;
-        case '5':
-            return;
-        default:
-            printf("无效的选择，请重新输入。\n");
-            break;
-        }
-    }
+    systemSettingWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(systemSettingWidgets.window), "通信管理系统 - 经理菜单 - 系统设置");
+    gtk_window_set_default_size(GTK_WINDOW(systemSettingWidgets.window), 500, 400);
+    gtk_container_set_border_width(GTK_CONTAINER(systemSettingWidgets.window), 10);
+    gtk_window_set_position(GTK_WINDOW(systemSettingWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
+    g_signal_connect(systemSettingWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    systemSettingWidgets.grid = gtk_grid_new();
+    gtk_container_add(GTK_CONTAINER(systemSettingWidgets.window), systemSettingWidgets.grid);
+    gtk_widget_set_halign(systemSettingWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(systemSettingWidgets.grid, GTK_ALIGN_CENTER);
+
+    systemSettingWidgets.changePassword_btn = gtk_button_new_with_label("密码维护");
+    g_signal_connect(systemSettingWidgets.changePassword_btn, "clicked", G_CALLBACK(on_changePassword_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(systemSettingWidgets.grid), systemSettingWidgets.changePassword_btn, 0, 0, 2, 1);
+
+    systemSettingWidgets.resetPassword_btn = gtk_button_new_with_label("重置业务员密码");
+    g_signal_connect(systemSettingWidgets.resetPassword_btn, "clicked", G_CALLBACK(on_resetPassword_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(systemSettingWidgets.grid), systemSettingWidgets.resetPassword_btn, 0, 1, 2, 1);
+
+    systemSettingWidgets.backupData_btn = gtk_button_new_with_label("数据备份");
+    g_signal_connect(systemSettingWidgets.backupData_btn, "clicked", G_CALLBACK(on_backupData_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(systemSettingWidgets.grid), systemSettingWidgets.backupData_btn, 0, 2, 2, 1);
+
+    systemSettingWidgets.restoreData_btn = gtk_button_new_with_label("数据恢复");
+    g_signal_connect(systemSettingWidgets.restoreData_btn, "clicked", G_CALLBACK(on_restoreData_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(systemSettingWidgets.grid), systemSettingWidgets.restoreData_btn, 0, 3, 2, 1);
+
+    systemSettingWidgets.backToManageMenu_btn = gtk_button_new_with_label("返回");
+    g_signal_connect(systemSettingWidgets.backToManageMenu_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), systemSettingWidgets.window);
+    gtk_grid_attach(GTK_GRID(systemSettingWidgets.grid), systemSettingWidgets.backToManageMenu_btn, 0, 4, 2, 1);
+    
+    gtk_widget_show_all(systemSettingWidgets.window);
+    gtk_main();
 }
 
 bool changeUserPassword(const char *username, const char *newEncryptedPassword) {
@@ -232,6 +231,19 @@ void restoreData() {
     } else {
         printf("恢复成功。文件 '%s' 已被恢复。\n", originalFilename);
     }
+}
+
+static void on_changePassword_clicked(GtkWidget *widget, gpointer data) {
+    changePassword();
+}
+static void on_resetPassword_clicked(GtkWidget *widget, gpointer data) {
+    resetPassword();
+}
+static void on_backupData_clicked(GtkWidget *widget, gpointer data) {
+    backupData();
+}
+static void on_restoreData_clicked(GtkWidget *widget, gpointer data) {
+    restoreData();
 }
 
 // end widgets/system_setting.c

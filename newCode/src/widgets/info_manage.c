@@ -1,7 +1,6 @@
 // widgets/info_manage.c
 #include "../header.h"
 
-
 void infoManageWidget() {
     initializeInfoFile("employees.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
     initializeInfoFile("customers.csv", "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone");
@@ -58,69 +57,12 @@ void infoManageWidget() {
     gtk_grid_attach(GTK_GRID(infoManageWidgets.grid), infoManageWidgets.removeContactRecord_btn, 0, 8, 2, 1);
     
     infoManageWidgets.backToManage_btn = gtk_button_new_with_label("返回");
-    g_signal_connect(infoManageWidgets.backToManage_btn, "clicked", G_CALLBACK(on_backToManage_clicked), NULL);
+    g_signal_connect(infoManageWidgets.backToManage_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), infoManageWidgets.window);
     gtk_grid_attach(GTK_GRID(infoManageWidgets.grid), infoManageWidgets.backToManage_btn, 0, 9, 2, 1);
     
     gtk_widget_show_all(infoManageWidgets.window);
     gtk_main();
     
-    
-    // while(true) {
-    //     printf("\n信息管理\n");
-    //     printf("1. 增加业务员信息\n");
-    //     printf("2. 修改业务员信息\n");
-    //     printf("3. 删除业务员信息\n");
-    //     printf("4. 增加客户信息\n");
-    //     printf("5. 修改客户信息\n");
-    //     printf("6. 删除客户信息\n");
-    //     printf("7. 增加客户联络员信息\n");
-    //     printf("8. 修改客户联络员信息\n");
-    //     printf("9. 删除客户联络员信息\n");
-    //     printf("0. 返回\n");
-    //     printf("请选择一个操作（0-9）：");
-
-    //     char get[MAX_LENGTH];
-    //     getInput(get, sizeof(get));
-    //     system(SYSTEM_CLEAR);
-
-    //     if (!isOneChar(get)) {
-    //         printf("无效的选项，请重新选择。\n");
-    //         continue;  // 继续循环等待有效输入
-    //     }
-    //     switch (get[0]) {
-    //     case '1':
-    //         addEmployee();
-    //         break;
-    //     case '2':
-    //         changeEmployee();
-    //         break;
-    //     case '3':
-    //         removeRecord("employees.csv", "输入要删除的业务员姓名: ");
-    //         break;
-    //     case '4':
-    //         addCustomer();
-    //         break;
-    //     case '5':
-    //         changeCustomer();
-    //         break;
-    //     case '6':
-    //         removeRecord("customers.csv", "输入要删除的客户姓名: ");
-    //         break;
-    //     case '7':
-    //         addContact();
-    //         break;
-    //     case '8':
-    //         changeContact();
-    //         break;
-    //     case '9':
-    //         removeRecord("contacts.csv", "输入要删除的联络员姓名: ");
-    //         break;
-    //     case '0':
-    //         return;  // 返回主菜单
-    //     default:
-    //         printf("无效的选项，请重新输入。\n");
-    //     }
-    // }
 }
 
 void addEmployee() {
@@ -385,8 +327,5 @@ static void on_changeContact_clicked(GtkWidget *widget, gpointer data) {
 static void on_removeContactRecord_clicked(GtkWidget *widget, gpointer data) {
     removeRecord("contacts.csv", "输入要删除的联络员姓名: ");
 }
-static void on_backToManage_clicked(GtkWidget *widget, gpointer data) {
-    gtk_widget_destroy(infoManageWidgets.window);
-    gtk_widget_show(managerMenuWidgets.window);
-}
+
 // end widgets/info_manage.c

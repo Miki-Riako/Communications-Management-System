@@ -3,52 +3,75 @@
 
 void infoEnquiryWidget() {
     initializeAll();
-    printf("正在加载中，请您耐心等待。\n");
+    GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoEnquiryWidgets.window),
+                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_INFO,
+                                                GTK_BUTTONS_OK,
+                                                "正在加载中，请您耐心等待。");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+
     head_node *head = (head_node *)malloc(sizeof(head_node));  // 分配内存
     if (!head) {
-        fprintf(stderr, "内存分配失败！\n");
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoEnquiryWidgets.window),
+                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_OK,
+                                                    "内存分配失败！");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
     loadFile(head);  // 加载数据
-    if (head->is_empty) printf("没有加载到任何数据。\n");
-    else printf("数据加载成功！\n");
-
-    while (true) {
-        printf("\n信息查询系统\n");
-        printf("1. 简单查询\n");
-        printf("2. 组合查询\n");
-        printf("3. 模糊查询\n");
-        printf("4. 返回\n");
-        printf("请选择一个操作：（1-4）");
-        
-        char get[MAX_LENGTH];
-        getInput(get, sizeof(get));
-        system(SYSTEM_CLEAR);
-        
-        if (!isOneChar(get)) {
-            printf("无效的选择，请重新输入。\n");
-            continue;
-        }
-        switch (get[0]) {
-        case '1':
-            simpleQuery(head);
-            break;
-        case '2':
-            combinedQuery(head);
-            break;
-        case '3':
-            fuzzyQuery(head);
-            break;
-        case '4':
-            printf("正在返回，请稍等。\n");
-            freeAll(head);
-            printf("返回成功。\n");
-            return;
-        default:
-            printf("无效的选择，请重新输入。\n");
-            break;
-        }
+    if (head->is_empty) {
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoEnquiryWidgets.window),
+                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_OK,
+                                                    "没有加载到任何数据。");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+    } else {
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoEnquiryWidgets.window),
+                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_MESSAGE_INFO,
+                                                    GTK_BUTTONS_OK,
+                                                    "数据加载成功！");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     }
+
+    infoEnquiryWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(infoEnquiryWidgets.window), "通信管理系统 - 经理菜单 - 信息查询系统");
+    gtk_window_set_default_size(GTK_WINDOW(infoEnquiryWidgets.window), 500, 400);
+    gtk_container_set_border_width(GTK_CONTAINER(infoEnquiryWidgets.window), 10);
+    gtk_window_set_position(GTK_WINDOW(infoEnquiryWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
+    g_signal_connect(infoEnquiryWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    
+    infoEnquiryWidgets.grid = gtk_grid_new();
+    gtk_container_add(GTK_CONTAINER(infoEnquiryWidgets.window), infoEnquiryWidgets.grid);
+    gtk_widget_set_halign(infoEnquiryWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(infoEnquiryWidgets.grid, GTK_ALIGN_CENTER);
+
+    infoEnquiryWidgets.simpleQuery_btn = gtk_button_new_with_label("简单查询");
+    g_signal_connect(infoEnquiryWidgets.simpleQuery_btn, "clicked", G_CALLBACK(on_simpleQuery_clicked), head);
+    gtk_grid_attach(GTK_GRID(infoEnquiryWidgets.grid), infoEnquiryWidgets.simpleQuery_btn, 0, 0, 2, 1);
+
+    infoEnquiryWidgets.combinedQuery_btn = gtk_button_new_with_label("组合查询");
+    g_signal_connect(infoEnquiryWidgets.combinedQuery_btn, "clicked", G_CALLBACK(on_combinedQuery_clicked), head);
+    gtk_grid_attach(GTK_GRID(infoEnquiryWidgets.grid), infoEnquiryWidgets.combinedQuery_btn, 0, 1, 2, 1);
+
+    infoEnquiryWidgets.fuzzyQuery_btn = gtk_button_new_with_label("模糊查询");
+    g_signal_connect(infoEnquiryWidgets.fuzzyQuery_btn, "clicked", G_CALLBACK(on_fuzzyQuery_clicked), head);
+    gtk_grid_attach(GTK_GRID(infoEnquiryWidgets.grid), infoEnquiryWidgets.fuzzyQuery_btn, 0, 2, 2, 1);
+
+    infoEnquiryWidgets.backToManageMenu_btn = gtk_button_new_with_label("返回");
+    g_signal_connect(infoEnquiryWidgets.backToManageMenu_btn, "clicked", G_CALLBACK(on_backToManagerMenu_clicked), infoEnquiryWidgets.window);
+    gtk_grid_attach(GTK_GRID(infoEnquiryWidgets.grid), infoEnquiryWidgets.backToManageMenu_btn, 0, 3, 2, 1);
+    
+    gtk_widget_show_all(infoEnquiryWidgets.window);
+    gtk_main();
+    
 }
 
 int selectSearchAttribute(int which) {
@@ -166,5 +189,14 @@ void fuzzyQuery(head_node *head) {
     if (which == -1) return;
 }
 
+static void on_simpleQuery_clicked(GtkWidget *widget, gpointer data) {
+    simpleQuery(data);
+}
+static void on_combinedQuery_clicked(GtkWidget *widget, gpointer data) {
+    combinedQuery(data);
+}
+static void on_fuzzyQuery_clicked(GtkWidget *widget, gpointer data) {
+    fuzzyQuery(data);
+}
 
 // end widgets/info_enquiry.c
