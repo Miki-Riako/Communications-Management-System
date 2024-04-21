@@ -3,9 +3,12 @@
 
 void infoEnquiryWidget();
 int selectSearchAttribute(int which);
-bool searchOnes(head_node *head, char *query, int attrIndex, int which);
+bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how);
+bool howToSearch(const char *toCompare, const char *query, int how);
 void simpleQuery(head_node *head);
+// bool matchNode(void *node, int query, int attrIndex, int which, int method);
 void combinedQuery(head_node *head);
+// void updateTempList(head_node *currentHead, head_node *tempHead, char *query, int attrIndex, int method, int which);
 void fuzzyQuery(head_node *head);
 
 void infoEnquiryWidget() {
@@ -76,11 +79,12 @@ int selectSearchAttribute(int which) {
         printf("无效的选择\n");
         return -1;
     } else {
-        return get[0] - '0' - 1;
+        return charToInt(get[0]) - 1;
     }
 }
 
-bool searchOnes(head_node *head, char *query, int attrIndex, int which) {
+bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how) {
+    // 如果copyList是NULL，就不会执行复制结点到另一个链表的操作
     bool found = false;
     switch (which) {
     case 0: // 客户
@@ -116,9 +120,13 @@ bool searchOnes(head_node *head, char *query, int attrIndex, int which) {
                 printf("无效的属性选择。\n");
                 return false;
             }
-            if (toCompare && isSameString(toCompare, query)) {
+            if (toCompare && howToSearch(toCompare, query, how)) {
                 printNode_cus(cusNode);
                 found = true;
+                if (copyList) {
+                    node_cus *newNode = copyNode_cus(cusNode);
+                    linkNode_cus(copyList, newNode);
+                }
             }
             cusNode = cusNode->next;
         }
@@ -150,9 +158,13 @@ bool searchOnes(head_node *head, char *query, int attrIndex, int which) {
                 printf("无效的属性选择。\n");
                 return false;
             }
-            if (toCompare && isSameString(toCompare, query)) {
+            if (toCompare && howToSearch(toCompare, query, how)) {
                 printNode_ctp(ctpNode);
                 found = true;
+                if (copyList) {
+                    node_ctp *newNode = copyNode_ctp(ctpNode);
+                    linkNode_ctp(copyList, newNode);
+                }
             }
             ctpNode = ctpNode->next;
         }
@@ -184,13 +196,29 @@ bool searchOnes(head_node *head, char *query, int attrIndex, int which) {
                 printf("无效的属性选择。\n");
                 return false;
             }
-            if (toCompare && isSameString(toCompare, query)) {
+            if (toCompare && howToSearch(toCompare, query, how)) {
                 printNode_emp(empNode);
                 found = true;
+                if (copyList) {
+                    node_emp *newNode = copyNode_emp(empNode);
+                    linkNode_emp(copyList, newNode);
+                }
             }
             empNode = empNode->next;
         }
         return found;
+    }
+}
+
+bool howToSearch(const char *toCompare, const char *query, int how) {
+    switch (how) {
+    case 0:  // 完全匹配
+        return isSameString(toCompare, query);
+    case 1:
+        return strstr(toCompare, query) != NULL;
+    default:
+        printf("无效的属性选择。\n");
+        return false;
     }
 }
 
@@ -212,34 +240,97 @@ void simpleQuery(head_node *head) {
 
     // 根据用户选择决定查询内容和显示格式
     printHeading(which);
-    found = searchOnes(head, queryValue, attributeIndex, which);
+    found = searchOnes(head, NULL, queryValue, attributeIndex, which, 0);
     if (!found) {
         printf("没有找到匹配的信息。\n");
     }
 }
-    // } case 3: { // 查询记录
-    //     infoInput(queryName, sizeof(queryName), "请输入要查询的公司名称：");
-    //     node_rec *recNode = head->next_rec;
-    //     printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
-    //     while (recNode != NULL) {
-    //         if (isSameString(recNode->record.companyName, queryName)) {
-    //             printNode_rec(recNode);
-    //             found = true;
-    //         }
-    //         recNode = recNode->next;
-    //     }
-    //     break;
-    // }
 
 void combinedQuery(head_node *head) {
+    // 多一个链表，A链表符合条件的放到B链表，还搜的话就B链表变A链表，继续以此类推
     int which = beforeInfo(head, "查询");
-    if (which == -1) return;
+    if (which == -1) return;  // 无效的查询类型或无数据类型被选中
+    
+    bool first = true;
+    head_node *headA = (head_node *)malloc(sizeof(head_node));  // 分配内存
+    head_node *headB = (head_node *)malloc(sizeof(head_node));  // 分配内存
+    if (!headA || !headB) {
+        fprintf(stderr, "内存分配失败！\n");
+        return;
+    }
+
+    while (true) {
+        char queryValue[MAX_LENGTH];
+        char searchType[MAX_LENGTH];
+        bool found = false;
+        int attributeIndex = selectSearchAttribute(which);
+
+        if (attributeIndex == -1) {
+            printf("无效的属性选择。\n");
+            return;
+        }
+
+        // 获取用户想要搜索的值
+        infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
+        infoInput(searchType, sizeof(searchType), "请输入搜索方式 (0: 精确查询, 1: 模糊查询):\n");
+        if (!isOneChar(searchType) || (charToInt(searchType[0]) < 0 || charToInt(searchType[0]) > 1)) {
+            printf("错误的搜索方式！\n");
+            continue;
+        }
+        // 根据用户选择决定查询内容和显示格
+        printHeading(which);
+        if (first) {
+            found = searchOnes(head, headB, queryValue, attributeIndex, which, charToInt(searchType[0]));
+            first = false;
+        } else {
+            found = searchOnes(headA, headB, queryValue, attributeIndex, which, charToInt(searchType[0]));
+        }
+        if (!found) {
+            printf("没有找到匹配的信息。\n");
+        }
+
+        printf("是否继续查询？(y):\n");
+
+        char get[MAX_LENGTH];
+        getInput(get, sizeof(get));
+        system(SYSTEM_CLEAR);
+        
+        if (!isOneChar(get)) {
+            break;
+        } else if (get[0] != 'y'&& get[0] != 'Y') {
+            break;
+        } else {
+            swapLists(&headA, &headB);
+            clearList(headB);
+        }
+    }
+
+    freeAll(headA);
+    freeAll(headB);
 }
 
 void fuzzyQuery(head_node *head) {
     int which = beforeInfo(head, "查询");
     if (which == -1) return;
-}
 
+    char queryValue[MAX_LENGTH];
+    bool found = false;
+    int attributeIndex = selectSearchAttribute(which);
+
+    if (attributeIndex == -1) {
+        printf("无效的属性选择。\n");
+        return;
+    }
+
+    // 获取用户想要搜索的值
+    infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
+
+    // 根据用户选择决定查询内容和显示格式
+    printHeading(which);
+    found = searchOnes(head, NULL, queryValue, attributeIndex, which, 1);
+    if (!found) {
+        printf("没有找到匹配的信息。\n");
+    }
+}
 
 // end widgets/info_enquiry.c

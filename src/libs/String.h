@@ -7,6 +7,9 @@ bool isOneChar(const char *input) { return (strlen(input) == 1); }
 // 清除缓冲区
 void clearBuffer() { while (getchar() != '\n'); }
 
+// 字符变数字
+int charToInt(char c) { return (int)(c - '0'); }
+
 // 获取字符串
 void getInput(char *input, int buffer_size) {
     if (fgets(input, buffer_size, stdin) != NULL) {
