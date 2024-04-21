@@ -290,6 +290,25 @@ void printNode_rec(node_rec *node) {
     );
 }
 
+void printHeading(int which) {
+    switch (which) {
+    case 0:
+        printf("客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n");
+        break;
+    case 1:
+        printf("联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+        break;
+    case 2:
+        printf("业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+        break;
+    case 3:
+        printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
+        break;
+    default:
+        break;
+    }
+}
+
 // 打印需要的链表内容
 void printNodeList(head_node *head, int choice) {
     if (head == NULL || head->is_empty) {
@@ -301,7 +320,7 @@ void printNodeList(head_node *head, int choice) {
     case 0:  // 客户信息
         if (head->is_cus) {
             node_cus *current = head->next_cus;
-            printf("客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n");
+            printHeading(choice);
             while (current != NULL) {
                 printNode_cus(current);
                 current = current->next;
@@ -313,7 +332,7 @@ void printNodeList(head_node *head, int choice) {
     case 1:  // 联络人信息
         if (head->is_ctp) {
             node_ctp *current = head->next_ctp;
-            printf("联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+            printHeading(choice);
             while (current != NULL) {
                 printNode_ctp(current);
                 current = current->next;
@@ -325,7 +344,7 @@ void printNodeList(head_node *head, int choice) {
     case 2:  // 业务员信息
         if (head->is_emp) {
             node_emp *current = head->next_emp;
-            printf("业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+            printHeading(choice);
             while (current != NULL) {
                 printNode_emp(current);
                 current = current->next;
@@ -337,7 +356,7 @@ void printNodeList(head_node *head, int choice) {
     case 3:  // 通信记录
         if (head->is_rec) {
             node_rec *current = head->next_rec;
-            printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
+            printHeading(choice);
             while (current != NULL) {
                 printNode_rec(current);
                 current = current->next;

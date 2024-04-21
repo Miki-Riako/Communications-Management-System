@@ -83,6 +83,7 @@ void infoInput(char *input, int buffer_size, const char *prompt);
 void inputTheName(char *name, int buffer_size, const char *prompt);
 void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact);
 void addColumn(char *fullLine, const char *newOne);
+void printHeading(int which);
 void printNode_cus(node_cus *node);
 void printNode_ctp(node_ctp *node);
 void printNode_emp(node_emp *node);
