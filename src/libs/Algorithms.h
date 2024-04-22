@@ -231,3 +231,171 @@ void combinedSortHelper(head_node *head, int which) {
     // 先进后排序
     sort(which, head, attributeIndex, isAscending);
 }
+
+// 组合统计函数
+void countCombinedAttributes(head_node *head, int *attrIndexes, int numAttrs, int which) {
+    AttributeCount counts[MAX_LENGTH];
+    int uniqueCount = 0;
+    bool found;
+
+    switch (which) {
+    case 0: // 客户
+        for (node_cus *node = head->next_cus; node != NULL; node = node->next) {
+            char combinedAttributes[MAX_LENGTH * 10] = "";
+            for (int i = 0; i < numAttrs - 1; ++i) {
+                char *attr = getCustomerAttribute(&node->customer, attrIndexes[i]);
+                strcat(combinedAttributes, attr);
+                if (i < numAttrs - 1) {
+                    strcat(combinedAttributes, " | ");
+                }
+            }
+
+            found = false;
+            for (int i = 0; i < uniqueCount; ++i) {
+                if (strcmp(counts[i].value, combinedAttributes) == 0) {
+                    ++counts[i].count;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                strcpy(counts[uniqueCount].value, combinedAttributes);
+                counts[uniqueCount].count = 1;
+                ++uniqueCount;
+            }
+        }
+        break;
+    case 1: // 联络人
+        for (node_ctp *node = head->next_ctp; node != NULL; node = node->next) {
+            char combinedAttributes[MAX_LENGTH * 10] = "";
+            for (int i = 0; i < numAttrs - 1; ++i) {
+                char *attr = getContactPersonAttribute(&node->contactPerson, attrIndexes[i]);
+                strcat(combinedAttributes, attr);
+                if (i < numAttrs - 1) {
+                    strcat(combinedAttributes, " | ");
+                }
+            }
+
+            found = false;
+            for (int i = 0; i < uniqueCount; ++i) {
+                if (strcmp(counts[i].value, combinedAttributes) == 0) {
+                    ++counts[i].count;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                strcpy(counts[uniqueCount].value, combinedAttributes);
+                counts[uniqueCount].count = 1;
+                ++uniqueCount;
+            }
+        }
+    case 2: // 业务员
+        for (node_emp *node = head->next_emp; node != NULL; node = node->next) {
+            char combinedAttributes[MAX_LENGTH * 10] = "";
+            for (int i = 0; i < numAttrs - 1; ++i) {
+                char *attr = getEmployeeAttribute(&node->employee, attrIndexes[i]);
+                strcat(combinedAttributes, attr);
+                if (i < numAttrs - 1) {
+                    strcat(combinedAttributes, " | ");
+                }
+            }
+
+            found = false;
+            for (int i = 0; i < uniqueCount; ++i) {
+                if (strcmp(counts[i].value, combinedAttributes) == 0) {
+                    ++counts[i].count;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                strcpy(counts[uniqueCount].value, combinedAttributes);
+                counts[uniqueCount].count = 1;
+                ++uniqueCount;
+            }
+        }
+        break;
+    case 3: // 通信记录
+        for (node_rec *node = head->next_rec; node != NULL; node = node->next) {
+            char combinedAttributes[MAX_LENGTH * 10] = "";
+            for (int i = 0; i < numAttrs - 1; ++i) {
+                char *attr = getRecordAttribute(&node->record, attrIndexes[i]);
+                strcat(combinedAttributes, attr);
+                if (i < numAttrs - 1) {
+                    strcat(combinedAttributes, " | ");
+                }
+            }
+
+            found = false;
+            for (int i = 0; i < uniqueCount; ++i) {
+                if (strcmp(counts[i].value, combinedAttributes) == 0) {
+                    ++counts[i].count;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                strcpy(counts[uniqueCount].value, combinedAttributes);
+                counts[uniqueCount].count = 1;
+                ++uniqueCount;
+            }
+        }
+        break;
+    }
+
+    printf("组合统计结果：\n");
+    for (int i = 0; i < uniqueCount; ++i) {
+        printf("%s: %d\n", counts[i].value, counts[i].count);
+    }
+    if (uniqueCount == 0) printf("无符合条件的结果！\n");
+    printf("统计完毕！\n");
+}
+// 好用函数
+char* getCustomerAttribute(Customer *customer, int attrIndex) {
+    switch (attrIndex) {
+    case 0: return isSameString(customer->name, " ") ? "空值" : customer->name;
+    case 1: return isSameString(customer->region, " ") ? "空值" : customer->region;
+    case 2: return isSameString(customer->address, " ") ? "空值" : customer->address;
+    case 3: return isSameString(customer->legalRepresentative, " ") ? "空值" : customer->legalRepresentative;
+    case 4: return isSameString(customer->scale, " ") ? "空值" : customer->scale;
+    case 5: return isSameString(customer->businessContactLevel, " ") ? "空值" : customer->businessContactLevel;
+    case 6: return isSameString(customer->email, " ") ? "空值" : customer->email;
+    case 7: return isSameString(customer->phone, " ") ? "空值" : customer->phone;
+    default: return "空值";
+    }
+}
+char* getContactPersonAttribute(ContactPerson *contact, int attrIndex) {
+    switch (attrIndex) {
+    case 0: return isSameString(contact->name, " ") ? "空值" : contact->name;
+    case 1: return isSameString(contact->gender, " ") ? "空值" : contact->gender;
+    case 2: return isSameString(contact->birthday, " ") ? "空值" : contact->birthday;
+    case 3: return isSameString(contact->email, " ") ? "空值" : contact->email;
+    case 4: return isSameString(contact->phone, " ") ? "空值" : contact->phone;
+    case 5: return isSameString(contact->representative, " ") ? "空值" : contact->representative;
+    default: return "空值";
+    }
+}
+char* getEmployeeAttribute(Employee *employee, int attrIndex) {
+    switch (attrIndex) {
+    case 0: return isSameString(employee->name, " ") ? "空值" : employee->name;
+    case 1: return isSameString(employee->gender, " ") ? "空值" : employee->gender;
+    case 2: return isSameString(employee->birthday, " ") ? "空值" : employee->birthday;
+    case 3: return isSameString(employee->email, " ") ? "空值" : employee->email;
+    case 4: return isSameString(employee->phone, " ") ? "空值" : employee->phone;
+    case 5: return isSameString(employee->representative, " ") ? "空值" : employee->representative;
+    default: return "空值";
+    }
+}
+char* getRecordAttribute(Record *record, int attrIndex) {
+    switch (attrIndex) {
+    case 0: return isSameString(record->user, " ") ? "空值" : record->user;
+    case 1: return isSameString(record->companyName, " ") ? "空值" : record->companyName;
+    case 2: return isSameString(record->contactName, " ") ? "空值" : record->contactName;
+    case 3: return isSameString(record->date, " ") ? "空值" : record->date;
+    case 4: return isSameString(record->time, " ") ? "空值" : record->time;
+    case 5: return isSameString(record->duration, " ") ? "空值" : record->duration;
+    case 6: return isSameString(record->content, " ") ? "空值" : record->content;
+    default: return "空值";
+    }
+}

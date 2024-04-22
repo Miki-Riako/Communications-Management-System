@@ -107,8 +107,60 @@ void sortRecords(head_node *head) {
 }
 
 void statisticsRecords(head_node *head) {
-    // 此处实现统计逻辑
-    printf("统计通信情况的功能尚未实现。\n");
+    if (head->is_empty) {
+        printf("没有可统计的数据。\n");
+        return;
+    }
+    int attrIndex = -1;
+    int numAttrs = 0;
+    int attrIndexes[32];
+    while (true) {
+        printf("\n信息统计\n");
+        printf("1. 简单统计\n");
+        printf("2. 组合统计\n");
+        printf("3. 预设统计\n");
+        printf("4. 条件统计\n");
+        printf("5. 返回\n");
+        printf("请选择一个操作（1-5）：");
+
+        char get[MAX_LENGTH];
+        getInput(get, sizeof(get));
+        system(SYSTEM_CLEAR);
+
+        switch (get[0]) {
+        case '1':
+            attrIndex = selectSearchAttribute(3);
+            if (attrIndex == -1) {
+                printf("无效的属性选择。\n");
+                break;
+            }
+            countAttributes(head, attrIndex, 3);
+            break;
+        case '2':
+            printf("请输入属性索引，输入-1结束：\n");
+            while (true) {
+                attrIndex = selectSearchAttribute(3);
+                attrIndexes[numAttrs++] = attrIndex;
+                if (attrIndex == -1) break;
+                else if (numAttrs >= 32) {
+                    printf("属性索引数量超过限制。\n");
+                    break;
+                }
+            }
+            countCombinedAttributes(head, attrIndexes, numAttrs, 3);
+            break;
+        case '3':
+            // presetStatistics(head);
+            break;
+        case '4':
+            // conditionalStatistics(head);
+            break;
+        case '5':
+            return;
+        default:
+            printf("无效的选择，请重新输入。\n");
+        }
+    }
 }
 
 

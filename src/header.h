@@ -43,6 +43,11 @@ bool compareNodeRec(node_rec *a, node_rec *b, int attrIndex, bool ascending);
 void sort(int which, head_node *head, int attrIndex, bool ascending);
 void beforeSort(head_node *head, int which, int *attributeIndex, bool *isAscending);
 void combinedSortHelper(head_node *head, int which);
+void countCombinedAttributes(head_node *head, int *attrIndexes, int numAttrs, int which);
+char* getCustomerAttribute(Customer *customer, int attrIndex);
+char* getContactPersonAttribute(ContactPerson *contact, int attrIndex);
+char* getEmployeeAttribute(Employee *employee, int attrIndex);
+char* getRecordAttribute(Record *record, int attrIndex);
 
 bool alreadyExists(const char *filename, const char *username);
 bool lineExists(const char *filename, const char *lineToCheck);
