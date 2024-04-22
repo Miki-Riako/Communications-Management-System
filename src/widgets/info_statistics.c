@@ -6,7 +6,7 @@ void simpleStatistics(head_node *head);
 void combinedStatistics(head_node *head);
 void presetStatistics(head_node *head);
 void conditionalStatistics(head_node *head);
-void countAttributesByCondition(head_node *head, int attrIndex, int which, char *conditionValue);
+void countAttributesByConditions(head_node *head, int *attrIndexes, char conditionValues[][MAX_LENGTH], int numConditions, int which);
 void countCombinedAttributes(head_node *head, int *attrIndexes, int numAttrs, int which);
 void countAttributes(head_node *head, int attrIndex, int which);
 char* getCustomerAttribute(Customer *customer, int attrIndex);
@@ -172,40 +172,64 @@ void conditionalStatistics(head_node *head) {
     int which = beforeInfo(head, "统计");
     if (which == -1) return;  // 无效的选择
 
-    int attrIndex = selectSearchAttribute(which);
-    if (attrIndex == -1) {
-        printf("无效的属性选择。\n");
-        return;
+    int attrIndexes[32]; // 存储属性索引
+    char conditionValues[32][MAX_LENGTH]; // 存储每个属性的条件值
+    int numConditions = 0; // 条件数量
+
+    printf("请输入属性索引和条件值，输入-1结束索引输入：\n");
+    while (true) {
+        printf("属性索引：\n");
+        int attrIndex = selectSearchAttribute(which);
+        if (attrIndex == -1) break;
+        attrIndexes[numConditions] = attrIndex;
+
+        printf("条件值：");
+        getInput(conditionValues[numConditions], sizeof(conditionValues[numConditions]));
+        numConditions++;
+
+        if (numConditions >= 32) {
+            printf("条件数量超过限制。\n");
+            break;
+        }
     }
 
-    printf("请输入您想要统计的值：");
-    char conditionValue[MAX_LENGTH];
-    getInput(conditionValue, sizeof(conditionValue));
-
-    countAttributesByCondition(head, attrIndex, which, conditionValue);
+    countAttributesByConditions(head, attrIndexes, conditionValues, numConditions, which);
 }
 
-void countAttributesByCondition(head_node *head, int attrIndex, int which, char *conditionValue) {
+void countAttributesByConditions(head_node *head, int *attrIndexes, char conditionValues[][MAX_LENGTH], int numConditions, int which) {
     AttributeCount counts[MAX_LENGTH];
     int uniqueCount = 0;
     bool found;
-    char *attributeValue;
+    bool match;
 
     switch (which) {
     case 0: // 客户
         for (node_cus *node = head->next_cus; node != NULL; node = node->next) {
-            attributeValue = getCustomerAttribute(&node->customer, attrIndex);
-            if (strcmp(attributeValue, conditionValue) == 0) {
+            match = true;
+            char combinedAttributes[MAX_LENGTH * 10] = "";
+            for (int i = 0; i < numConditions; ++i) {
+                char *attr = getCustomerAttribute(&node->customer, attrIndexes[i]);
+                if (strcmp(attr, conditionValues[i]) != 0) {
+                    match = false;
+                    break;
+                }
+                strcat(combinedAttributes, attr);
+                if (i < numConditions - 1) {
+                    strcat(combinedAttributes, " | ");
+                }
+            }
+
+            if (match) {
                 found = false;
-                for (int i = 0; i < uniqueCount; i++) {
-                    if (strcmp(counts[i].value, attributeValue) == 0) {
-                        counts[i].count++;
+                for (int i = 0; i < uniqueCount; ++i) {
+                    if (strcmp(counts[i].value, combinedAttributes) == 0) {
+                        ++counts[i].count;
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    strcpy(counts[uniqueCount].value, attributeValue);
+                    strcpy(counts[uniqueCount].value, combinedAttributes);
                     counts[uniqueCount].count = 1;
                     ++uniqueCount;
                 }
@@ -214,18 +238,31 @@ void countAttributesByCondition(head_node *head, int attrIndex, int which, char 
         break;
     case 1: // 联络人
         for (node_ctp *node = head->next_ctp; node != NULL; node = node->next) {
-            attributeValue = getContactPersonAttribute(&node->contactPerson, attrIndex);
-            if (strcmp(attributeValue, conditionValue) == 0) {
+            match = true;
+            char combinedAttributes[MAX_LENGTH * 10] = "";
+            for (int i = 0; i < numConditions; ++i) {
+                char *attr = getContactPersonAttribute(&node->contactPerson, attrIndexes[i]);
+                if (strcmp(attr, conditionValues[i]) != 0) {
+                    match = false;
+                    break;
+                }
+                strcat(combinedAttributes, attr);
+                if (i < numConditions - 1) {
+                    strcat(combinedAttributes, " | ");
+                }
+            }
+
+            if (match) {
                 found = false;
-                for (int i = 0; i < uniqueCount; i++) {
-                    if (strcmp(counts[i].value, attributeValue) == 0) {
-                        counts[i].count++;
+                for (int i = 0; i < uniqueCount; ++i) {
+                    if (strcmp(counts[i].value, combinedAttributes) == 0) {
+                        ++counts[i].count;
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    strcpy(counts[uniqueCount].value, attributeValue);
+                    strcpy(counts[uniqueCount].value, combinedAttributes);
                     counts[uniqueCount].count = 1;
                     ++uniqueCount;
                 }
@@ -234,18 +271,31 @@ void countAttributesByCondition(head_node *head, int attrIndex, int which, char 
         break;
     case 2: // 业务员
         for (node_emp *node = head->next_emp; node != NULL; node = node->next) {
-            attributeValue = getEmployeeAttribute(&node->employee, attrIndex);
-            if (strcmp(attributeValue, conditionValue) == 0) {
+            match = true;
+            char combinedAttributes[MAX_LENGTH * 10] = "";
+            for (int i = 0; i < numConditions; ++i) {
+                char *attr = getEmployeeAttribute(&node->employee, attrIndexes[i]);
+                if (strcmp(attr, conditionValues[i]) != 0) {
+                    match = false;
+                    break;
+                }
+                strcat(combinedAttributes, attr);
+                if (i < numConditions - 1) {
+                    strcat(combinedAttributes, " | ");
+                }
+            }
+
+            if (match) {
                 found = false;
-                for (int i = 0; i < uniqueCount; i++) {
-                    if (strcmp(counts[i].value, attributeValue) == 0) {
-                        counts[i].count++;
+                for (int i = 0; i < uniqueCount; ++i) {
+                    if (strcmp(counts[i].value, combinedAttributes) == 0) {
+                        ++counts[i].count;
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    strcpy(counts[uniqueCount].value, attributeValue);
+                    strcpy(counts[uniqueCount].value, combinedAttributes);
                     counts[uniqueCount].count = 1;
                     ++uniqueCount;
                 }
@@ -254,9 +304,8 @@ void countAttributesByCondition(head_node *head, int attrIndex, int which, char 
         break;
     }
 
-    // 打印统计结果
     printf("条件统计结果：\n");
-    for (int i = 0; i < uniqueCount; ++i) {
+    for (int i = 0; i < uniqueCount; i++) {
         printf("%s: %d\n", counts[i].value, counts[i].count);
     }
     if (uniqueCount == 0) printf("无符合条件的结果！\n");

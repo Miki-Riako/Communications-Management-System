@@ -91,7 +91,10 @@ void simpleSort(head_node *head) {
         break;
     }
     int attributeIndex = selectSearchAttribute(which);
-    if (attributeIndex == -1) return;
+    if (attributeIndex == -1) {
+        printf("无效的属性选择。\n");
+        return;
+    }
 
     char ascending[MAX_LENGTH];
     printf("请输入排序方式（1升序/0降序）：");
@@ -135,7 +138,7 @@ void combinedSortHelper(head_node *head, int which) {
     while (true) {
         attributeIndex = selectSearchAttribute(which);
         if (attributeIndex == -1) {
-            printf("无效的排序属性，请重新输入。\n");
+            printf("无效的属性选择，请重新输入。\n");
         } else {
             break;
         }

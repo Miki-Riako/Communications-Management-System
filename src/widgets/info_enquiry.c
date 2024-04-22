@@ -204,8 +204,10 @@ void simpleQuery(head_node *head) {
     char queryValue[MAX_LENGTH];
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
-    if (attributeIndex == -1) return;
-
+    if (attributeIndex == -1) {
+        printf("无效的属性选择。\n");
+        return;
+    }
     // 获取用户想要搜索的值
     infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
 
@@ -237,7 +239,6 @@ void combinedQuery(head_node *head) {
         char searchType[MAX_LENGTH];
         bool found = false;
         int attributeIndex = selectSearchAttribute(which);
-
         if (attributeIndex == -1) {
             printf("无效的属性选择。\n");
             return;
@@ -291,7 +292,6 @@ void fuzzyQuery(head_node *head) {
     char queryValue[MAX_LENGTH];
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
-
     if (attributeIndex == -1) {
         printf("无效的属性选择。\n");
         return;
