@@ -5,7 +5,6 @@ void infoSortWidget();
 void defaultSort(head_node *head);
 void simpleSort(head_node *head);
 void combinedSort(head_node *head);
-void combinedSortHelper(head_node *head, int which);
 
 void infoSortWidget() {
     initializeAll();
@@ -58,6 +57,10 @@ void infoSortWidget() {
 }
 
 void defaultSort(head_node *head) {
+    if (head == NULL || head->is_empty) {
+        printf("没有可排序的数据。\n");
+        return;
+    }
     int which = beforeInfo(head, "排序");
     if (which == -1) return;  // 选择无效
 
@@ -76,6 +79,10 @@ void defaultSort(head_node *head) {
 }
 
 void simpleSort(head_node *head) {
+    if (head == NULL || head->is_empty) {
+        printf("没有可排序的数据。\n");
+        return;
+    }
     int which = beforeInfo(head, "排序");
     if (which == -1) return;  // 如果选择无效或不允许展示，则返回
 
@@ -90,21 +97,12 @@ void simpleSort(head_node *head) {
         printf("业务员信息列表：\n");
         break;
     }
-    int attributeIndex = selectSearchAttribute(which);
-    if (attributeIndex == -1) {
-        printf("无效的属性选择。\n");
-        return;
-    }
+    int attributeIndex = 0;
+    bool isAscending = false;
 
-    char ascending[MAX_LENGTH];
-    printf("请输入排序方式（1升序/0降序）：");
-    getInput(ascending, sizeof(ascending));
-    if (!isOneChar(ascending)) {
-        printf("无效的排序方式，请重新输入。\n");
-        return;
-    }
+    beforeSort(head, which, &attributeIndex, &isAscending);
     
-    sort(which, head, attributeIndex, charToInt(ascending[0]));
+    sort(which, head, attributeIndex, isAscending);
     printNodeList(head, which);
 }
 
@@ -132,46 +130,5 @@ void combinedSort(head_node *head) {
     system(SYSTEM_CLEAR);
     printNodeList(head, which);
 }
-
-void combinedSortHelper(head_node *head, int which) {
-    int attributeIndex = 0;
-    while (true) {
-        attributeIndex = selectSearchAttribute(which);
-        if (attributeIndex == -1) {
-            printf("无效的属性选择，请重新输入。\n");
-        } else {
-            break;
-        }
-    }
-
-    char ascending[MAX_LENGTH];
-    while (true) {
-        printf("请输入排序方式（1升序/0降序）：");
-        getInput(ascending, sizeof(ascending));
-        if (!isOneChar(ascending)) {
-            printf("无效的排序方式，请重新输入。\n");
-        } else {
-            break;
-        }
-    }
-
-    char get[MAX_LENGTH];
-    printf("是否继续添加排序条件？(y): ");
-    getInput(get, sizeof(get));
-    if (isOneChar(get) && (get[0] == 'y' || get[0] == 'Y')) {
-        system(SYSTEM_CLEAR);
-        combinedSortHelper(head, which);  // 递归调用以继续排序
-    }
-
-    // 先进后排序
-    sort(which, head, attributeIndex, charToInt(ascending[0]));
-}
-
-
-
-
-
-
-
 
 // end widgets/info_sort.c

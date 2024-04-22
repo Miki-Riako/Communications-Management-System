@@ -41,6 +41,8 @@ bool compareNodeCtp(node_ctp *a, node_ctp *b, int attrIndex, bool ascending);
 bool compareNodeEmp(node_emp *a, node_emp *b, int attrIndex, bool ascending);
 bool compareNodeRec(node_rec *a, node_rec *b, int attrIndex, bool ascending);
 void sort(int which, head_node *head, int attrIndex, bool ascending);
+void beforeSort(head_node *head, int which, int *attributeIndex, bool *isAscending);
+void combinedSortHelper(head_node *head, int which);
 
 bool alreadyExists(const char *filename, const char *username);
 bool lineExists(const char *filename, const char *lineToCheck);
@@ -52,6 +54,7 @@ bool removeLineInFile(const char *filename, const char *data);
 void copyLine(const char *sourceFilename, const char *destinationFilename, const char *columnName, const char *targetValue);
 bool copyFile(const char *sourcePath, const char *destinationPath);
 void loadFile(head_node *head);
+void loadFile_record(head_node *head);
 void loadCustomerData(const char *filename, const char *customerName, head_node *head);
 void loadCustomers(const char *filename, head_node *head);
 void loadContactPersons(const char *filename, head_node *head);

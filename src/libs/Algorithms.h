@@ -64,13 +64,22 @@ bool compareNodeEmp(node_emp *a, node_emp *b, int attrIndex, bool ascending) {
 }
 bool compareNodeRec(node_rec *a, node_rec *b, int attrIndex, bool ascending) {
     char *attrA, *attrB;
+    int intA, intB;
     switch (attrIndex) {
     case 0: attrA = a->record.user; attrB = b->record.user; break;
     case 1: attrA = a->record.companyName; attrB = b->record.companyName; break;
     case 2: attrA = a->record.contactName; attrB = b->record.contactName; break;
     case 3: attrA = a->record.date; attrB = b->record.date; break;
     case 4: attrA = a->record.time; attrB = b->record.time; break;
-    case 5: attrA = a->record.duration; attrB = b->record.duration; break;
+    case 5:
+        // 处理duration作为整数比较
+        intA = atoi(a->record.duration); // 将duration字符串转换为整数
+        intB = atoi(b->record.duration);
+        if (ascending) {
+            return intA > intB;
+        } else {
+            return intA < intB;
+        }
     case 6: attrA = a->record.content; attrB = b->record.content; break;
     default: return false;
     }
@@ -178,4 +187,47 @@ void sort(int which, head_node *head, int attrIndex, bool ascending) {
     default:
         break;
     }
+}
+
+// 排序前向用户确认信息的函数
+void beforeSort(head_node *head, int which, int *attributeIndex, bool *isAscending) {
+    while (true) {
+        *attributeIndex = selectSearchAttribute(which);
+        if (*attributeIndex == -1) {
+            printf("无效的属性选择，请重新输入。\n");
+        } else {
+            break;
+        }
+    }
+
+    char ascending[MAX_LENGTH];
+    while (true) {
+        printf("请输入排序方式（1升序/0降序）：");
+        getInput(ascending, sizeof(ascending));
+        if (!isOneChar(ascending)) {
+            printf("无效的排序方式，请重新输入。\n");
+        } else {
+            break;
+        }
+    }
+    *isAscending = charToInt(ascending[0]) == 0 ? false : true;
+}
+
+// 帮助组合排序的递归函数
+void combinedSortHelper(head_node *head, int which) {
+    int attributeIndex = 0;
+    bool isAscending = false;
+
+    beforeSort(head, which, &attributeIndex, &isAscending);
+
+    char get[MAX_LENGTH];
+    printf("是否继续添加排序条件？(y): ");
+    getInput(get, sizeof(get));
+    if (isOneChar(get) && (get[0] == 'y' || get[0] == 'Y')) {
+        system(SYSTEM_CLEAR);
+        combinedSortHelper(head, which);  // 递归调用以继续排序
+    }
+
+    // 先进后排序
+    sort(which, head, attributeIndex, isAscending);
 }

@@ -264,6 +264,7 @@ void loadFile(head_node *head) {
         loadCustomers("customers.csv", head);
         loadContactPersons("contacts.csv", head);
         loadEmployees("employees.csv", head);
+        loadRecords("customers.csv", head);
         return;
     }
     // 非管理员只加载其负责的客户数据
@@ -285,6 +286,62 @@ void loadFile(head_node *head) {
         return;
     }
 }
+
+// loadFile的Record版本
+void loadFile_record(head_node *head) {
+    head->is_empty = true;
+    head->is_cus = false;
+    head->is_ctp = false;
+    head->is_emp = false;
+    head->is_rec = false;
+    head->next_cus = NULL;
+    head->next_ctp = NULL;
+    head->next_emp = NULL;
+    head->next_rec = NULL;
+    if (IsManager) {
+        loadRecords("records.csv", head);
+        return;
+    }
+
+    // 以下是为非管理员用户加载记录的逻辑
+    FILE *file = fopen("records.csv", "r");
+    if (!file) {
+        perror("打开记录文件失败");
+        return;
+    }
+    char line[1024];
+    fgets(line, sizeof(line), file); // 跳过标题行
+    while (fgets(line, sizeof(line), file)) {
+        Record record;
+        char *token = strtok(line, "|||");
+        if (!token) continue;
+        
+        // 检查用户名是否匹配当前用户
+        if (strcmp(token, User) != 0) continue;  // 如果不匹配，跳过此条记录
+        
+        strcpy(record.user, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.companyName, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.contactName, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.date, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.time, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.duration, token);
+
+        token = strtok(NULL, "|||\n\r");
+        if (token) {
+            cleanField(token);
+            strcpy(record.content, token);
+        }
+
+        appendNode_rec(head, record); // 将记录追加到链表
+    }
+    fclose(file);
+}
+
 
 // 实际加载客户数据的函数
 void loadCustomerData(const char *filename, const char *customerName, head_node *head) {
