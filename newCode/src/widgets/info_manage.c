@@ -70,26 +70,17 @@ void infoManageWidget(GtkWidget *parent) {
 void addEmployee() {
     Employee newEmployee;
     addEntry(1, "employees.csv", "请输入业务员姓名：", &newEmployee, NULL, NULL);
-    // saveEmployeeToFile(newEmployee);
-    // displayEmployee(newEmployee);
-    // printf("业务员信息已添加。\n");
 }
 
 
 void addCustomer() {
     Customer newCustomer;
     addEntry(2, "customers.csv", "请输入客户姓名：",NULL, &newCustomer, NULL);
-    saveCustomerToFile(newCustomer);
-    displayCustomer(newCustomer);
-    printf("客户信息已添加。\n");
 }
 
 void addContact() {
     ContactPerson newContact;
     addEntry(3, "contacts.csv", "请输入联络员姓名：", NULL, NULL, &newContact);
-    saveContactToFile(newContact);
-    displayContact(newContact);
-    printf("联络员信息已添加。\n");
 }
 
 void changeEmployee(){
@@ -98,7 +89,14 @@ void changeEmployee(){
 
     // 检查员工是否存在
     if (!alreadyExists("employees.csv", name)) {
-        printf("业务员信息未找到。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "业务员信息未找到。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "修改失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
 
@@ -120,31 +118,51 @@ void changeEmployee(){
 
     // 删除原有员工记录
     if (!removeEntry("employees_backup.csv", name)) {
-        printf("无法删除原有员工记录。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "无法删除原有员工记录。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "删除失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
 
     // 添加更新后的新记录
     Employee newEmployee;
-    addEntry(1, "employees_backup.csv", "请输入新的业务员姓名：", &newEmployee, NULL, NULL);
+    addEntry(1, "employees_backup.csv", "请输入新的业务员信息：", &newEmployee, NULL, NULL);
 
     // 移除原文件并将临时文件重命名
     remove("employees.csv");
     rename("employees_backup.csv", "employees.csv");
 
     saveEmployeeToFile(newEmployee);
-    displayEmployee(newEmployee);
-    printf("业务员信息已更新。\n");
+    // displayEmployee(newEmployee);
+    GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_INFO,
+                                GTK_BUTTONS_OK,
+                                "业务员信息已更新。");
+    gtk_window_set_title(GTK_WINDOW(dialog), "修改成功");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
 
 void changeCustomer(){
     char name[MAX_LENGTH];
-    printf("请输入要修改的客户姓名：");
-    getInput(name, sizeof(name));
+    inputTheName(name, sizeof(name), "请输入要修改的客户姓名：");
 
     // 检查客户是否存在
     if (!alreadyExists("customers.csv", name)) {
-        printf("客户信息未找到。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "客户信息未找到。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "修改失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
 
@@ -166,7 +184,14 @@ void changeCustomer(){
 
     // 删除原有客户记录
     if (!removeEntry("customers_backup.csv", name)) {
-        printf("无法删除原有客户记录。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "无法删除原有客户记录。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "删除失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
 
@@ -179,18 +204,31 @@ void changeCustomer(){
     rename("customers_backup.csv", "customers.csv");
 
     saveCustomerToFile(newCustomer);
-    displayCustomer(newCustomer);
-    printf("客户信息已更新。\n");
+
+    GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_INFO,
+                                GTK_BUTTONS_OK,
+                                "客户信息已更新。");
+    gtk_window_set_title(GTK_WINDOW(dialog), "修改成功");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
 
 void changeContact(){
     char name[MAX_LENGTH];
-    printf("请输入要修改的联系人姓名：");
-    getInput(name, sizeof(name));
+    inputTheName(name, sizeof(name), "请输入要修改的联络员姓名：");
 
     // 检查联系人是否存在
     if (!alreadyExists("contacts.csv", name)) {
-        printf("联系人信息未找到。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "联系人信息未找到。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "修改失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
 
@@ -212,7 +250,14 @@ void changeContact(){
 
     // 删除原有联系人记录
     if (!removeEntry("contacts_backup.csv", name)) {
-        printf("无法删除原有联系人记录。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "无法删除原有联系人记录。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "删除失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
 
@@ -223,10 +268,16 @@ void changeContact(){
     // 移除原文件并将临时文件重命名
     remove("contacts.csv");
     rename("contacts_backup.csv", "contacts.csv");
-
     saveContactToFile(newContact);
-    displayContact(newContact);
-    printf("联系人信息已更新。\n");
+
+    GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_INFO,
+                                GTK_BUTTONS_OK,
+                                "联系人信息已更新。");
+    gtk_window_set_title(GTK_WINDOW(dialog), "修改成功");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
 
 void saveEmployeeToFile(Employee employee) {
@@ -271,36 +322,120 @@ void saveContactToFile(ContactPerson contact) {
 }
 
 void displayEmployee(Employee employee) {
-    printf("\n显示业务员信息:\n");
-    printf("姓名: %-20s\n", employee.name);
-    printf("性别: %-10s\n", employee.gender);
-    printf("生日: %-15s\n", employee.birthday);
-    printf("电子邮件: %-25s\n", employee.email);
-    printf("电话: %-15s\n", employee.phone);
-    printf("代表联络公司: %-20s\n", employee.representative);
+    GtkWidget *dialog, *label, *content_area;
+    GtkWindow *parent_window = NULL;  // 如果有主窗口，此处应设置为相应的 GtkWindow 指针
+
+    dialog = gtk_dialog_new_with_buttons("显示业务员信息",
+                                         parent_window,
+                                         GTK_DIALOG_MODAL,
+                                         "_OK", GTK_RESPONSE_OK,
+                                         NULL);
+
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    // 创建并设置标签内容
+    char info[1024];
+    snprintf(info, sizeof(info),
+             "\n显示业务员信息:\n"
+             "姓名: %-20.20s\n"
+             "性别: %-10.10s\n"
+             "生日: %-15.15s\n" 
+             "电子邮件: %-25.25s\n" 
+             "电话: %-15.15s\n"
+             "代表联络公司: %-20.20s\n", 
+             employee.name,
+             employee.gender,
+             employee.birthday,
+             employee.email,
+             employee.phone,
+             employee.representative);
+
+    label = gtk_label_new(info);
+    gtk_container_add(GTK_CONTAINER(content_area), label);
+
+    gtk_widget_show_all(dialog);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
 
 void displayCustomer(Customer customer) {
-    printf("\n显示客户信息:\n");
-    printf("姓名: %-20s\n", customer.name);
-    printf("区域: %-20s\n", customer.region);
-    printf("地址: %-30s\n", customer.address);
-    printf("法人: %-20s\n", customer.legalRepresentative);
-    printf("规模: %-10s\n", customer.scale);
-    printf("业务联系程度: %-15s\n", customer.businessContactLevel);
-    printf("电子邮件: %-25s\n", customer.email);
-    printf("电话: %-15s\n", customer.phone);
+    GtkWidget *dialog, *label, *content_area;
+    GtkWindow *parent_window = NULL;  // 如果有主窗口，此处应设置为相应的 GtkWindow 指针
+    dialog = gtk_dialog_new_with_buttons("显示客户信息",
+                                         parent_window,
+                                         GTK_DIALOG_MODAL,
+                                         "_OK", GTK_RESPONSE_OK,
+                                         NULL);
+
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    // 创建并设置标签内容
+    char info[1024];
+    snprintf(info, sizeof(info),
+             "\n显示客户信息:\n"
+             "姓名: %-20.20s\n"
+             "区域: %-20.20s\n"
+             "地址: %-30.30s\n"
+             "法人: %-20.20s\n"
+             "规模: %-10.10s\n"
+             "业务联系程度: %-15.15s\n"
+             "电子邮件: %-25.25s\n"
+             "电话: %-15.15s\n",
+             customer.name,
+             customer.region,
+             customer.address,
+             customer.legalRepresentative,
+             customer.scale,
+             customer.businessContactLevel,
+             customer.email,
+             customer.phone);
+
+    label = gtk_label_new(info);
+    gtk_container_add(GTK_CONTAINER(content_area), label);
+
+    gtk_widget_show_all(dialog);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
 
+
 void displayContact(ContactPerson contact) {
-    printf("\n显示联络员信息:\n");
-    printf("姓名: %-20s\n", contact.name);
-    printf("性别: %-10s\n", contact.gender);
-    printf("生日: %-15s\n", contact.birthday);
-    printf("电子邮件: %-25s\n", contact.email);
-    printf("电话: %-15s\n", contact.phone);
-    printf("代表公司: %-20s\n", contact.representative);
+    GtkWidget *dialog, *label, *content_area;
+    GtkWindow *parent_window = NULL;  // 如果有主窗口，此处应设置为相应的 GtkWindow 指针
+
+    dialog = gtk_dialog_new_with_buttons("显示联络员信息",
+                                         parent_window,
+                                         GTK_DIALOG_MODAL,
+                                         "_OK", GTK_RESPONSE_OK,
+                                         NULL);
+
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    // 创建并设置标签内容
+    char info[1024];
+    snprintf(info, sizeof(info),
+             "\n显示联络员信息:\n"
+             "姓名: %-20.20s\n"
+             "性别: %-10.10s\n"
+             "生日: %-15.15s\n"
+             "电子邮件: %-25.25s\n"
+             "电话: %-15.15s\n"
+             "代表公司: %-20.20s\n",
+             contact.name,
+             contact.gender,
+             contact.birthday,
+             contact.email,
+             contact.phone,
+             contact.representative);
+
+    label = gtk_label_new(info);
+    gtk_container_add(GTK_CONTAINER(content_area), label);
+
+    gtk_widget_show_all(dialog);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
+
 
 static void on_addEmployee_clicked(GtkWidget *widget, gpointer data) {
     addEmployee();

@@ -3,7 +3,7 @@
 // XOR 加密/解密算法
 void xorEncryptDecrypt(const char *input, size_t length, char *output) {
     if (input == NULL || output == NULL) {
-        fprintf(stderr, "Null pointer passed to xorEncryptDecrypt function.\n");
+        fprintf(stderr, "无数据输入。\n");
         return;
     }
 
@@ -12,7 +12,7 @@ void xorEncryptDecrypt(const char *input, size_t length, char *output) {
     size_t key_length = strlen(encryptionKey);
 
     if (key_length == 0) {
-        fprintf(stderr, "Encryption key is empty.\n");
+        fprintf(stderr, "空错误。\n");
         return;
     }
 
@@ -85,6 +85,13 @@ bool matchPhone(const char *phone) {
     return true;  // 所有字符都是数字或连字符
 }
 
+// 检查性别的正则表达式
+bool matchGender(const char *gender) {
+    if (gender == NULL) return false;
+
+    return (strcmp(gender, "男") == 0 || strcmp(gender, "女") == 0 || strcmp(gender, "male")==0 || strcmp(gender,"female")==0);
+}
+
 // 检查程度的正则表达式
 bool matchScale(const char *scale) {
     // 检查是否为空字符串，因为输入不能是空的
@@ -140,7 +147,7 @@ bool matchTime(const char *time) {
     // HH:MM:SS
     ret = regcomp(&regex, "^[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$", REG_EXTENDED);
     if (ret) {
-        fprintf(stderr, "Could not compile regex for time\n");
+        fprintf(stderr, "编译正则表达式失败。\n");
         return false;
     }
 
@@ -183,6 +190,7 @@ bool matchDuration(const char *duration) {
     }
 }
 
+// 验证密码
 bool verify(const char *username, const char *password) {
     FILE *file;
     char line[MAX_LENGTH * 3];

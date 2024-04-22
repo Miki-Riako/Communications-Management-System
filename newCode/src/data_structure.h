@@ -50,6 +50,30 @@ typedef struct {
     const gchar *message;
 } DialogData;
 
+// String
+typedef struct {
+    GtkWidget *window;
+    GtkWidget *grid;
+    GtkWidget *name_entry;
+    GtkWidget *gender_entry;
+    GtkWidget *birthday_entry;
+    GtkWidget *email_entry;
+    GtkWidget *phone_entry;
+    GtkWidget *region_entry;
+    GtkWidget *address_entry;
+    GtkWidget *legal_rep_entry;
+    GtkWidget *scale_entry;
+    GtkWidget *contact_level_entry;
+    GtkWidget *representative_entry;
+    GtkWidget *save_entry_button;
+    GtkWidget *cancel_button;
+    int section;
+    const char *filename;
+    Employee *employee;
+    Customer *customer;
+    ContactPerson *contact;
+} EntryWidgets;
+EntryWidgets entryWidgets;
 
 // login
 typedef struct {
@@ -118,7 +142,9 @@ typedef struct {
     GtkWidget *grid;
     GtkWidget *infoEnquiry_btn;
     GtkWidget *infoSort_btn;
+    GtkWidget *infoStatistics_btn;
     GtkWidget *recordsManage_btn;
+    GtkWidget *recordsAnalysis_btn;
     GtkWidget *systemSetting_btn;
     GtkWidget *exit_btn;
 } EmployeeMenuWidgets;
@@ -188,10 +214,21 @@ typedef struct {
     GtkWidget *defaultSort_btn;
     GtkWidget *simpleSort_btn;
     GtkWidget *combinedSort_btn;
-    GtkWidget *recordSort_btn;
     GtkWidget *back_btn;
 } InfoSortWidgets;
 InfoSortWidgets infoSortWidgets;
+
+// info_statistics
+typedef struct {
+    GtkWidget *window;
+    GtkWidget *grid;
+    GtkWidget *simpleStatistics_btn;
+    GtkWidget *combinedStatistics_btn;
+    GtkWidget *presetStatistics_btn;
+    GtkWidget *conditionalStatistics_btn;
+    GtkWidget *back_btn;
+} InfoStatisticsWidgets;
+InfoStatisticsWidgets infoStatisticsWidgets;
 
 // record_manage
 typedef struct {
@@ -203,6 +240,18 @@ typedef struct {
     GtkWidget *back_btn;
 } RecordsManageWidgets;
 RecordsManageWidgets recordsManageWidgets;
+
+
+// record_analysis
+typedef struct {
+    GtkWidget *window;
+    GtkWidget *grid;
+    GtkWidget *enquiryRecords_btn;
+    GtkWidget *sortRecords_btn;
+    GtkWidget *statisticsRecords_btn;
+    GtkWidget *back_btn;
+} RecordsAnalysisWidgets;
+RecordsAnalysisWidgets recordsAnalysisWidgets;
 
 
 // system_setting
@@ -247,6 +296,11 @@ typedef struct head_node{ // 头结点
     node_emp *next_emp;
     node_rec *next_rec;
 } head_node;
+
+typedef struct { // 键值对
+    char value[MAX_LENGTH];
+    int count;
+} AttributeCount;
 
 extern char User[];
 extern bool IsManager;

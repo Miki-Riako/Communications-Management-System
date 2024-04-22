@@ -79,25 +79,25 @@ void employeeMenuWidget() {
     g_signal_connect(employeeMenuWidgets.infoSort_btn, "clicked", G_CALLBACK(on_infoSort_clicked), employeeMenuWidgets.window);
     gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.infoSort_btn, 0, 1, 2, 1);
 
-    // employeeMenuWidgets.recordsManage_btn = gtk_button_new_with_label("信息统计");
-    // g_signal_connect(employeeMenuWidgets.recordsManage_btn, "clicked", G_CALLBACK(on_recordManage_clicked), employeeMenuWidgets.window);
-    // gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.recordsManage_btn, 0, 2, 2, 1);
+    employeeMenuWidgets.infoStatistics_btn = gtk_button_new_with_label("信息统计");
+    g_signal_connect(employeeMenuWidgets.infoStatistics_btn, "clicked", G_CALLBACK(on_infoStatistic_clicked), employeeMenuWidgets.window);
+    gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.infoStatistics_btn, 0, 2, 2, 1);
 
     employeeMenuWidgets.recordsManage_btn = gtk_button_new_with_label("记录管理");
     g_signal_connect(employeeMenuWidgets.recordsManage_btn, "clicked", G_CALLBACK(on_recordManage_clicked), employeeMenuWidgets.window);
     gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.recordsManage_btn, 0, 3, 2, 1);
 
-    // employeeMenuWidgets.recordsManage_btn = gtk_button_new_with_label("记录分析");
-    // g_signal_connect(employeeMenuWidgets.recordsManage_btn, "clicked", G_CALLBACK(on_recordManage_clicked), employeeMenuWidgets.window);
-    // gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.recordsManage_btn, 0, 3, 2, 1);
+    employeeMenuWidgets.recordsAnalysis_btn = gtk_button_new_with_label("记录分析");
+    g_signal_connect(employeeMenuWidgets.recordsAnalysis_btn, "clicked", G_CALLBACK(on_recordManage_clicked), employeeMenuWidgets.window);
+    gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.recordsAnalysis_btn, 0, 4, 2, 1);
 
     employeeMenuWidgets.systemSetting_btn = gtk_button_new_with_label("系统维护");
     g_signal_connect(employeeMenuWidgets.systemSetting_btn, "clicked", G_CALLBACK(on_systemSetting_clicked), employeeMenuWidgets.window);
-    gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.systemSetting_btn, 0, 4, 2, 1);
+    gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.systemSetting_btn, 0, 5, 2, 1);
 
     employeeMenuWidgets.exit_btn = gtk_button_new_with_label("退出系统");
     g_signal_connect(employeeMenuWidgets.exit_btn, "clicked", G_CALLBACK(on_exit_clicked), NULL);
-    gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.exit_btn, 0, 5, 2, 1);
+    gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.exit_btn, 0, 6, 2, 1);
 
     gtk_widget_show_all(employeeMenuWidgets.window);
     gtk_main();
@@ -133,10 +133,11 @@ void on_infoSort_clicked(GtkWidget *widget, gpointer data) {
 }
 void on_infoStatistic_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data);
-
+    infoStatisticsWidget(data);
 }
 void on_analysisRecord_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data);
+    recordsAnalysisWidget(data);
 }
 void on_systemSetting_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_hide(data);

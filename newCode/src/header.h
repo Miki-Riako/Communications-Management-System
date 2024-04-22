@@ -33,7 +33,24 @@
     #define CREATE_DIRECTORY(path) (mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH))
 #endif
 
+// Algorithem
+int mapScaleToPriority(const char *scale);
+int mapContactLevelToPriority(const char *level);
+bool compareNodeCus(node_cus *a, node_cus *b, int attrIndex, bool ascending);
+bool compareNodeCtp(node_ctp *a, node_ctp *b, int attrIndex, bool ascending);
+bool compareNodeEmp(node_emp *a, node_emp *b, int attrIndex, bool ascending);
+bool compareNodeRec(node_rec *a, node_rec *b, int attrIndex, bool ascending);
+void sort(int which, head_node *head, int attrIndex, bool ascending);
+void beforeSort(head_node *head, int which, int *attributeIndex, bool *isAscending);
+void combinedSortHelper(head_node *head, int which);
+void countCombinedAttributes(head_node *head, int *attrIndexes, int numAttrs, int which);
+char* getCustomerAttribute(Customer *customer, int attrIndex);
+char* getContactPersonAttribute(ContactPerson *contact, int attrIndex);
+char* getEmployeeAttribute(Employee *employee, int attrIndex);
+char* getRecordAttribute(Record *record, int attrIndex);
+bool performQueryIteration(head_node *head, head_node **headA, head_node **headB, int which, bool *first);
 
+// BasicIO
 bool alreadyExists(const char *filename, const char *username);
 bool lineExists(const char *filename, const char *lineToCheck);
 void initializeInfoFile(const char *path, const char *header);
@@ -44,28 +61,42 @@ bool removeLineInFile(const char *filename, const char *data);
 void copyLine(const char *sourceFilename, const char *destinationFilename, const char *columnName, const char *targetValue);
 bool copyFile(const char *sourcePath, const char *destinationPath);
 void loadFile(head_node *head);
+void loadFile_record(head_node *head);
 void loadCustomerData(const char *filename, const char *customerName, head_node *head);
 void loadCustomers(const char *filename, head_node *head);
 void loadContactPersons(const char *filename, head_node *head);
 void loadEmployees(const char *filename, head_node *head);
 void initializeAll();
-
 void loadRecords(const char *filename, head_node *head);
+
+// Memory
+void initializeHeadNode(head_node *head);
 void appendNode_cus(head_node *head, Customer customer);
 void appendNode_ctp(head_node *head, ContactPerson contact);
 void appendNode_emp(head_node *head, Employee employee);
 void appendNode_rec(head_node *head, Record record);
+void linkNode_cus(head_node *head, node_cus *newNode);
+void linkNode_ctp(head_node *head, node_ctp *newNode);
+void linkNode_emp(head_node *head, node_emp *newNode);
+void linkNode_rec(head_node *head, node_rec *newNode);
+node_cus *copyNode_cus(node_cus *original);
+node_ctp *copyNode_ctp(node_ctp *original);
+node_emp *copyNode_emp(node_emp *original);
+node_rec *copyNode_rec(node_rec *original);
 void freeNodeList_cus(node_cus *node);
 void freeNodeList_ctp(node_ctp *node);
 void freeNodeList_emp(node_emp *node);
 void freeNodeList_rec(node_rec *node);
 void freeAll(GtkWidget *widget,head_node *head);
+void swapLists(head_node **headA, head_node **headB);
+void clearList(head_node *head);
 
 void xorEncryptDecrypt(const char *input, size_t length, char *output);
 bool verify(const char *username, const char *password);
 bool matchRegex(const char *password);
 bool matchMail(const char *email);
 bool matchPhone(const char *phone);
+bool matchGender(const char *gender);
 bool matchScale(const char *scale);
 bool matchContactLevel(const char *contactLevel);
 bool matchDate(const char *date);
@@ -75,20 +106,32 @@ bool matchDuration(const char *duration);
 bool isEmpty(const char *input);
 bool isOneChar(const char *input);
 void clearBuffer();
-void getInput(char *input, int buffer_size);
+int charToInt(char c);
+bool getInput(char *input, int buffer_size);
+void stripNewline(char *str);
 char *splitLine(char *input, const char *delim, int num);
 bool isSameString(const char *str1, const char *str2);
 void cleanField(char *field);
-void infoInput(char *input, int buffer_size, const char *prompt);
+bool infoInput(char *input, int buffer_size, const char *prompt);
 void inputTheName(char *name, int buffer_size, const char *prompt);
 void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact);
 void addColumn(char *fullLine, const char *newOne);
+void printHeading(int which);
 void printNode_cus(node_cus *node);
 void printNode_ctp(node_ctp *node);
 void printNode_emp(node_emp *node);
 void printNode_rec(node_rec *node);
 void printNodeList(head_node *node, int choice);
 int beforeInfo(head_node *head, const char *prompt);
+int selectSearchAttribute(int which);
+
+
+
+
+// String
+static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets);
+static void on_cancel_save_clicked(GtkWidget *widget, EntryWidgets *entryWidgets);
+
 
 // all widget
 void on_back_clicked(GtkWidget *widget, WidgetPair *pair);
@@ -162,6 +205,13 @@ static void on_showGroups_clicked(GtkWidget *widget, gpointer data);
 static void on_divideCustomer_clicked(GtkWidget *widget, gpointer data);
 static void on_adjustCustomer_clicked(GtkWidget *widget, gpointer data);
 
+// info_enquiry
+void infoEnquiryWidget(GtkWidget *parent);
+bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how);
+bool howToSearch(const char *toCompare, const char *query, int how);
+void simpleQuery(head_node *head);
+void combinedQuery(head_node *head);
+void fuzzyQuery(head_node *head);
 
 // info_manage
 void infoManageWidget(GtkWidget *parent);
@@ -206,8 +256,33 @@ void defaultSort(head_node *head);
 void on_defaultSort_clicked(GtkWidget *widget, gpointer data);
 void on_simpleSort_clicked(GtkWidget *widget, gpointer data);
 void on_combinedSort_clicked(GtkWidget *widget, gpointer data);
-void on_recordSort_clicked(GtkWidget *widget, gpointer data);
 static void on_infoSortBack_clicked(GtkWidget *widget, gpointer data);
+
+// info_statistics
+void infoStatisticsWidget(GtkWidget *parent);
+void simpleStatistics(head_node *head);
+void combinedStatistics(head_node *head);
+void presetStatistics(head_node *head);
+void conditionalStatistics(head_node *head);
+void countAttributesByConditions(head_node *head, int *attrIndexes, char conditionValues[][MAX_LENGTH], int numConditions, int which);
+void countAttributes(head_node *head, int attrIndex, int which);
+
+void on_simpleStatistics_clicked(GtkWidget *widget, gpointer data);
+void on_combinedStatistics_clicked(GtkWidget *widget, gpointer data);
+void on_presetStatistics_clicked(GtkWidget *widget, gpointer data);
+void on_conditionalStatistics_clicked(GtkWidget *widget, gpointer data);
+static void on_infoStatisticsBack_clicked(GtkWidget *widget, gpointer data);
+
+// record_analysis
+void recordsAnalysisWidget(GtkWidget *parent);
+void enquiryRecords(head_node *head);
+void sortRecords(head_node *head);
+void statisticsRecords(head_node *head);
+
+void on_enquiryRecords_clicked(GtkWidget *widget, gpointer data);
+void on_sortRecords_clicked(GtkWidget *widget, gpointer data);
+void on_statisticsRecords_clicked(GtkWidget *widget, gpointer data);
+static void on_recordAnalysisBack_clicked(GtkWidget *widget, gpointer data);
 
 // record_manage
 void recordsManageWidget(GtkWidget *parent);

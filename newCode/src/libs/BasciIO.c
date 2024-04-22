@@ -99,23 +99,49 @@ void removeRecord(const char *filename, const char *prompt) {
     char delName[MAX_LENGTH];
 
     while (true) {
-        printf("%s", prompt); // 显示删除提示信息
-        getInput(delName, sizeof(delName));
+        bool noCancel = infoInput(delName, sizeof(delName),prompt);
+        if(!noCancel) {
+            return;
+        }
         if (!isEmpty(delName)) {
             if (alreadyExists(filename, delName)) {
                 break;
             } else {
-                printf("记录不存在！\n");
+                GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                        GTK_MESSAGE_ERROR,
+                                                        GTK_BUTTONS_OK,
+                                                        "记录不存在！");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
             }
         } else {
-            printf("请输入一个有效的名字。\n");
+            GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_OK,
+                                                    "请输入一个有效的名字。");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
         }
     }
 
     if (removeEntry(filename, delName)) {
-        printf("记录删除成功。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_INFO,
+                                                GTK_BUTTONS_OK,
+                                                "记录删除成功。");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     } else {
-        printf("记录删除失败。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                "记录删除失败。");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     }
 }
 
@@ -283,6 +309,61 @@ void loadFile(head_node *head) {
         }
         fclose(assignmentsFile);
     }
+}
+
+// loadFile的Record版本
+void loadFile_record(head_node *head) {
+    head->is_empty = true;
+    head->is_cus = false;
+    head->is_ctp = false;
+    head->is_emp = false;
+    head->is_rec = false;
+    head->next_cus = NULL;
+    head->next_ctp = NULL;
+    head->next_emp = NULL;
+    head->next_rec = NULL;
+    if (IsManager) {
+        loadRecords("records.csv", head);
+        return;
+    }
+
+    // 以下是为非管理员用户加载记录的逻辑
+    FILE *file = fopen("records.csv", "r");
+    if (!file) {
+        perror("打开记录文件失败");
+        return;
+    }
+    char line[1024];
+    fgets(line, sizeof(line), file); // 跳过标题行
+    while (fgets(line, sizeof(line), file)) {
+        Record record;
+        char *token = strtok(line, "|||");
+        if (!token) continue;
+        
+        // 检查用户名是否匹配当前用户
+        if (strcmp(token, User) != 0) continue;  // 如果不匹配，跳过此条记录
+        
+        strcpy(record.user, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.companyName, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.contactName, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.date, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.time, token);
+        if (!(token = strtok(NULL, "|||"))) continue;
+        strcpy(record.duration, token);
+
+        token = strtok(NULL, "|||\n\r");
+        if (token) {
+            cleanField(token);
+            strcpy(record.content, token);
+        }
+
+        appendNode_rec(head, record); // 将记录追加到链表
+    }
+    fclose(file);
 }
 
 // 实际加载客户数据的函数

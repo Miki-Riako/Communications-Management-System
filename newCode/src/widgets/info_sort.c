@@ -65,10 +65,6 @@ void infoSortWidget(GtkWidget *parent) {
     g_signal_connect(infoSortWidgets.combinedSort_btn, "clicked", G_CALLBACK(on_combinedSort_clicked), head);
     gtk_grid_attach(GTK_GRID(infoSortWidgets.grid), infoSortWidgets.combinedSort_btn, 0, 2, 2, 1);
 
-    infoSortWidgets.recordSort_btn = gtk_button_new_with_label("通信记录排序");
-    g_signal_connect(infoSortWidgets.recordSort_btn, "clicked", G_CALLBACK(on_recordSort_clicked), head);
-    gtk_grid_attach(GTK_GRID(infoSortWidgets.grid), infoSortWidgets.recordSort_btn, 0, 3, 2, 1);
-
     infoSortWidgets.back_btn = gtk_button_new_with_label("返回");
     WidgetPair *widgetPair = g_slice_new(WidgetPair);
     widgetPair->parentWindow = parent;
@@ -78,15 +74,19 @@ void infoSortWidget(GtkWidget *parent) {
     g_signal_connect(infoSortWidgets.back_btn, "clicked", G_CALLBACK(freeAll), head);
     g_signal_connect(infoSortWidgets.back_btn, "clicked", G_CALLBACK(on_infoSortBack_clicked), widgetPair);
 
-    gtk_grid_attach(GTK_GRID(infoSortWidgets.grid), infoSortWidgets.back_btn, 0, 4, 2, 1);
+    gtk_grid_attach(GTK_GRID(infoSortWidgets.grid), infoSortWidgets.back_btn, 0, 3, 2, 1);
     
     gtk_widget_show_all(infoSortWidgets.window);
     gtk_main();
 }
 
 void defaultSort(head_node *head) {
-    int which = beforeInfo(head, "展示");
-    if (which == -1) return;  // 如果选择无效或不允许展示，则返回
+    if (head == NULL || head->is_empty) {
+        printf("没有可排序的数据。\n");
+        return;
+    }
+    int which = beforeInfo(head, "排序");
+    if (which == -1) return;  // 选择无效
 
     switch (which) {
     case 0:
@@ -101,25 +101,68 @@ void defaultSort(head_node *head) {
     }
     printNodeList(head, which);
 }
-    // case 3:
-    //     printf("通信记录列表：\n");
-    //     printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
-    //     break;
 
+void simpleSort(head_node *head) {
+    if (head == NULL || head->is_empty) {
+        printf("没有可排序的数据。\n");
+        return;
+    }
+    int which = beforeInfo(head, "排序");
+    if (which == -1) return;  // 如果选择无效或不允许展示，则返回
 
+    switch (which) {
+    case 0:
+        printf("客户信息列表：\n");
+        break;
+    case 1:
+        printf("联络人信息列表：\n");
+        break;
+    case 2:
+        printf("业务员信息列表：\n");
+        break;
+    }
+    int attributeIndex = 0;
+    bool isAscending = false;
 
+    beforeSort(head, which, &attributeIndex, &isAscending);
+    
+    sort(which, head, attributeIndex, isAscending);
+    printNodeList(head, which);
+}
+
+void combinedSort(head_node *head) {
+    if (head == NULL || head->is_empty) {
+        printf("没有可排序的数据。\n");
+        return;
+    }
+    printf("开始进行组合排序。\n");
+    int which = beforeInfo(head, "排序");
+    if (which == -1) return;  // 如果选择无效或不允许展示，则返回
+
+    switch (which) {
+    case 0:
+        printf("客户信息列表：\n");
+        break;
+    case 1:
+        printf("联络人信息列表：\n");
+        break;
+    case 2:
+        printf("业务员信息列表：\n");
+        break;
+    }
+    combinedSortHelper(head, which);
+    system(SYSTEM_CLEAR);
+    printNodeList(head, which);
+}
 
 void on_defaultSort_clicked(GtkWidget *widget, gpointer data) {
     defaultSort(data);
 }
 void on_simpleSort_clicked(GtkWidget *widget, gpointer data) {
-
+    simpleSort(data);
 }
 void on_combinedSort_clicked(GtkWidget *widget, gpointer data) {
-
-}
-void on_recordSort_clicked(GtkWidget *widget, gpointer data) {
-
+    combinedSort(data);
 }
 static void on_infoSortBack_clicked(GtkWidget *widget, gpointer data) {
     on_back_clicked(widget,data);
