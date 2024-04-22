@@ -4,6 +4,8 @@
 void infoStatisticsWidget();
 void simpleStatistics(head_node *head);
 void combinedStatistics(head_node *head);
+void presetStatistics(head_node *head);
+void countCombinedAttributes(head_node *head, int *attrIndexes, int numAttrs, int which);
 void countAttributes(head_node *head, int attrIndex, int which);
 char* getCustomerAttribute(Customer *customer, int attrIndex);
 char* getContactPersonAttribute(ContactPerson *contact, int attrIndex);
@@ -42,6 +44,7 @@ void infoStatisticsWidget() {
             combinedStatistics(head);
             break;
         case '3':
+            presetStatistics(head);
             break;
         case '4':
             break;
@@ -98,6 +101,58 @@ void combinedStatistics(head_node *head) {
         }
     }
 
+    countCombinedAttributes(head, attrIndexes, numAttrs, which);
+}
+
+void presetStatistics(head_node *head) {
+    if (head->is_empty) {
+        printf("没有可统计的数据。\n");
+        return;
+    }
+
+    printf("预设统计选项：\n");
+    printf("1. 按区域统计客户\n");
+    printf("2. 按规模与联系程度统计客户\n");
+    printf("3. 按性别统计联络员\n");
+    printf("4. 按性别统计业务员\n");
+    printf("请选择一个操作（1-4）：");
+
+    char choice[MAX_LENGTH];
+    getInput(choice, sizeof(choice));
+
+    int attrIndexes[3];  // 最多两个属性
+
+    if (!isOneChar(choice)) {
+        printf("无效的选择。\n");
+        return;
+    }
+    switch (choice[0]) {
+    case '1':
+        // 按区域统计客户
+        countAttributes(head, 1, 0); // 1 是区域属性索引，0 是客户类型
+        break;
+    case '2':
+        // 按规模与联系程度统计客户
+        attrIndexes[0] = 4; // 规模
+        attrIndexes[1] = 5; // 联系程度
+        attrIndexes[2] = -1;
+        countCombinedAttributes(head, attrIndexes, 2, 0); // 0 是客户类型
+        break;
+    case '3':
+        // 按性别统计联络员
+        countAttributes(head, 1, 1); // 1 是性别属性索引，1 是联络人类型
+        break;
+    case '4':
+        // 按性别统计业务员
+        countAttributes(head, 1, 2); // 1 是性别属性索引，2 是业务员类型
+        break;
+    default:
+        printf("无效的选择。\n");
+        break;
+    }
+}
+
+void countCombinedAttributes(head_node *head, int *attrIndexes, int numAttrs, int which) {
     AttributeCount counts[MAX_LENGTH];
     int uniqueCount = 0;
     bool found;
