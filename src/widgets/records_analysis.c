@@ -7,40 +7,48 @@ void sortRecords(head_node *head);
 void statisticsRecords(head_node *head);
 
 void recordsAnalysisWidget(void) {
-    // head_node *head = (head_node *)malloc(sizeof(head_node));
-    // if (!head) {
-    //     fprintf(stderr, "内存分配失败！\n");
-    //     return;
-    // }
-
-    printf("通信记录分析系统\n");
-    printf("1. 查询通信记录\n");
-    printf("2. 排序通信记录\n");
-    printf("3. 统计通信情况\n");
-    printf("4. 返回\n");
-    printf("请选择一个操作（1-4）：");
-
-    char get[MAX_LENGTH];
-    getInput(get, sizeof(get));
-    system(SYSTEM_CLEAR);
-
-    switch(get[0]) {
-    case '1':
-        // queryRecords(head);
-        break;
-    case '2':
-        // sortRecords(head);
-        break;
-    case '3':
-        // statisticsRecords(head);
-        break;
-    case '4':
-        printf("正在返回，请稍等。\n");
-        // free(head);
+    initializeAll();
+    printf("正在加载中，请您耐心等待。\n");
+    head_node *head = (head_node *)malloc(sizeof(head_node));  // 分配内存
+    if (!head) {
+        fprintf(stderr, "内存分配失败！\n");
         return;
-    default:
-        printf("无效的选择，请重新输入。\n");
-        break;
+    }
+    loadFile(head);  // 加载数据
+    if (head->is_empty)  printf("没有加载到任何数据。\n");
+    else printf("数据加载成功！\n");
+
+    while (true) {
+        printf("通信记录分析系统\n");
+        printf("1. 查询通信记录\n");
+        printf("2. 排序通信记录\n");
+        printf("3. 统计通信情况\n");
+        printf("4. 返回\n");
+        printf("请选择一个操作（1-4）：");
+
+        char get[MAX_LENGTH];
+        getInput(get, sizeof(get));
+        system(SYSTEM_CLEAR);
+
+        switch(get[0]) {
+        case '1':
+            // queryRecords(head);
+            break;
+        case '2':
+            // sortRecords(head);
+            break;
+        case '3':
+            // statisticsRecords(head);
+            break;
+        case '4':
+            printf("正在返回，请稍等。\n");
+            free(head);
+            printf("返回成功。\n");
+            return;
+        default:
+            printf("无效的选择，请重新输入。\n");
+            break;
+        }
     }
 }
 
