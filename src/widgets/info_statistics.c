@@ -151,11 +151,19 @@ void presetStatistics(head_node *head) {
         break;
     case '4':
         // 按性别统计联络员
-        countAttributes(head, 1, 1); // 1 是性别属性索引，1 是联络人类型
+        if (IsManager) {
+            countAttributes(head, 1, 1); // 1 是性别属性索引，1 是联络人类型
+        } else {
+            printf("您不是经理，没有权限执行此操作。\n");
+        }
         break;
     case '5':
         // 按性别统计业务员
-        countAttributes(head, 1, 2); // 1 是性别属性索引，2 是业务员类型
+        if (IsManager) {
+            countAttributes(head, 1, 2); // 1 是性别属性索引，2 是业务员类型
+        } else {
+            printf("您不是经理，没有权限执行此操作。\n");
+        }
         break;
     default:
         printf("无效的选择。\n");
@@ -185,7 +193,7 @@ void conditionalStatistics(head_node *head) {
 
         printf("条件值：");
         getInput(conditionValues[numConditions], sizeof(conditionValues[numConditions]));
-        numConditions++;
+        ++numConditions;
 
         if (numConditions >= 32) {
             printf("条件数量超过限制。\n");
