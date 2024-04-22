@@ -34,6 +34,9 @@
 
 #include "data_structure.h"
 
+bool howToSearch(const char *toCompare, const char *query, int how);
+bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how);
+bool performQueryIteration(head_node *head, head_node **headA, head_node **headB, int which, bool *first);
 int mapScaleToPriority(const char *scale);
 int mapContactLevelToPriority(const char *level);
 bool compareNodeCus(node_cus *a, node_cus *b, int attrIndex, bool ascending);
@@ -43,7 +46,9 @@ bool compareNodeRec(node_rec *a, node_rec *b, int attrIndex, bool ascending);
 void sort(int which, head_node *head, int attrIndex, bool ascending);
 void beforeSort(head_node *head, int which, int *attributeIndex, bool *isAscending);
 void combinedSortHelper(head_node *head, int which);
+void countAttributes(head_node *head, int attrIndex, int which);
 void countCombinedAttributes(head_node *head, int *attrIndexes, int numAttrs, int which);
+void countAttributesByConditions(head_node *head, int *attrIndexes, char conditionValues[][MAX_LENGTH], int numConditions, int which);
 char* getCustomerAttribute(Customer *customer, int attrIndex);
 char* getContactPersonAttribute(ContactPerson *contact, int attrIndex);
 char* getEmployeeAttribute(Employee *employee, int attrIndex);
