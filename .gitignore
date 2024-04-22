@@ -3,6 +3,9 @@
 *.ini
 *.exe
 build/*
+# do not ignore
+!data/*.csv
+!bin/*.exe
 # Backup
 *.c_backup
 *.h_backup

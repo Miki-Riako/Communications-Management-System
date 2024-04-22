@@ -23,7 +23,7 @@ void managerMenuWidget() {
         printf("4. 信息查询\n");
         printf("5. 信息排序\n");
         printf("6. 信息统计\n");
-        printf("7. 通信记录分析\n");
+        printf("7. 记录分析\n");
         printf("8. 系统维护\n");
         printf("9. 退出系统\n");
         printf("请选择一个操作（1-9）：");
