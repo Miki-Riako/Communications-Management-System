@@ -31,6 +31,7 @@ void infoEnquiryWidget(GtkWidget *parent) {
                                                     "没有加载到任何数据。");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
+        return;
     } else {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoEnquiryWidgets.window),
                                                     GTK_DIALOG_DESTROY_WITH_PARENT,

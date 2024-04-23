@@ -542,6 +542,7 @@ int beforeInfo(head_node *head, const char *prompt) {
     GtkWindow *parent_window = NULL;
     int response_id;
     int result = -1;
+    int index;
     if(IsManager) {
         
         
@@ -564,13 +565,15 @@ int beforeInfo(head_node *head, const char *prompt) {
 
         // 运行对话框
         response_id = gtk_dialog_run(GTK_DIALOG(dialog));
+        index = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
         gtk_widget_destroy(dialog);
     } else {
         response_id = 1;
+        index = 1;
     }
     
     if (response_id == GTK_RESPONSE_OK) {
-        int index = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
+        
         switch (index) {
             case 0:
                 if (head->is_cus) {

@@ -292,12 +292,14 @@ void loadFile(head_node *head) {
         loadCustomers("customers.csv", head);
         loadContactPersons("contacts.csv", head);
         loadEmployees("employees.csv", head);
+        loadRecords("customers.csv", head);
     }
     // 非管理员只加载其负责的客户数据
     FILE *assignmentsFile = fopen("assignments.csv", "r");
     if (assignmentsFile) {
         char line[5 * MAX_LENGTH];
         while (fgets(line, sizeof(line), assignmentsFile)) {
+            stripNewline(line);
             char *employee = splitLine(line, "|||", 0);
             char *customer = splitLine(line, "|||", 1);
             if (isSameString(employee, User)) {
@@ -308,6 +310,7 @@ void loadFile(head_node *head) {
             free(customer);
         }
         fclose(assignmentsFile);
+        return;
     }
 }
 

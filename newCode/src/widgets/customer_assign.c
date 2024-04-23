@@ -63,10 +63,29 @@ void addAssignment() {
 
     // 检查是否已经存在这个分配
     if (lineExists("assignments.csv", fullLine)) {
-        printf("这个分配已经存在：%s -> %s\n", employeeName, customerName);
+        char message[MAX_LENGTH*3];
+        snprintf(message, sizeof(message), "这个分配已经存在：%s -> %s\n", employeeName, customerName);
+
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "%s",message);
+        gtk_window_set_title(GTK_WINDOW(dialog), "分配失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     } else {
         writeLineToFile("assignments.csv", fullLine);
-        printf("客户分配成功：%s -> %s\n", employeeName, customerName);
+        char message[MAX_LENGTH*3];
+        snprintf(message, sizeof(message), "客户分配成功：%s -> %s\n", employeeName, customerName);
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_INFO,
+                                    GTK_BUTTONS_OK,
+                                    "%s",message);
+        gtk_window_set_title(GTK_WINDOW(dialog), "分配成功");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     }
 }
 
@@ -85,7 +104,17 @@ void changeAssignment() {
 
     // 检查原始组合是否存在
     if (!lineExists("assignments.csv", oldLine)) {
-        printf("分配不存在：%s -> %s\n", oldEmployeeName, oldCustomerName);
+        char message[MAX_LENGTH*3];
+        snprintf(message, sizeof(message), "分配不存在：%s -> %s\n", oldEmployeeName, oldCustomerName);
+
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "%s",message);
+        gtk_window_set_title(GTK_WINDOW(dialog), "修改分配失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
 
@@ -100,9 +129,26 @@ void changeAssignment() {
     if (removeLineInFile("assignments.csv", oldLine)) {
         // 添加新组合
         writeLineToFile("assignments.csv", newLine);
-        printf("成功更新分配：%s -> %s\n", newEmployeeName, newCustomerName);
+        char message[MAX_LENGTH*3];
+        snprintf(message, sizeof(message), "成功更新分配：%s -> %s\n", newEmployeeName, newCustomerName);
+
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_INFO,
+                                    GTK_BUTTONS_OK,
+                                    "%s",message);
+        gtk_window_set_title(GTK_WINDOW(dialog), "修改分配成功");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     } else {
-        printf("更新分配失败。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "更新分配失败。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "修改分配失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     }
 }
 
@@ -117,35 +163,100 @@ void removeAssignment() {
     addColumn(fullLine, customerName);
 
     if (!lineExists("assignments.csv", fullLine)) {
-        printf("未找到该分配：%s -> %s\n", employeeName, customerName);
+        char message[MAX_LENGTH*3];
+        snprintf(message, sizeof(message), "未找到该分配：%s -> %s\n", employeeName, customerName);
+
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "%s",message);
+        gtk_window_set_title(GTK_WINDOW(dialog), "删除分配失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     } else {
         // 删除分配
         if (removeLineInFile("assignments.csv", fullLine)) {
-            printf("客户分配删除成功：%s -> %s\n", employeeName, customerName);
+            char message[MAX_LENGTH*3];
+            snprintf(message, sizeof(message), "客户分配删除成功：%s -> %s\n", employeeName, customerName);
+
+            GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_INFO,
+                                        GTK_BUTTONS_OK,
+                                        "%s",message);
+            gtk_window_set_title(GTK_WINDOW(dialog), "删除分配成功");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+
         } else {
-            printf("客户分配删除失败。\n");
+            GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_OK,
+                                        "客户分配删除失败。");
+            gtk_window_set_title(GTK_WINDOW(dialog), "删除分配失败");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
         }
     }
 }
 
 void displayAssignment() {
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    char line[MAX_LENGTH];
     FILE *file = fopen("assignments.csv", "r");
+    
     if (!file) {
         perror("打开文件失败");
         return;
     }
-    char line[MAX_LENGTH];
-    printf("当前的业务员和客户配对如下：\n");
+
+    // 创建窗口
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "业务员和客户配对");
+    gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    // 创建滚动窗口
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    // 创建文本视图和文本缓冲区
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    // 读取文件并添加到文本视图
     while (fgets(line, sizeof(line), file)) {
         char *delimiter = strstr(line, "|||");
         if (delimiter != NULL) {
-            *delimiter = '\0';  // 将分隔符替换为字符串终结符，从而分割字符串
-            printf("%s -> %s", line, delimiter + 3); // 输出前后部分
+            *delimiter = '\0';
+            GtkTextIter end;
+            gtk_text_buffer_get_end_iter(buffer, &end);
+            gtk_text_buffer_insert(buffer, &end, line, -1);
+            gtk_text_buffer_insert(buffer, &end, " -> ", -1);
+            gtk_text_buffer_insert(buffer, &end, delimiter + 3, -1);
+            gtk_text_buffer_insert(buffer, &end, "\n", -1);
         } else {
-            printf("格式错误： %s\n", line);
+            GtkTextIter end;
+            gtk_text_buffer_get_end_iter(buffer, &end);
+            gtk_text_buffer_insert(buffer, &end, "格式错误： ", -1);
+            gtk_text_buffer_insert(buffer, &end, line, -1);
+            gtk_text_buffer_insert(buffer, &end, "\n", -1);
         }
     }
+
     fclose(file);
+
+    // 显示所有窗口和控件
+    gtk_widget_show_all(window);
+    gtk_main();
 }
 
 static void on_addAssignment_clicked(GtkWidget *widget, gpointer data) {
