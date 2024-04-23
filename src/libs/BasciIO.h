@@ -97,9 +97,12 @@ void removeRecord(const char *filename, const char *prompt) {
     char delName[MAX_LENGTH];
 
     while (true) {
-        printf("%s", prompt); // 显示删除提示信息
-        getInput(delName, sizeof(delName));
+        infoInput(delName, sizeof(delName), prompt);
         if (!isEmpty(delName)) {
+            if (isSameString(delName, "Name") || isSameString(delName, "User") || isSameString(delName, "Employee")) {
+                printf("不能删除头标题行。\n");
+                continue;
+            }
             if (alreadyExists(filename, delName)) {
                 break;
             } else {
