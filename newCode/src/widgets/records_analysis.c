@@ -83,9 +83,33 @@ void recordsAnalysisWidget(GtkWidget *parent) {
 
 void enquiryRecords(head_node *head) {
     if (head == NULL || head->is_empty) {
-        printf("没有可查询的数据。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有可查询的数据。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
+
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "查询结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     
     char queryValue[MAX_LENGTH];
     bool found = false;
@@ -95,31 +119,41 @@ void enquiryRecords(head_node *head) {
     head_node *headB;  // 分配内存
 
     while (true) {
-        printf("\n信息查询\n");
-        printf("1. 简单查询\n");
-        printf("2. 组合查询\n");
-        printf("3. 模糊查询\n");
-        printf("4. 返回\n");
-        printf("请选择一个操作（1-4）：");
+        const char* message = "信息查询(1. 简单查询 2. 组合查询 3. 模糊查询 4. 返回)";
         
         char get[MAX_LENGTH];
-        getInput(get, sizeof(get));
+        infoInput(get, sizeof(get),message);
         system(SYSTEM_CLEAR);
         
         if (!isOneChar(get)) {
-            printf("无效的选择，请重新输入。\n");
+            GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_OK,
+                                        "无效的选择，请重新输入。");
+            gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
             continue;
         }
+        GtkWidget* dialog;
         switch (get[0]) {
         case '1':
             attributeIndex = selectSearchAttribute(3);
             if (attributeIndex == -1) {
-                printf("无效的属性选择。\n");
+                dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            "无效的属性选择。");
+                gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
                 return;
             }
             infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
-            printHeading(3);
-            found = searchOnes(head, NULL, queryValue, attributeIndex, 3, 0);
+            printHeading(buffer,3);
+            found = searchOnes(buffer,head, NULL, queryValue, attributeIndex, 3, 0);
             if (!found) {
                 printf("没有找到匹配的信息。\n");
             }
@@ -129,7 +163,14 @@ void enquiryRecords(head_node *head) {
             headA = (head_node *)malloc(sizeof(head_node));  // 分配内存
             headB = (head_node *)malloc(sizeof(head_node));  // 分配内存
             if (!headA || !headB) {
-                fprintf(stderr, "内存分配失败！\n");
+                dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            "内存分配失败！");
+                gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
                 return;
             }
             initializeHeadNode(headA);
@@ -143,96 +184,156 @@ void enquiryRecords(head_node *head) {
         case '3':
             attributeIndex = selectSearchAttribute(3);
             if (attributeIndex == -1) {
-                printf("无效的属性选择。\n");
+                dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            "无效的属性选择。");
+                gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
                 return;
             }
             infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
-            printHeading(3);
-            found = searchOnes(head, NULL, queryValue, attributeIndex, 3, 1);
+            printHeading(buffer,3);
+            found = searchOnes(buffer,head, NULL, queryValue, attributeIndex, 3, 1);
             if (!found) {
-                printf("没有找到匹配的信息。\n");
+                gtk_text_buffer_insert_at_cursor(buffer, "没有找到匹配的信息", -1);
             }
             break;
         case '4':
             return;
         default:
-            printf("无效的选择，请重新输入。\n");
+            dialog = gtk_message_dialog_new(NULL,
+                                        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_OK,
+                                        "无效的选择");
+            gtk_window_set_title(GTK_WINDOW(dialog), "请重新输入");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
             break;
         }
     }
+    gtk_widget_show_all(window);
 }
 
 void sortRecords(head_node *head) {
     if (head == NULL || head->is_empty) {
-        printf("没有可排序的数据。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有可排序的数据。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "排序失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
-    while (true) {
-        printf("排序显示\n");
-        printf("\n请选择排序类型：\n");
-        printf("1. 显示当前排序\n");
-        printf("2. 单一属性排序\n");
-        printf("3. 多属性排序\n");
-        printf("4. 返回\n");
-        printf("请选择一个操作（1-4）：");
 
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    const char *heading;
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "排序结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+    while (true) {
+        const char* message = "排序显示(1. 显示当前排序 2. 单一属性排序 3. 多属性排序 4. 返回)";
         char get[MAX_LENGTH];
-        getInput(get, sizeof(get));
-        system(SYSTEM_CLEAR);
+        infoInput(get, sizeof(get),message);
 
         int attributeIndex = 0;
         bool isAscending = false;
 
         if (!isOneChar(get)) {
-            printf("无效的选择，请重新输入。\n");
+            GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_OK,
+                                        "无效的选择，请重新输入。");
+            gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
             continue;
         }
         switch (get[0]) {
         case '1':
-            printf("通信记录的信息列表：\n");
-            printNodeList(head, 3);
+            heading = "通信记录的信息列表：\n";
+            gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
+            printNodeList(buffer,head, 3);
             break;
         case '2':
-            printf("通信记录的信息列表：\n");
+            heading = "通信记录的信息列表：\n";
+            gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
             beforeSort(head, 3, &attributeIndex, &isAscending);
             sort(3, head, attributeIndex, isAscending);
-            printNodeList(head, 3);
+            printNodeList(buffer,head, 3);
             break;
         case '3':
             combinedSortHelper(head, 3);
-            system(SYSTEM_CLEAR);
-            printNodeList(head, 3);
+            printNodeList(buffer,head, 3);
             break;
         case '4':
             return;
         default:
-            printf("无效的选择，请重新输入。\n");
+            gtk_text_buffer_insert_at_cursor(buffer, "无效的选择，请重新输入。\n", -1);
         }
     }
+    gtk_widget_show_all(window);
 }
 
 void statisticsRecords(head_node *head) {
     if (head->is_empty) {
-        printf("没有可统计的数据。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有可统计的数据。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
+
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    const char *heading;
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "统计结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
     int attrIndex = -1;
     int numAttrs = 0;
     int attrIndexes[32];
     char conditionValues[32][MAX_LENGTH]; // 存储每个属性的条件值
     int numConditions = 0; // 条件数量
     while (true) {
-        printf("\n信息统计\n");
-        printf("1. 简单统计\n");
-        printf("2. 组合统计\n");
-        printf("3. 预设统计\n");
-        printf("4. 条件统计\n");
-        printf("5. 返回\n");
-        printf("请选择一个操作（1-5）：");
+        const char* message = "信息统计(1. 简单统计 2. 组合统计 3. 预设统计 4. 条件统计 5. 返回)";
 
         char get[MAX_LENGTH];
-        getInput(get, sizeof(get));
-        system(SYSTEM_CLEAR);
+        infoInput(get, sizeof(get),message);
         char choice[MAX_LENGTH];
         bool print = false;
 
@@ -240,20 +341,33 @@ void statisticsRecords(head_node *head) {
         case '1':
             attrIndex = selectSearchAttribute(3);
             if (attrIndex == -1) {
-                printf("无效的属性选择。\n");
+                GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            "无效的属性选择。");
+                gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
                 break;
             }
             countAttributes(head, attrIndex, 3);
             break;
         case '2':
-            printf("请输入属性索引，输入-1结束：\n");
             print = false;
             while (true) {
                 attrIndex = selectSearchAttribute(3);
                 attrIndexes[numAttrs++] = attrIndex;
                 if (attrIndex == -1) break;
                 else if (numAttrs >= 32) {
-                    printf("属性索引数量超过限制。\n");
+                    GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                "属性索引数量超过限制。");
+                    gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
+                    gtk_dialog_run(GTK_DIALOG(dialog));
+                    gtk_widget_destroy(dialog);
                     break;
                 }
                 print = true;
@@ -261,17 +375,21 @@ void statisticsRecords(head_node *head) {
             countCombinedAttributes(head, attrIndexes, numAttrs, 3);
             break;
         case '3':
-            printf("预设统计选项：\n");
-            printf("1. 按客户公司统计\n");
-            printf("2. 按通信内容统计\n");
-            printf("请选择一个操作（1-2）：");
-
-            getInput(choice, sizeof(choice));
+            message = "预设统计选项：(1. 按客户公司统计 2. 按通信内容统计)";
+            infoInput(choice, sizeof(choice),message);
 
             if (!isOneChar(choice)) {
-                printf("无效的选择。\n");
+                GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            "无效的选择。");
+                gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
                 break;
             }
+            GtkWidget* dialog;
             switch (choice[0]) {
             case '1':
                 countAttributes(head, 1, 3); // 1 是索引，3 是类型
@@ -280,26 +398,61 @@ void statisticsRecords(head_node *head) {
                 countAttributes(head, 6, 3); // 6 是索引，3 是类型
                 break;
             default:
-                printf("无效的选择。\n");
+                dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            "无效的选择。");
+                gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
                 break;
             }
             break;
         case '4':
-            printf("请输入属性索引和条件值，输入-1结束索引输入：\n");
+            dialog = gtk_message_dialog_new(NULL,
+                                        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_INFO,
+                                        GTK_BUTTONS_OK,
+                                        "请输入属性索引和条件值，输入-1结束索引输入");
+            gtk_window_set_title(GTK_WINDOW(dialog), "提示");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
             print = false;
             while (true) {
-                printf("属性索引：\n");
+                dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_INFO,
+                                            GTK_BUTTONS_OK,
+                                            "请输入属性索引");
+                gtk_window_set_title(GTK_WINDOW(dialog), "提示");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
                 int attrIndex = selectSearchAttribute(3);
                 if (attrIndex == -1) break;
                 attrIndexes[numConditions] = attrIndex;
                 print = true;
 
-                printf("条件值：");
+                dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_INFO,
+                                            GTK_BUTTONS_OK,
+                                            "请输入条件值");
+                gtk_window_set_title(GTK_WINDOW(dialog), "提示");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
                 getInput(conditionValues[numConditions], sizeof(conditionValues[numConditions]));
                 ++numConditions;
 
                 if (numConditions >= 32) {
-                    printf("条件数量超过限制。\n");
+                    dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                "条件数量超过限制。");
+                    gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
+                    gtk_dialog_run(GTK_DIALOG(dialog));
+                    gtk_widget_destroy(dialog);
                     break;
                 }
             }
@@ -308,7 +461,14 @@ void statisticsRecords(head_node *head) {
         case '5':
             return;
         default:
-            printf("无效的选择，请重新输入。\n");
+            dialog = gtk_message_dialog_new(NULL,
+                                        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_OK,
+                                        "无效的选择，请重新输入。");
+            gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
         }
     }
 }

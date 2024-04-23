@@ -14,7 +14,7 @@ bool howToSearch(const char *toCompare, const char *query, int how) {
 }
 
 // 搜索实现
-bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how) {
+bool searchOnes(GtkTextBuffer *buffer,head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how) {
     // 如果copyList是NULL，就不会执行复制结点到另一个链表的操作
     bool found = false;
     node_cus *cusNode = NULL;
@@ -57,7 +57,7 @@ bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex
                 return false;
             }
             if (toCompare && howToSearch(toCompare, query, how)) {
-                printNode_cus(cusNode);
+                printNode_cus(buffer,cusNode);
                 found = true;
                 if (copyList) {
                     node_cus *newNode = copyNode_cus(cusNode);
@@ -95,7 +95,7 @@ bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex
                 return false;
             }
             if (toCompare && howToSearch(toCompare, query, how)) {
-                printNode_ctp(ctpNode);
+                printNode_ctp(buffer,ctpNode);
                 found = true;
                 if (copyList) {
                     node_ctp *newNode = copyNode_ctp(ctpNode);
@@ -133,7 +133,7 @@ bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex
                 return false;
             }
             if (toCompare && howToSearch(toCompare, query, how)) {
-                printNode_emp(empNode);
+                printNode_emp(buffer,empNode);
                 found = true;
                 if (copyList) {
                     node_emp *newNode = copyNode_emp(empNode);
@@ -174,7 +174,7 @@ bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex
                 return false;
             }
             if (toCompare && howToSearch(toCompare, query, how)) {
-                printNode_rec(recNode);
+                printNode_rec(buffer,recNode);
                 found = true;
                 if (copyList) {
                     node_rec *newNode = copyNode_rec(recNode);
@@ -206,21 +206,37 @@ bool performQueryIteration(head_node *head, head_node **headA, head_node **headB
         return false;
     }
 
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "搜索结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+    
     // 根据用户选择决定查询内容和显示格
-    printHeading(which);
+    printHeading(buffer, which);
     if (*first) {
-        found = searchOnes(head, *headB, queryValue, attributeIndex, which, charToInt(searchType[0]));
+        found = searchOnes(buffer,head, *headB, queryValue, attributeIndex, which, charToInt(searchType[0]));
     } else {
-        found = searchOnes(*headA, *headB, queryValue, attributeIndex, which, charToInt(searchType[0]));
+        found = searchOnes(buffer,*headA, *headB, queryValue, attributeIndex, which, charToInt(searchType[0]));
     }
     if (!found) {
-        printf("没有找到匹配的信息。\n");
+        gtk_text_buffer_insert_at_cursor(buffer, "没有找到匹配的信息。\n", -1);
     }
+    gtk_widget_show_all(window);
 
-    printf("是否继续查询？(y):\n");
     char get[MAX_LENGTH];
-    getInput(get, sizeof(get));
-    system(SYSTEM_CLEAR);
+    infoInput(get, sizeof(get),"是否继续查询？(y)");
 
     if (!isOneChar(get) || (get[0] != 'y' && get[0] != 'Y')) {
         return false;

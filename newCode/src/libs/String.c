@@ -544,8 +544,6 @@ int beforeInfo(head_node *head, const char *prompt) {
     int result = -1;
     int index;
     if(IsManager) {
-        
-        
         dialog = gtk_dialog_new_with_buttons("选择数据类型",
                                             parent_window,
                                             GTK_DIALOG_MODAL,
@@ -604,7 +602,7 @@ int beforeInfo(head_node *head, const char *prompt) {
 }
 
 // 打印客户信息
-void printNode_cus(node_cus *node) {
+void printNode_cus(GtkTextBuffer *buffer,node_cus *node) {
     printf("%s - %s - %s - %s - %s - %s - %s - %s\n", 
         node->customer.name,
         node->customer.region,
@@ -615,69 +613,93 @@ void printNode_cus(node_cus *node) {
         node->customer.email,
         node->customer.phone
     );
+    char heading[MAX_LENGTH*9];
+    snprintf(heading,sizeof(heading),"%s - %s - %s - %s - %s - %s - %s - %s\n", 
+        node->customer.name,
+        node->customer.region,
+        node->customer.address, 
+        node->customer.legalRepresentative,
+        node->customer.scale, 
+        node->customer.businessContactLevel,
+        node->customer.email,
+        node->customer.phone);
+    gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
 }
 
 // 打印联络人信息
-void printNode_ctp(node_ctp *node) {
-    printf("%s - %s - %s - %s - %s - %s\n", 
+void printNode_ctp(GtkTextBuffer *buffer,node_ctp *node) {
+    char heading[MAX_LENGTH*7];
+    snprintf(heading,sizeof(heading),"%s - %s - %s - %s - %s - %s\n", 
         node->contactPerson.name,
         node->contactPerson.gender,
         node->contactPerson.birthday, 
         node->contactPerson.email,
         node->contactPerson.phone,
-        node->contactPerson.representative
-    );
+        node->contactPerson.representative);
+    gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
 }
 
 // 打印业务员信息
-void printNode_emp(node_emp *node) {
-    printf("%s - %s - %s - %s - %s - %s\n", 
+void printNode_emp(GtkTextBuffer *buffer,node_emp *node) {
+    char heading[MAX_LENGTH*7];
+    snprintf(heading,sizeof(heading),"%s - %s - %s - %s - %s - %s\n", 
         node->employee.name,
         node->employee.gender,
         node->employee.birthday, 
         node->employee.email,
         node->employee.phone,
-        node->employee.representative
-    );
+        node->employee.representative);
+    gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
 }
 
 // 打印通信记录信息
-void printNode_rec(node_rec *node) {
-    printf("%s - %s - %s - %s - %s - %s - %s\n", 
+void printNode_rec(GtkTextBuffer *buffer,node_rec *node) {
+    char heading[MAX_LENGTH*8];
+    snprintf(heading,sizeof(heading),"%s - %s - %s - %s - %s - %s - %s\n", 
         node->record.user,
         node->record.companyName,
         node->record.contactName,
         node->record.date, 
         node->record.time,
         node->record.duration,
-        node->record.content
-    );
+        node->record.content);
+    gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
 }
 
-void printHeading(int which) {
+void printHeading(GtkTextBuffer *buffer,int which) {
+    const char *heading;
     switch (which) {
     case 0:
-        printf("客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n");
+        heading = "客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n";
         break;
     case 1:
-        printf("联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+        heading = "联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n";
         break;
     case 2:
-        printf("业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+        heading = "业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n";
         break;
     case 3:
-        printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
+        heading = "管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n";
         break;
     default:
+        heading = "无效类型\n";
         break;
     }
+    gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
 }
 
 
 // 打印需要的链表内容
-void printNodeList(head_node *head, int choice) {
+void printNodeList(GtkTextBuffer *buffer,head_node *head, int choice) {
+    const char *heading;
     if (head == NULL || head->is_empty) {
-        printf("没有可显示的数据。\n");
+        GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_OK,
+                                                   "没有可显示的数据。");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
 
@@ -685,76 +707,79 @@ void printNodeList(head_node *head, int choice) {
     case 0:  // 客户信息
         if (head->is_cus) {
             node_cus *current = head->next_cus;
-            printf("客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n");
+            heading = "客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n";
             while (current != NULL) {
-                printNode_cus(current);
+                printNode_cus(buffer,current);
                 current = current->next;
             }
         } else {
-            printf("没有可显示的客户信息。\n");
+            heading = "没有可显示的客户信息。\n";
         }
         break;
     case 1:  // 联络人信息
         if (head->is_ctp) {
             node_ctp *current = head->next_ctp;
-            printf("联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+            heading = "联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n";
             while (current != NULL) {
-                printNode_ctp(current);
+                printNode_ctp(buffer,current);
                 current = current->next;
             }
         } else {
-            printf("没有可显示的联络人信息。\n");
+            heading = "没有可显示的联络人信息。\n";
         }
         break;
     case 2:  // 业务员信息
         if (head->is_emp) {
             node_emp *current = head->next_emp;
-            printf("业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n");
+            heading = "业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n";
             while (current != NULL) {
-                printNode_emp(current);
+                printNode_emp(buffer,current);
                 current = current->next;
             }
         } else {
-            printf("没有可显示的业务员信息。\n");
+            heading = "没有可显示的业务员信息。\n";
         }
         break;
     case 3:  // 通信记录
         if (head->is_rec) {
             node_rec *current = head->next_rec;
-            printf("管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n");
+            heading = "管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n";
             while (current != NULL) {
-                printNode_rec(current);
+                printNode_rec(buffer,current);
                 current = current->next;
             }
         } else {
-            printf("没有可显示的通信记录信息。\n");
+            heading = "没有可显示的通信记录信息。\n";
         }
         break;
     default:
-        printf("无效的选项。\n");
+        heading = "无效的选项。\n";
         break;
     }
+    gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
 }
 
 int selectSearchAttribute(int which) {
     char index = '0';
+    char message[MAX_LENGTH];
+    
     switch (which) {
     case 0: // 客户
-        printf("1. 名称\n2. 地区\n3. 地址\n4. 法人\n5. 规模\n6. 联系等级\n7. 邮箱\n8. 电话\n");
+        snprintf(message,sizeof(message),"请选择属性：(1. 名称 2. 地区 3. 地址 4. 法人 5. 规模 6. 联系等级 7. 邮箱 8. 电话)\n");
         index = '8';
         break;
     case 1: // 联络人
     case 2: // 业务员
-        printf("1. 名称\n2. 性别\n3. 生日\n4. 邮箱\n5. 电话\n6. 代表公司\n");
+        snprintf(message,sizeof(message),"请选择属性：(1. 名称 2. 性别 3. 生日 4. 邮箱 5. 电话 6. 代表公司)\n");
         index = '6';
         break;
     case 3: // 通信记录
-        printf("1. 管理用户\n2. 公司名称\n3. 联络人\n4. 日期\n5. 时间\n6. 时长\n7. 通信内容\n");
+        snprintf(message,sizeof(message),"请选择属性：(1. 管理用户 2. 公司名称 3. 联络人 4. 日期 5. 时间 6. 时长 7. 通信内容)\n");
         index = '7';
     default: break;
     }
     char get[MAX_LENGTH];
-    infoInput(get, sizeof(get), "请选择属性：\n");
+    infoInput(get, sizeof(get), message);
     if (!isOneChar(get) || get[0] < '1' || get[0] > index) {
         return -1;
     } else {

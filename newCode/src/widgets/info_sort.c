@@ -81,78 +81,165 @@ void infoSortWidget(GtkWidget *parent) {
 }
 
 void defaultSort(head_node *head) {
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    const char *heading;
     if (head == NULL || head->is_empty) {
-        printf("没有可排序的数据。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有可排序的数据。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "排序失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
     int which = beforeInfo(head, "排序");
     if (which == -1) return;  // 选择无效
 
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "排序结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
     switch (which) {
     case 0:
-        printf("客户信息列表：\n");
+        heading = "客户信息列表：\n";
         break;
     case 1:
-        printf("联络人信息列表：\n");
+        heading = "联络人信息列表：\n";
         break;
     case 2:
-        printf("业务员信息列表：\n");
+        heading = "业务员信息列表：\n";
         break;
     }
-    printNodeList(head, which);
+    gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
+    printNodeList(buffer,head, which);
+
+    gtk_widget_show_all(window);
+    gtk_main();
 }
 
 void simpleSort(head_node *head) {
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    const char *heading;
     if (head == NULL || head->is_empty) {
-        printf("没有可排序的数据。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有可排序的数据。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "排序失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
     int which = beforeInfo(head, "排序");
     if (which == -1) return;  // 如果选择无效或不允许展示，则返回
 
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "排序结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
+
     switch (which) {
     case 0:
-        printf("客户信息列表：\n");
+        heading = "客户信息列表：\n";
         break;
     case 1:
-        printf("联络人信息列表：\n");
+        heading = "联络人信息列表：\n";
         break;
     case 2:
-        printf("业务员信息列表：\n");
+        heading = "业务员信息列表：\n";
         break;
     }
+    gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
     int attributeIndex = 0;
     bool isAscending = false;
 
     beforeSort(head, which, &attributeIndex, &isAscending);
     
     sort(which, head, attributeIndex, isAscending);
-    printNodeList(head, which);
+    printNodeList(buffer,head, which);
+
+    gtk_widget_show_all(window);
 }
 
 void combinedSort(head_node *head) {
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    const char *heading;
     if (head == NULL || head->is_empty) {
-        printf("没有可排序的数据。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有可排序的数据。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "排序失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
-    printf("开始进行组合排序。\n");
+    GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_INFO,
+                                GTK_BUTTONS_OK,
+                                "开始进行组合排序。");
+    gtk_window_set_title(GTK_WINDOW(dialog), "开始排序");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+
     int which = beforeInfo(head, "排序");
     if (which == -1) return;  // 如果选择无效或不允许展示，则返回
 
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "排序结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
     switch (which) {
     case 0:
-        printf("客户信息列表：\n");
+        heading = "客户信息列表：\n";
         break;
     case 1:
-        printf("联络人信息列表：\n");
+        heading = "联络人信息列表：\n";
         break;
     case 2:
-        printf("业务员信息列表：\n");
+        heading = "业务员信息列表：\n";
         break;
     }
     combinedSortHelper(head, which);
-    system(SYSTEM_CLEAR);
-    printNodeList(head, which);
+    printNodeList(buffer,head, which);
 }
 
 void on_defaultSort_clicked(GtkWidget *widget, gpointer data) {

@@ -116,12 +116,12 @@ bool infoInput(char *input, int buffer_size, const char *prompt);
 void inputTheName(char *name, int buffer_size, const char *prompt);
 void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact);
 void addColumn(char *fullLine, const char *newOne);
-void printHeading(int which);
-void printNode_cus(node_cus *node);
-void printNode_ctp(node_ctp *node);
-void printNode_emp(node_emp *node);
-void printNode_rec(node_rec *node);
-void printNodeList(head_node *node, int choice);
+void printHeading(GtkTextBuffer *buffer,int which);
+void printNode_cus(GtkTextBuffer *buffer,node_cus *node);
+void printNode_ctp(GtkTextBuffer *buffer,node_ctp *node);
+void printNode_emp(GtkTextBuffer *buffer,node_emp *node);
+void printNode_rec(GtkTextBuffer *buffer,node_rec *node);
+void printNodeList(GtkTextBuffer *buffer,head_node *node, int choice);
 int beforeInfo(head_node *head, const char *prompt);
 int selectSearchAttribute(int which);
 
@@ -207,7 +207,7 @@ static void on_adjustCustomer_clicked(GtkWidget *widget, gpointer data);
 
 // info_enquiry
 void infoEnquiryWidget(GtkWidget *parent);
-bool searchOnes(head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how);
+bool searchOnes(GtkTextBuffer *buffer,head_node *head, head_node *copyList, char *query, int attrIndex, int which, int how);
 bool howToSearch(const char *toCompare, const char *query, int how);
 void simpleQuery(head_node *head);
 void combinedQuery(head_node *head);

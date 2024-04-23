@@ -81,7 +81,14 @@ void infoEnquiryWidget(GtkWidget *parent) {
 
 void simpleQuery(head_node *head) {
     if (head == NULL || head->is_empty) {
-        printf("没有可查询的数据。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有可查询的数据。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
     int which = beforeInfo(head, "查询");
@@ -91,24 +98,63 @@ void simpleQuery(head_node *head) {
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
     if (attributeIndex == -1) {
-        printf("无效的属性选择。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "无效的属性选择。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
     // 获取用户想要搜索的值
     infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
 
+
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "搜索结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
     // 根据用户选择决定查询内容和显示格式
-    printHeading(which);
-    found = searchOnes(head, NULL, queryValue, attributeIndex, which, 0);
+    printHeading(buffer,which);
+    found = searchOnes(buffer,head, NULL, queryValue, attributeIndex, which, 0);
     if (!found) {
-        printf("没有找到匹配的信息。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有找到匹配的信息。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     }
+    gtk_widget_show_all(window);
 }
 
 void combinedQuery(head_node *head) {
     // 多一个链表，A链表符合条件的放到B链表，还搜的话就B链表变A链表，继续以此类推
     if (head == NULL || head->is_empty) {
-        printf("没有可查询的数据。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有可查询的数据。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
     int which = beforeInfo(head, "查询");
@@ -118,7 +164,14 @@ void combinedQuery(head_node *head) {
     head_node *headA = (head_node *)malloc(sizeof(head_node));  // 分配内存
     head_node *headB = (head_node *)malloc(sizeof(head_node));  // 分配内存
     if (!headA || !headB) {
-        fprintf(stderr, "内存分配失败！\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "内存分配失败！");
+        gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
     initializeHeadNode(headA);
@@ -134,7 +187,14 @@ void combinedQuery(head_node *head) {
 
 void fuzzyQuery(head_node *head) {
     if (head == NULL || head->is_empty) {
-        printf("没有可查询的数据。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有可查询的数据。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
     int which = beforeInfo(head, "查询");
@@ -144,19 +204,50 @@ void fuzzyQuery(head_node *head) {
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
     if (attributeIndex == -1) {
-        printf("无效的属性选择。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "无效的属性选择。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
         return;
     }
 
     // 获取用户想要搜索的值
     infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
 
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "搜索结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
     // 根据用户选择决定查询内容和显示格式
-    printHeading(which);
-    found = searchOnes(head, NULL, queryValue, attributeIndex, which, 1);
+    printHeading(buffer,which);
+    found = searchOnes(buffer,head, NULL, queryValue, attributeIndex, which, 1);
     if (!found) {
-        printf("没有找到匹配的信息。\n");
+        GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_OK,
+                                    "没有找到匹配的信息。");
+        gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
     }
+    gtk_widget_show_all(window);
 }
 
 static void on_simpleQuery_clicked(GtkWidget *widget, gpointer data) {
