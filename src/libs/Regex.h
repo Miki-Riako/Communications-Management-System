@@ -87,7 +87,14 @@ bool matchPhone(const char *phone) {
 bool matchGender(const char *gender) {
     if (gender == NULL) return false;
 
-    return (strcmp(gender, "男") == 0 || strcmp(gender, "女") == 0);
+    return (
+        strcmp(gender, "男") == 0 || 
+        strcmp(gender, "女") == 0 || 
+        strcmp(gender, "Male") == 0 || 
+        strcmp(gender, "Female") == 0 || 
+        strcmp(gender, "male") == 0 || 
+        strcmp(gender, "female") == 0
+    );
 }
 
 // 检查程度的正则表达式
@@ -96,7 +103,16 @@ bool matchScale(const char *scale) {
     if (scale == NULL || scale[0] == '\0') return false;
 
     // 比较输入是否为 "大"、"中" 或 "小"
-    return (strcmp(scale, "大") == 0 || strcmp(scale, "中") == 0 || strcmp(scale, "小") == 0);
+    return (strcmp(scale, "大") == 0 || 
+        strcmp(scale, "中") == 0 || 
+        strcmp(scale, "小") == 0 || 
+        strcmp(scale, "Large") == 0 || 
+        strcmp(scale, "Medium") == 0 || 
+        strcmp(scale, "Small") == 0 || 
+        strcmp(scale, "large") == 0 || 
+        strcmp(scale, "medium") == 0 || 
+        strcmp(scale, "small") == 0
+        );
 }
 
 // 检查等级的正则表达式
@@ -105,7 +121,17 @@ bool matchContactLevel(const char *contactLevel) {
     if (contactLevel == NULL || contactLevel[0] == '\0') return false;
 
     // 比较输入是否为 "高"、"中" 或 "低"
-    return (strcmp(contactLevel, "高") == 0 || strcmp(contactLevel, "中") == 0 || strcmp(contactLevel, "低") == 0);
+    return (
+        strcmp(contactLevel, "高") == 0 || 
+        strcmp(contactLevel, "中") == 0 || 
+        strcmp(contactLevel, "低") == 0 || 
+        strcmp(contactLevel, "High") == 0 || 
+        strcmp(contactLevel, "Medium") == 0 || 
+        strcmp(contactLevel, "Low") == 0 || 
+        strcmp(contactLevel, "high") == 0 || 
+        strcmp(contactLevel, "medium") == 0 || 
+        strcmp(contactLevel, "low") == 0
+        );
 }
 
 // 检查日期的正则表达式
