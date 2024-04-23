@@ -135,7 +135,6 @@ static void on_cancel_save_clicked(GtkWidget *widget, EntryWidgets *entryWidgets
 
 // all widget
 void on_back_clicked(GtkWidget *widget, WidgetPair *pair);
-
 void show_info_dialog(GtkWidget *widget, const gchar *message);
 
 

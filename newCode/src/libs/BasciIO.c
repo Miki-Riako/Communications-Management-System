@@ -104,6 +104,16 @@ void removeRecord(const char *filename, const char *prompt) {
             return;
         }
         if (!isEmpty(delName)) {
+            if (isSameString(delName, "Name") || isSameString(delName, "User") || isSameString(delName, "Employee")) {
+                GtkWidget *dialog = gtk_message_dialog_new(NULL,
+                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                        GTK_MESSAGE_ERROR,
+                                                        GTK_BUTTONS_OK,
+                                                        "不能删除头标题行。");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
+                continue;
+            }
             if (alreadyExists(filename, delName)) {
                 break;
             } else {
@@ -293,6 +303,7 @@ void loadFile(head_node *head) {
         loadContactPersons("contacts.csv", head);
         loadEmployees("employees.csv", head);
         loadRecords("customers.csv", head);
+        return;
     }
     // 非管理员只加载其负责的客户数据
     FILE *assignmentsFile = fopen("assignments.csv", "r");

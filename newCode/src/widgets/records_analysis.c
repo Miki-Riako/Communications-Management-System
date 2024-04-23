@@ -122,17 +122,20 @@ void enquiryRecords(head_node *head) {
         const char* message = "信息查询(1. 简单查询 2. 组合查询 3. 模糊查询 4. 返回)";
         
         char get[MAX_LENGTH];
-        infoInput(get, sizeof(get),message);
+        if(!infoInput(get, sizeof(get),message))return;
         system(SYSTEM_CLEAR);
         
         if (!isOneChar(get)) {
             GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_MESSAGE_ERROR,
-                                        GTK_BUTTONS_OK,
+                                        GTK_BUTTONS_OK_CANCEL,
                                         "无效的选择，请重新输入。");
             gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
-            gtk_dialog_run(GTK_DIALOG(dialog));
+            if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_CANCEL) {
+                gtk_widget_destroy(dialog);
+                break;  // Exit the loop if Cancel is pressed
+            }
             gtk_widget_destroy(dialog);
             continue;
         }
@@ -141,21 +144,14 @@ void enquiryRecords(head_node *head) {
         case '1':
             attributeIndex = selectSearchAttribute(3);
             if (attributeIndex == -1) {
-                dialog = gtk_message_dialog_new(NULL,
-                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
-                                            "无效的属性选择。");
-                gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                show_info_dialog(NULL,"无效的属性选择。");
                 return;
             }
-            infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
+            if(!infoInput(queryValue, sizeof(queryValue), "请输入搜索值："))return;
             printHeading(buffer,3);
             found = searchOnes(buffer,head, NULL, queryValue, attributeIndex, 3, 0);
             if (!found) {
-                printf("没有找到匹配的信息。\n");
+                show_info_dialog(NULL,"没有找到匹配的信息");
             }
             break;
         case '2':
@@ -163,14 +159,7 @@ void enquiryRecords(head_node *head) {
             headA = (head_node *)malloc(sizeof(head_node));  // 分配内存
             headB = (head_node *)malloc(sizeof(head_node));  // 分配内存
             if (!headA || !headB) {
-                dialog = gtk_message_dialog_new(NULL,
-                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
-                                            "内存分配失败！");
-                gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                show_info_dialog(NULL,"内存分配失败！");
                 return;
             }
             initializeHeadNode(headA);
@@ -184,17 +173,10 @@ void enquiryRecords(head_node *head) {
         case '3':
             attributeIndex = selectSearchAttribute(3);
             if (attributeIndex == -1) {
-                dialog = gtk_message_dialog_new(NULL,
-                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
-                                            "无效的属性选择。");
-                gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                show_info_dialog(NULL,"无效的属性选择。");
                 return;
             }
-            infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
+            if(!infoInput(queryValue, sizeof(queryValue), "请输入搜索值："))return;
             printHeading(buffer,3);
             found = searchOnes(buffer,head, NULL, queryValue, attributeIndex, 3, 1);
             if (!found) {
@@ -207,10 +189,13 @@ void enquiryRecords(head_node *head) {
             dialog = gtk_message_dialog_new(NULL,
                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_MESSAGE_ERROR,
-                                        GTK_BUTTONS_OK,
+                                        GTK_BUTTONS_OK_CANCEL,
                                         "无效的选择");
             gtk_window_set_title(GTK_WINDOW(dialog), "请重新输入");
-            gtk_dialog_run(GTK_DIALOG(dialog));
+            if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_CANCEL) {
+                gtk_widget_destroy(dialog);
+                return;
+            }
             gtk_widget_destroy(dialog);
             break;
         }
@@ -251,7 +236,7 @@ void sortRecords(head_node *head) {
     while (true) {
         const char* message = "排序显示(1. 显示当前排序 2. 单一属性排序 3. 多属性排序 4. 返回)";
         char get[MAX_LENGTH];
-        infoInput(get, sizeof(get),message);
+        if(!infoInput(get, sizeof(get),message))return;
 
         int attributeIndex = 0;
         bool isAscending = false;
@@ -260,10 +245,13 @@ void sortRecords(head_node *head) {
             GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_MESSAGE_ERROR,
-                                        GTK_BUTTONS_OK,
+                                        GTK_BUTTONS_OK_CANCEL,
                                         "无效的选择，请重新输入。");
             gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
-            gtk_dialog_run(GTK_DIALOG(dialog));
+            if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_CANCEL) {
+                gtk_widget_destroy(dialog);
+                return;
+            }
             gtk_widget_destroy(dialog);
             continue;
         }
@@ -333,7 +321,7 @@ void statisticsRecords(head_node *head) {
         const char* message = "信息统计(1. 简单统计 2. 组合统计 3. 预设统计 4. 条件统计 5. 返回)";
 
         char get[MAX_LENGTH];
-        infoInput(get, sizeof(get),message);
+        if(!infoInput(get, sizeof(get),message))return;
         char choice[MAX_LENGTH];
         bool print = false;
 
@@ -344,10 +332,13 @@ void statisticsRecords(head_node *head) {
                 GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                             GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                             GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
+                                            GTK_BUTTONS_OK_CANCEL,
                                             "无效的属性选择。");
                 gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
-                gtk_dialog_run(GTK_DIALOG(dialog));
+                if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_CANCEL) {
+                    gtk_widget_destroy(dialog);
+                    return;
+                }
                 gtk_widget_destroy(dialog);
                 break;
             }
@@ -376,17 +367,10 @@ void statisticsRecords(head_node *head) {
             break;
         case '3':
             message = "预设统计选项：(1. 按客户公司统计 2. 按通信内容统计)";
-            infoInput(choice, sizeof(choice),message);
+            if(!infoInput(choice, sizeof(choice),message))return;
 
             if (!isOneChar(choice)) {
-                GtkWidget* dialog = gtk_message_dialog_new(NULL,
-                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
-                                            "无效的选择。");
-                gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                show_info_dialog(NULL,"无效的选择。");
                 break;
             }
             GtkWidget* dialog;
@@ -398,14 +382,7 @@ void statisticsRecords(head_node *head) {
                 countAttributes(head, 6, 3); // 6 是索引，3 是类型
                 break;
             default:
-                dialog = gtk_message_dialog_new(NULL,
-                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
-                                            "无效的选择。");
-                gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
+                show_info_dialog(NULL,"统计失败：无效的选择");
                 break;
             }
             break;
@@ -413,46 +390,37 @@ void statisticsRecords(head_node *head) {
             dialog = gtk_message_dialog_new(NULL,
                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_MESSAGE_INFO,
-                                        GTK_BUTTONS_OK,
+                                        GTK_BUTTONS_OK_CANCEL,
                                         "请输入属性索引和条件值，输入-1结束索引输入");
             gtk_window_set_title(GTK_WINDOW(dialog), "提示");
-            gtk_dialog_run(GTK_DIALOG(dialog));
+            if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_CANCEL) {
+                gtk_widget_destroy(dialog);
+                return;
+            }
             gtk_widget_destroy(dialog);
             print = false;
             while (true) {
                 dialog = gtk_message_dialog_new(NULL,
                                             GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                             GTK_MESSAGE_INFO,
-                                            GTK_BUTTONS_OK,
+                                            GTK_BUTTONS_OK_CANCEL,
                                             "请输入属性索引");
                 gtk_window_set_title(GTK_WINDOW(dialog), "提示");
-                gtk_dialog_run(GTK_DIALOG(dialog));
+                if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_CANCEL) {
+                    gtk_widget_destroy(dialog);
+                    return;
+                }
                 gtk_widget_destroy(dialog);
                 int attrIndex = selectSearchAttribute(3);
                 if (attrIndex == -1) break;
                 attrIndexes[numConditions] = attrIndex;
                 print = true;
 
-                dialog = gtk_message_dialog_new(NULL,
-                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_INFO,
-                                            GTK_BUTTONS_OK,
-                                            "请输入条件值");
-                gtk_window_set_title(GTK_WINDOW(dialog), "提示");
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);
-                getInput(conditionValues[numConditions], sizeof(conditionValues[numConditions]));
+                if(!infoInput(conditionValues[numConditions], sizeof(conditionValues[numConditions]),"请输入条件值"))return;
                 ++numConditions;
 
                 if (numConditions >= 32) {
-                    dialog = gtk_message_dialog_new(NULL,
-                                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                GTK_MESSAGE_ERROR,
-                                                GTK_BUTTONS_OK,
-                                                "条件数量超过限制。");
-                    gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
-                    gtk_dialog_run(GTK_DIALOG(dialog));
-                    gtk_widget_destroy(dialog);
+                    show_info_dialog(NULL,"条件数量超过限制。");
                     break;
                 }
             }

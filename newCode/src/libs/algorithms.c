@@ -8,7 +8,7 @@ bool howToSearch(const char *toCompare, const char *query, int how) {
     case 1:
         return strstr(toCompare, query) != NULL;
     default:
-        printf("无效的属性选择。\n");
+        show_info_dialog(NULL,"无效的属性选择");
         return false;
     }
 }
@@ -53,7 +53,7 @@ bool searchOnes(GtkTextBuffer *buffer,head_node *head, head_node *copyList, char
                 toCompare = cusNode->customer.phone;
                 break;
             default:
-                printf("无效的属性选择。\n");
+                show_info_dialog(NULL,"无效的属性选择");
                 return false;
             }
             if (toCompare && howToSearch(toCompare, query, how)) {
@@ -91,7 +91,7 @@ bool searchOnes(GtkTextBuffer *buffer,head_node *head, head_node *copyList, char
                 toCompare = ctpNode->contactPerson.representative;
                 break;
             default:
-                printf("无效的属性选择。\n");
+                show_info_dialog(NULL,"无效的属性选择");
                 return false;
             }
             if (toCompare && howToSearch(toCompare, query, how)) {
@@ -129,7 +129,7 @@ bool searchOnes(GtkTextBuffer *buffer,head_node *head, head_node *copyList, char
                 toCompare = empNode->employee.representative;
                 break;
             default:
-                printf("无效的属性选择。\n");
+                show_info_dialog(NULL,"无效的属性选择");
                 return false;
             }
             if (toCompare && howToSearch(toCompare, query, how)) {
@@ -170,7 +170,7 @@ bool searchOnes(GtkTextBuffer *buffer,head_node *head, head_node *copyList, char
                 toCompare = recNode->record.content;
                 break;
             default:
-                printf("无效的属性选择。\n");
+                show_info_dialog(NULL,"无效的属性选择");
                 return false;
             }
             if (toCompare && howToSearch(toCompare, query, how)) {
@@ -194,15 +194,15 @@ bool performQueryIteration(head_node *head, head_node **headA, head_node **headB
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
     if (attributeIndex == -1) {
-        printf("无效的属性选择。\n");
+        show_info_dialog(NULL,"无效的属性选择");
         return false;
     }
 
     // 获取用户想要搜索的值
-    infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
-    infoInput(searchType, sizeof(searchType), "请输入搜索方式 (0: 精确查询, 1: 模糊查询):\n");
+    if(!infoInput(queryValue, sizeof(queryValue), "请输入搜索值："))return false;
+    if(!infoInput(searchType, sizeof(searchType), "请输入搜索方式 (0: 精确查询, 1: 模糊查询):\n")) return false;
     if (!isOneChar(searchType) || (charToInt(searchType[0]) < 0 || charToInt(searchType[0]) > 1)) {
-        printf("错误的搜索方式！\n");
+        show_info_dialog(NULL,"错误的搜索方式！");
         return false;
     }
 
@@ -236,8 +236,7 @@ bool performQueryIteration(head_node *head, head_node **headA, head_node **headB
     gtk_widget_show_all(window);
 
     char get[MAX_LENGTH];
-    infoInput(get, sizeof(get),"是否继续查询？(y)");
-
+    if(!infoInput(get, sizeof(get),"是否继续查询？(y)"))return false;
     if (!isOneChar(get) || (get[0] != 'y' && get[0] != 'Y')) {
         return false;
     }
@@ -446,7 +445,20 @@ void beforeSort(head_node *head, int which, int *attributeIndex, bool *isAscendi
     while (true) {
         *attributeIndex = selectSearchAttribute(which);
         if (*attributeIndex == -1) {
-            printf("无效的属性选择，请重新输入。\n");
+            GtkWidget* dialog = gtk_message_dialog_new(NULL,
+                                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_OK_CANCEL, 
+                                                    "无效的选择，请重新输入。");
+            int response = gtk_dialog_run(GTK_DIALOG(dialog));
+            if (response == GTK_RESPONSE_OK) {
+                gtk_widget_destroy(dialog); 
+                continue;
+            } else if (response == GTK_RESPONSE_CANCEL) {
+                gtk_widget_destroy(dialog); 
+                return;
+            }
+            gtk_widget_destroy(dialog); 
         } else {
             break;
         }
@@ -454,10 +466,11 @@ void beforeSort(head_node *head, int which, int *attributeIndex, bool *isAscendi
 
     char ascending[MAX_LENGTH];
     while (true) {
-        printf("请输入排序方式（1升序/0降序）：");
-        getInput(ascending, sizeof(ascending));
-        if (!isOneChar(ascending)) {
-            printf("无效的排序方式，请重新输入。\n");
+        int ret = infoInput(ascending, sizeof(ascending),"请输入排序方式（1升序/0降序）：");
+        if(!ret) {
+            return;
+        } else if (!isOneChar(ascending)) {
+            show_info_dialog(NULL,"无效的排序方式，请重新输入。\n");
         } else {
             break;
         }
@@ -473,10 +486,9 @@ void combinedSortHelper(head_node *head, int which) {
     beforeSort(head, which, &attributeIndex, &isAscending);
 
     char get[MAX_LENGTH];
-    printf("是否继续添加排序条件？(y): ");
-    getInput(get, sizeof(get));
-    if (isOneChar(get) && (get[0] == 'y' || get[0] == 'Y')) {
-        system(SYSTEM_CLEAR);
+    bool ret = infoInput(get, sizeof(get),"是否继续添加排序条件？(y): ");
+    if(!ret){}
+    else if(isOneChar(get) && (get[0] == 'y' || get[0] == 'Y')) {
         combinedSortHelper(head, which);  // 递归调用以继续排序
     }
 
@@ -568,13 +580,37 @@ void countAttributes(head_node *head, int attrIndex, int which) {
         break;
     }
 
-    // 打印统计结果
-    printf("统计结果：\n");
+    // 在GTK窗口中显示统计结果
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "统计结果");
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
+    // 添加统计结果到文本视图
+    gtk_text_buffer_insert_at_cursor(buffer, "统计结果：\n", -1);
     for (int i = 0; i < uniqueCount; ++i) {
-        printf("%s: %d\n", counts[i].value, counts[i].count);
+        char line[MAX_LENGTH*2];
+        snprintf(line, sizeof(line), "%s: %d\n", counts[i].value, counts[i].count);
+        gtk_text_buffer_insert_at_cursor(buffer, line, -1);
     }
-    if (uniqueCount == 0) printf("无符合条件的结果！\n");
-    printf("统计完毕！\n");
+    if (uniqueCount == 0) {
+        gtk_text_buffer_insert_at_cursor(buffer, "无符合条件的结果！\n", -1);
+    }
+    gtk_text_buffer_insert_at_cursor(buffer, "统计完毕！\n", -1);
+
+    gtk_widget_show_all(window);
 }
 
 // 组合统计函数
@@ -689,12 +725,37 @@ void countCombinedAttributes(head_node *head, int *attrIndexes, int numAttrs, in
         break;
     }
 
-    printf("组合统计结果：\n");
+    // 在GTK窗口中显示统计结果
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "组合统计结果：");
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
+    // 添加统计结果到文本视图
+    gtk_text_buffer_insert_at_cursor(buffer, "组合统计结果：\n", -1);
     for (int i = 0; i < uniqueCount; ++i) {
-        printf("%s: %d\n", counts[i].value, counts[i].count);
+        char line[MAX_LENGTH*2];
+        snprintf(line, sizeof(line), "%s: %d\n", counts[i].value, counts[i].count);
+        gtk_text_buffer_insert_at_cursor(buffer, line, -1);
     }
-    if (uniqueCount == 0) printf("无符合条件的结果！\n");
-    printf("统计完毕！\n");
+    if (uniqueCount == 0) {
+        gtk_text_buffer_insert_at_cursor(buffer, "无符合条件的结果！\n", -1);
+    }
+    gtk_text_buffer_insert_at_cursor(buffer, "统计完毕！\n", -1);
+
+    gtk_widget_show_all(window);
 }
 
 // 有条件搜索的逻辑
@@ -839,12 +900,37 @@ void countAttributesByConditions(head_node *head, int *attrIndexes, char conditi
         break;
     }
 
-    printf("条件统计结果：\n");
-    for (int i = 0; i < uniqueCount; i++) {
-        printf("%s: %d\n", counts[i].value, counts[i].count);
+    // 在GTK窗口中显示统计结果
+    GtkWidget *window, *scrolled_window, *text_view;
+    GtkTextBuffer *buffer;
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "条件统计结果：");
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+    text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
+    // 添加统计结果到文本视图
+    gtk_text_buffer_insert_at_cursor(buffer, "条件统计结果：\n", -1);
+    for (int i = 0; i < uniqueCount; ++i) {
+        char line[MAX_LENGTH*2];
+        snprintf(line, sizeof(line), "%s: %d\n", counts[i].value, counts[i].count);
+        gtk_text_buffer_insert_at_cursor(buffer, line, -1);
     }
-    if (uniqueCount == 0) printf("无符合条件的结果！\n");
-    printf("统计完毕！\n");
+    if (uniqueCount == 0) {
+        gtk_text_buffer_insert_at_cursor(buffer, "无符合条件的结果！\n", -1);
+    }
+    gtk_text_buffer_insert_at_cursor(buffer, "统计完毕！\n", -1);
+
+    gtk_widget_show_all(window);
 }
 
 

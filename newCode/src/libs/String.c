@@ -208,6 +208,7 @@ void inputTheName(char *name, int buffer_size, const char *prompt) {
         } else {
             // 用户选择取消或关闭对话框
             printf("取消输入(name为“ ”)\n");
+
             strcpy(name, " ");
             break;
         }
@@ -548,6 +549,7 @@ int beforeInfo(head_node *head, const char *prompt) {
                                             parent_window,
                                             GTK_DIALOG_MODAL,
                                             "_OK", GTK_RESPONSE_OK,
+                                            "_Cancel",GTK_RESPONSE_CANCEL,
                                             NULL);
         content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
@@ -577,25 +579,54 @@ int beforeInfo(head_node *head, const char *prompt) {
                 if (head->is_cus) {
                     result = 0;
                 } else {
-                    printf("无法%s客户信息。\n", prompt);
+                    dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                "无法%s客户信息。",prompt);
+                    gtk_window_set_title(GTK_WINDOW(dialog), "错误");
+                    gtk_dialog_run(GTK_DIALOG(dialog));
+                    gtk_widget_destroy(dialog);
                 }
                 break;
             case 1:
                 if (IsManager && head->is_ctp) {
                     result = 1;
                 } else {
-                    printf("无法%s联络人信息。\n", prompt);
+                    dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                "无法%s联络人信息。",prompt);
+                    gtk_window_set_title(GTK_WINDOW(dialog), "错误");
+                    gtk_dialog_run(GTK_DIALOG(dialog));
+                    gtk_widget_destroy(dialog);
                 }
                 break;
             case 2:
                 if (IsManager && head->is_emp) {
                     result = 2;
                 } else {
-                    printf("无法%s业务员信息。\n", prompt);
+                    dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                "无法%s业务员信息。",prompt);
+                    gtk_window_set_title(GTK_WINDOW(dialog), "错误");
+                    gtk_dialog_run(GTK_DIALOG(dialog));
+                    gtk_widget_destroy(dialog);   
                 }
                 break;
             default:
-                printf("无效的选择。\n");
+                dialog = gtk_message_dialog_new(NULL,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            "无效的选择。");
+                gtk_window_set_title(GTK_WINDOW(dialog), "错误");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);   
+                break;
         }
     }
     return result; // 返回选择的结果或-1表示无效选择或取消操作
@@ -603,16 +634,6 @@ int beforeInfo(head_node *head, const char *prompt) {
 
 // 打印客户信息
 void printNode_cus(GtkTextBuffer *buffer,node_cus *node) {
-    printf("%s - %s - %s - %s - %s - %s - %s - %s\n", 
-        node->customer.name,
-        node->customer.region,
-        node->customer.address, 
-        node->customer.legalRepresentative,
-        node->customer.scale, 
-        node->customer.businessContactLevel,
-        node->customer.email,
-        node->customer.phone
-    );
     char heading[MAX_LENGTH*9];
     snprintf(heading,sizeof(heading),"%s - %s - %s - %s - %s - %s - %s - %s\n", 
         node->customer.name,
@@ -708,6 +729,7 @@ void printNodeList(GtkTextBuffer *buffer,head_node *head, int choice) {
         if (head->is_cus) {
             node_cus *current = head->next_cus;
             heading = "客户名 - 地区 - 地址 - 法人 - 规模 - 联系等级 - 邮箱 - 电话\n";
+            gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
             while (current != NULL) {
                 printNode_cus(buffer,current);
                 current = current->next;
@@ -720,6 +742,7 @@ void printNodeList(GtkTextBuffer *buffer,head_node *head, int choice) {
         if (head->is_ctp) {
             node_ctp *current = head->next_ctp;
             heading = "联络人名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n";
+            gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
             while (current != NULL) {
                 printNode_ctp(buffer,current);
                 current = current->next;
@@ -732,6 +755,7 @@ void printNodeList(GtkTextBuffer *buffer,head_node *head, int choice) {
         if (head->is_emp) {
             node_emp *current = head->next_emp;
             heading = "业务员名称 - 性别 - 生日 - 邮箱 - 电话 - 代表公司\n";
+            gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
             while (current != NULL) {
                 printNode_emp(buffer,current);
                 current = current->next;
@@ -744,6 +768,7 @@ void printNodeList(GtkTextBuffer *buffer,head_node *head, int choice) {
         if (head->is_rec) {
             node_rec *current = head->next_rec;
             heading = "管理用户 - 公司名称 - 联络人 - 日期 - 时间 - 时长 - 通信内容\n";
+            gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
             while (current != NULL) {
                 printNode_rec(buffer,current);
                 current = current->next;
@@ -779,8 +804,10 @@ int selectSearchAttribute(int which) {
     default: break;
     }
     char get[MAX_LENGTH];
-    infoInput(get, sizeof(get), message);
-    if (!isOneChar(get) || get[0] < '1' || get[0] > index) {
+    int ret = infoInput(get, sizeof(get), message);
+    if(!ret) {
+        return -1;
+    } else if (!isOneChar(get) || get[0] < '1' || get[0] > index) {
         return -1;
     } else {
         return charToInt(get[0]) - 1;

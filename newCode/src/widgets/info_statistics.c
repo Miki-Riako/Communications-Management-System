@@ -117,7 +117,7 @@ void simpleStatistics(head_node *head) {
 
 void combinedStatistics(head_node *head) {
     if (head->is_empty) {
-        printf("没有可统计的数据。\n");
+        show_info_dialog(NULL,"没有可统计的数据。");
         return;
     }
 
@@ -126,7 +126,7 @@ void combinedStatistics(head_node *head) {
 
     int attrIndexes[32];
     int numAttrs = 0;
-    printf("请输入属性索引，输入-1结束：\n");
+    show_info_dialog(NULL,"请输入属性索引，输入-1结束");
 
     while (true) {
         int attrIndex = selectSearchAttribute(which);
@@ -143,25 +143,16 @@ void combinedStatistics(head_node *head) {
 
 void presetStatistics(head_node *head) {
     if (head->is_empty) {
-        printf("没有可统计的数据。\n");
+        show_info_dialog(NULL,"没有可统计的数据。");
         return;
     }
-
-    printf("预设统计选项：\n");
-    printf("1. 按区域统计客户\n");
-    printf("2. 按区域和地址统计客户\n");
-    printf("3. 按规模与联系程度统计客户\n");
-    printf("4. 按性别统计联络员\n");
-    printf("5. 按性别统计业务员\n");
-    printf("请选择一个操作（1-5）：");
-
     char choice[MAX_LENGTH];
-    getInput(choice, sizeof(choice));
+    infoInput(choice, sizeof(choice),"预设统计选项：\n1. 按区域统计客户\n2. 按区域和地址统计客户\n3. 按规模与联系程度统计客户\n4. 按性别统计联络员\n5. 按性别统计业务员\n请选择一个操作（1-5）：");
 
     int attrIndexes[3];  // 最多两个属性
 
     if (!isOneChar(choice)) {
-        printf("无效的选择。\n");
+        show_info_dialog(NULL,"无效的选择。");
         return;
     }
     switch (choice[0]) {
@@ -188,7 +179,7 @@ void presetStatistics(head_node *head) {
         if (IsManager) {
             countAttributes(head, 1, 1); // 1 是性别属性索引，1 是联络人类型
         } else {
-            printf("您不是经理，没有权限执行此操作。\n");
+            show_info_dialog(NULL,"您不是经理，没有权限执行此操作。");
         }
         break;
     case '5':
@@ -196,18 +187,18 @@ void presetStatistics(head_node *head) {
         if (IsManager) {
             countAttributes(head, 1, 2); // 1 是性别属性索引，2 是业务员类型
         } else {
-            printf("您不是经理，没有权限执行此操作。\n");
+            show_info_dialog(NULL,"您不是经理，没有权限执行此操作。");
         }
         break;
     default:
-        printf("无效的选择。\n");
+        show_info_dialog(NULL,"无效的选择。");
         break;
     }
 }
 
 void conditionalStatistics(head_node *head) {
     if (head->is_empty) {
-        printf("没有可统计的数据。\n");
+        show_info_dialog(NULL,"没有可统计的数据。");
         return;
     }
 
@@ -219,20 +210,19 @@ void conditionalStatistics(head_node *head) {
     int numConditions = 0; // 条件数量
     bool print = false;
 
-    printf("请输入属性索引和条件值，输入-1结束索引输入：\n");
+    show_info_dialog(NULL,"请输入属性索引和条件值，输入-1结束索引输入");
     while (true) {
-        printf("属性索引：\n");
+        show_info_dialog(NULL,"输入属性索引");
         int attrIndex = selectSearchAttribute(which);
         if (attrIndex == -1) break;
         attrIndexes[numConditions] = attrIndex;
         print = true;
 
-        printf("条件值：");
-        getInput(conditionValues[numConditions], sizeof(conditionValues[numConditions]));
+        infoInput(conditionValues[numConditions], sizeof(conditionValues[numConditions]),"输入条件值");
         ++numConditions;
 
         if (numConditions >= 32) {
-            printf("条件数量超过限制。\n");
+            show_info_dialog(NULL,"条件数量超过限制。");
             break;
         }
     }

@@ -74,17 +74,15 @@ bool changeUserPassword(const char *username, const char *newEncryptedPassword) 
 
 void changePassword() {
     if (IsManager) {
-        printf("您是经理，无法改变自己的密钥。\n");
-        printf("要查看公司密钥吗？这是一个敏感操作。\n");
-        printf("输入 'yes' 确认查看，其他任意键取消：");
-
         char confirmation[10];
-        getInput(confirmation, sizeof(confirmation));
+        infoInput(confirmation, sizeof(confirmation),"您是经理，无法改变自己的密钥。\n要查看公司密钥吗？这是一个敏感操作。\n输入 'yes' 确认查看，其他任意键取消：");
 
         if (strcmp(confirmation, "yes") == 0) {
-            printf("公司密钥是：%s\n", SECRET_KEY);
+            char message[MAX_LENGTH*2];
+            snprintf(message,sizeof(message),"公司密钥是：%s",SECRET_KEY);
+            show_info_dialog(NULL,message);
         } else {
-            printf("操作已取消。\n");
+            show_info_dialog(NULL,"操作已取消。");
         }
     } else {
         char oldPassword[MAX_LENGTH], newPassword[MAX_LENGTH], confirmPassword[MAX_LENGTH];
@@ -94,34 +92,34 @@ void changePassword() {
         xorEncryptDecrypt(oldPassword, strlen(oldPassword), encryptedOldPassword);
 
         if (!verify(User, encryptedOldPassword)) {
-            printf("密码错误。无法更改密码。\n");
+            show_info_dialog(NULL,"密码错误。无法更改密码。");
             return;
         }
 
         infoInput(newPassword, sizeof(newPassword), "请输入新密码：");
         if (!matchRegex(newPassword)) {
-            printf("密码不符合要求。必须至少8个字符且包含大写字母、小写字母、数字、标点符号中的两种。\n");
+            show_info_dialog(NULL,"密码不符合要求。必须至少8个字符且包含大写字母、小写字母、数字、标点符号中的两种。");
             return;
         }
 
         infoInput(confirmPassword, sizeof(confirmPassword), "请再次输入新密码以确认：");
         if (!isSameString(newPassword, confirmPassword)) {
-            printf("两次输入的密码不匹配。\n");
+            show_info_dialog(NULL,"两次输入的密码不匹配。");
             return;
         }
 
         xorEncryptDecrypt(newPassword, strlen(newPassword), encryptedNewPassword);
         if (changeUserPassword(User, encryptedNewPassword)) {
-            printf("密码更新成功。\n");
+            show_info_dialog(NULL,"密码更新成功");
         } else {
-            printf("密码更新失败。\n");
+            show_info_dialog(NULL,"密码更新失败");
         }
     }
 }
 
 void resetPassword() {
     if (!IsManager) {
-        printf("您没有权限执行此操作。\n");
+        show_info_dialog(NULL,"您没有权限执行此操作。");
         return;
     }
     char employeeName[MAX_LENGTH];
@@ -132,15 +130,15 @@ void resetPassword() {
 
     // 检查该用户是否存在
     if (!alreadyExists("user.csv", employeeName)) {
-        printf("没有找到用户：%s\n", employeeName);
+        char message[MAX_LENGTH*2];
+        snprintf(message,sizeof(message),"没有找到用户：%s\n", employeeName);
+        show_info_dialog(NULL,message);
         return;
     }
-
-    printf("请输入新密码为用户 '%s' 设置：", employeeName);
-    getInput(newPassword, sizeof(newPassword));
+    infoInput(newPassword, sizeof(newPassword),"请输入新密码");
 
     if (!matchRegex(newPassword)) {
-        printf("密码不符合安全要求。\n");
+        show_info_dialog(NULL,"密码不符合安全要求。");
         return;
     }
 
@@ -148,25 +146,19 @@ void resetPassword() {
 
     // 更新密码
     if (changeUserPassword(employeeName, encryptedNewPassword)) {
-        printf("密码重置成功。\n");
+        show_info_dialog(NULL,"密码重置成功。");
     } else {
-        printf("密码重置失败。\n");
+        show_info_dialog(NULL,"密码重置失败。");
     }
 }
 
 void backupData() {
     if (!IsManager) {
-        printf("您没有权限执行此操作。\n");
+        show_info_dialog(NULL,"您没有权限执行此操作");
         return;
     }
-
-    printf("请选择备份类型：\n");
-    printf("1. 基本信息备份\n");
-    printf("2. 分组信息备份\n");
-    printf("请输入选择（1-2）：");
-
     char choice[MAX_LENGTH];
-    getInput(choice, sizeof(choice));
+    infoInput(choice, sizeof(choice),"请选择备份类型：\n1. 基本信息备份\n2. 分组信息备份\n请输入选择（1-2）：");
 
     char basePath[10] = "";
     if (isOneChar(choice) && choice[0] == '2') {
@@ -177,8 +169,7 @@ void backupData() {
     char fullPath[2 *MAX_LENGTH ];
     char backupFilename[2 * MAX_LENGTH];  // 留足够空间用于添加前缀
 
-    printf("请输入要备份的文件名：");
-    getInput(filename, sizeof(filename));
+    infoInput(filename, sizeof(filename),"请输入要备份的文件名：");
 
     // 构建完整的原文件路径和备份文件路径
     snprintf(fullPath, sizeof(fullPath), "%s%s", basePath, filename);
@@ -186,25 +177,21 @@ void backupData() {
 
     // 执行文件复制操作
     if (!copyFile(fullPath, backupFilename)) {
-        printf("备份失败，请检查文件名和路径是否正确。\n");
+        show_info_dialog(NULL,"备份失败，请检查文件名和路径是否正确。");
     } else {
-        printf("备份成功。备份文件名为：%s\n", backupFilename);
+        char message[MAX_LENGTH*4];
+        snprintf(message,sizeof(message),"备份成功。备份文件名为：%s\n", backupFilename);
+        show_info_dialog(NULL,message);
     }
 }
 
 void restoreData() {
     if (!IsManager) {
-        printf("您没有权限执行此操作。\n");
+        show_info_dialog(NULL,"您没有权限执行此操作。");
         return;
     }
-
-    printf("请选择恢复类型：\n");
-    printf("1. 基本信息恢复\n");
-    printf("2. 分组信息恢复\n");
-    printf("请输入选择（1-2）：");
-
     char choice[MAX_LENGTH];
-    getInput(choice, sizeof(choice));
+    infoInput(choice, sizeof(choice),"请选择恢复类型：\n1. 基本信息恢复\n2. 分组信息恢复\n请输入选择（1-2）：");
 
     char basePath[10] = "";
     if (isOneChar(choice) && choice[0] == '2') {
@@ -214,8 +201,7 @@ void restoreData() {
     char backupFilename[MAX_LENGTH];
     char originalFilename[2 * MAX_LENGTH];  // 留足够空间处理文件名和路径
 
-    printf("请输入要恢复的备份文件名（包含前缀）：");
-    getInput(backupFilename, sizeof(backupFilename));
+    infoInput(backupFilename, sizeof(backupFilename),"请输入要恢复的备份文件名（包含前缀）：");
 
     // 构建原始文件路径
     snprintf(originalFilename, sizeof(originalFilename), "%s%s", basePath, backupFilename + 7); // 假设前缀 "backup_" 占用7个字符
@@ -224,15 +210,17 @@ void restoreData() {
     char fullBackupPath[2 * MAX_LENGTH];
     snprintf(fullBackupPath, sizeof(fullBackupPath), "%s%s", basePath, backupFilename);
     if (ACCESS(fullBackupPath, F_OK) == -1) {
-        printf("备份文件 '%s' 不存在。\n", backupFilename);
+        show_info_dialog(NULL,"备份文件不存在。");
         return;
     }
 
     // 执行文件复制操作以恢复数据
     if (!copyFile(fullBackupPath, originalFilename)) {
-        printf("恢复失败，请检查备份文件名和路径是否正确。\n");
+        show_info_dialog(NULL,"恢复失败，请检查备份文件名和路径是否正确");
     } else {
-        printf("恢复成功。文件 '%s' 已被恢复。\n", originalFilename);
+        char message[MAX_LENGTH*4];
+        snprintf(message,sizeof(message),"恢复成功。文件 '%s' 已被恢复。\n", originalFilename);
+        show_info_dialog(NULL,message);
     }
 }
 

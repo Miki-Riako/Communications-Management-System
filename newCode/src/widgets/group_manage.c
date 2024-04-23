@@ -77,7 +77,7 @@ void addGroup() {
     GtkWindow *parent_window = NULL;  // 如果有主窗口，此处应设置为相应的 GtkWindow 指针
     int response_id;
 
-    infoInput(groupName, sizeof(groupName),"请输入新分组的名称");
+    if(!infoInput(groupName, sizeof(groupName),"请输入新分组的名称")) return;
 
     // 创建对话框
     dialog = gtk_dialog_new_with_buttons("选择分组类型",
@@ -124,7 +124,7 @@ void addGroup() {
 
 void regionGroup(const char *groupName) {
     char inputRegion[MAX_LENGTH];
-    infoInput(inputRegion, sizeof(inputRegion),"请输入区域名");
+    if(!infoInput(inputRegion, sizeof(inputRegion),"请输入区域名")) return;
 
     char filename[MAX_LENGTH];
     snprintf(filename, sizeof(filename), "groups/%s.csv", groupName);
@@ -241,12 +241,12 @@ void changeGroup() {
     char oldFilename[MAX_LENGTH + 12];
     char newFilename[MAX_LENGTH + 12];
 
-    infoInput(oldGroupName, sizeof(oldGroupName),"请输入要修改的分组名称");
+    if(!infoInput(oldGroupName, sizeof(oldGroupName),"请输入要修改的分组名称")) return;
     snprintf(oldFilename, sizeof(oldFilename), "groups/%s.csv", oldGroupName); // 构建原始文件名
 
     // 检查原始文件是否存在
     if (ACCESS(oldFilename, F_OK) != -1) {
-        infoInput(newGroupName, sizeof(newGroupName),"请输入新的分组名称");
+        if(!infoInput(newGroupName, sizeof(newGroupName),"请输入新的分组名称")) return;
         snprintf(newFilename, sizeof(newFilename), "groups/%s.csv", newGroupName); // 构建新文件名
 
         // 重命名文件
@@ -289,7 +289,7 @@ void removeGroup() {
     char groupName[MAX_LENGTH];
     char filename[MAX_LENGTH + 12];
 
-    infoInput(groupName, sizeof(groupName),"请输入要删除的分组名称");
+    if(!infoInput(groupName, sizeof(groupName),"请输入要删除的分组名称")) return;
     snprintf(filename, sizeof(filename), "groups/%s.csv", groupName); // 构建完整的文件路径
 
     // 检查文件是否存在
@@ -339,7 +339,7 @@ void showGroups() {
     char line[MAX_LENGTH];
     char header[MAX_LENGTH + 50];
 
-    infoInput(groupName, sizeof(groupName),"请输入要查看的分组名称：");
+    if(!infoInput(groupName, sizeof(groupName),"请输入要查看的分组名称："))return;
 
     snprintf(filename, sizeof(filename), "groups/%s.csv", groupName);
 
@@ -425,7 +425,7 @@ void divideCustomer() {
     char groupName[MAX_LENGTH];
     char groupFilename[MAX_LENGTH + 12];
 
-    infoInput(customerName, sizeof(customerName), "请输入客户名以进行分组：");
+    if(!infoInput(customerName, sizeof(customerName), "请输入客户名以进行分组："))return;
 
     if (!alreadyExists("customers.csv", customerName)) {
         char message[MAX_LENGTH*2];
@@ -441,7 +441,7 @@ void divideCustomer() {
         return;
     }
 
-    infoInput(groupName, sizeof(groupName), "请输入目标分组名称：");
+    if(!infoInput(groupName, sizeof(groupName), "请输入目标分组名称："))return;
     snprintf(groupFilename, sizeof(groupFilename), "groups/%s.csv", groupName);
 
     if (ACCESS(groupFilename, F_OK) == -1) {
@@ -477,9 +477,9 @@ void adjustCustomer() {
     char customerName[MAX_LENGTH];
     char oldGroupFilename[MAX_LENGTH + 12], newGroupFilename[MAX_LENGTH + 12];
 
-    infoInput(oldGroupName, sizeof(oldGroupName), "请输入原分组名称：");
+    if(!infoInput(oldGroupName, sizeof(oldGroupName), "请输入原分组名称："))return;
     snprintf(oldGroupFilename, sizeof(oldGroupFilename), "groups/%s.csv", oldGroupName);
-    infoInput(customerName, sizeof(customerName), "请输入客户名称：");
+    if(!infoInput(customerName, sizeof(customerName), "请输入客户名称："))return;
     if (!alreadyExists(oldGroupFilename, customerName)) {
         char message[MAX_LENGTH*3];
         snprintf(message,sizeof(message),"客户 '%s' 不存在于原分组 '%s' 中。",customerName, oldGroupName);
@@ -509,7 +509,7 @@ void adjustCustomer() {
     }
 
     char action[MAX_LENGTH];
-    infoInput(action, sizeof(action),"请选择操作：1. 复制客户 2. 移动客户 3. 删除客户 请输入选择（1-3）：");
+    if(!infoInput(action, sizeof(action),"请选择操作：1. 复制客户 2. 移动客户 3. 删除客户 请输入选择（1-3）："))return;
 
     if (!isOneChar(action)) {
         GtkWidget *dialog = gtk_message_dialog_new(NULL,
@@ -526,7 +526,7 @@ void adjustCustomer() {
     switch (action[0]) {
     case '1':  // 复制客户
     case '2':  // 移动客户
-        infoInput(newGroupName, sizeof(newGroupName), "请输入目标分组名称：");
+        if(!infoInput(newGroupName, sizeof(newGroupName), "请输入目标分组名称："))return;
         snprintf(newGroupFilename, sizeof(newGroupFilename), "groups/%s.csv", newGroupName);
         if (ACCESS(newGroupFilename, F_OK) == -1) {
             char message[MAX_LENGTH*2];

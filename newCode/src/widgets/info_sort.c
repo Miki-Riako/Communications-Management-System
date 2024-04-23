@@ -127,7 +127,6 @@ void defaultSort(head_node *head) {
     printNodeList(buffer,head, which);
 
     gtk_widget_show_all(window);
-    gtk_main();
 }
 
 void simpleSort(head_node *head) {
@@ -240,6 +239,8 @@ void combinedSort(head_node *head) {
     }
     combinedSortHelper(head, which);
     printNodeList(buffer,head, which);
+
+    gtk_widget_show_all(window);
 }
 
 void on_defaultSort_clicked(GtkWidget *widget, gpointer data) {

@@ -20,6 +20,7 @@ void infoEnquiryWidget(GtkWidget *parent) {
                                                     "内存分配失败！");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
+        gtk_widget_show(employeeMenuWidgets.window);
         return;
     }
     loadFile(head);  // 加载数据
@@ -31,6 +32,7 @@ void infoEnquiryWidget(GtkWidget *parent) {
                                                     "没有加载到任何数据。");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
+        gtk_widget_show(employeeMenuWidgets.window);
         return;
     } else {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoEnquiryWidgets.window),
@@ -109,7 +111,7 @@ void simpleQuery(head_node *head) {
         return;
     }
     // 获取用户想要搜索的值
-    infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
+    if(!infoInput(queryValue, sizeof(queryValue), "请输入搜索值："))return;
 
 
     GtkWidget *window, *scrolled_window, *text_view;
@@ -117,7 +119,6 @@ void simpleQuery(head_node *head) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "搜索结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);
@@ -216,7 +217,7 @@ void fuzzyQuery(head_node *head) {
     }
 
     // 获取用户想要搜索的值
-    infoInput(queryValue, sizeof(queryValue), "请输入搜索值：");
+    if(!infoInput(queryValue, sizeof(queryValue), "请输入搜索值："))return;
 
     GtkWidget *window, *scrolled_window, *text_view;
     GtkTextBuffer *buffer;

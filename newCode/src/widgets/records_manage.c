@@ -47,30 +47,43 @@ void addRecord() {
     inputTheName(record.contactName, sizeof(record.contactName), "请输入客户联络员名称：");
 
     while (true) {
-        infoInput(record.date, sizeof(record.date), "请输入日期 (YYYY-MM-DD)：");
-        if (isSameString(record.date, " ") || matchDate(record.date)) {
-            break;
+        if(infoInput(record.date, sizeof(record.date), "请输入日期 (YYYY-MM-DD)：")) {
+            if (isSameString(record.date, " ") || matchDate(record.date)) {
+                break;
+            } else {
+                show_info_dialog(NULL,"无效的日期格式，请重新输入。");
+            }
         } else {
-            printf("无效的日期格式，请重新输入。\n");
+            return;
         }
+        
     }
     while (true) {
-        infoInput(record.time, sizeof(record.time), "请输入时间 (HH:MM:SS)：");
-        if (isSameString(record.time, " ") || matchTime(record.time)) {
-            break;
+        if(infoInput(record.time, sizeof(record.time), "请输入时间 (HH:MM:SS)：")) {
+            if (isSameString(record.time, " ") || matchTime(record.time)) {
+                break;
+            } else {
+                show_info_dialog(NULL,"无效的时间格式，请重新输入。");
+            }
         } else {
-            printf("无效的时间格式，请重新输入。\n");
+            return;
         }
+        
     }
     while (true) {
-        infoInput(record.duration, sizeof(record.duration), "请输入通信时长（分钟）：");
-        if (isSameString(record.duration, " ") || matchDuration(record.duration)) {
-            break;
+        if(infoInput(record.duration, sizeof(record.duration), "请输入通信时长（分钟）：")) {
+            if (isSameString(record.duration, " ") || matchDuration(record.duration)) {
+                break;
+            } else {
+                show_info_dialog(NULL,"无效的通信时长，请重新输入。");
+            }
         } else {
-            printf("无效的通信时长，请重新输入。\n");
+            return;
         }
+        
     }
-    infoInput(record.content, sizeof(record.content), "请输入通信内容：");
+    if(!infoInput(record.content, sizeof(record.content), "请输入通信内容："))
+        return;
 
     // 构建完整的记录字符串
     char fullLine[MAX_LENGTH * 7 + 18];
@@ -85,7 +98,7 @@ void addRecord() {
     // 写入文件
     writeLineToFile("records.csv", fullLine);
     displayRecord(record);
-    printf("通信记录已成功添加。\n");
+    show_info_dialog(NULL,"通信记录已成功添加。");
 }
 
 void changeRecord() {
@@ -120,7 +133,7 @@ void changeRecord() {
             inputTheName(newCompanyName, sizeof(newCompanyName), "请输入新的客户公司名称：");
             inputTheName(newContactName, sizeof(newContactName), "请输入新的客户联络员名称：");
             while (true) {
-                infoInput(newDate, sizeof(newDate), "请输入新的日期 (YYYY-MM-DD)：");
+                if(!infoInput(newDate, sizeof(newDate), "请输入新的日期 (YYYY-MM-DD)："))return;
                 if (isSameString(newDate, " ") || matchDate(newDate)) {
                     break;
                 } else {
@@ -128,7 +141,7 @@ void changeRecord() {
                 }
             }
             while (true) {
-                infoInput(newTime, sizeof(newTime), "请输入新的时间 (HH:MM:SS)：");
+                if(!infoInput(newTime, sizeof(newTime), "请输入新的时间 (HH:MM:SS)："))return;
                 if (isSameString(newTime, " ") || matchTime(newTime)) {
                     break;
                 } else {
@@ -136,7 +149,7 @@ void changeRecord() {
                 }
             }
             while (true) {
-                infoInput(newDuration, sizeof(newDuration), "请输入新的通信时长（分钟）：");
+                if(!infoInput(newDuration, sizeof(newDuration), "请输入新的通信时长（分钟）："))return;
                 if (isSameString(newDuration, " ") || matchDuration(newDuration)) {
                     break;
                 } else {
