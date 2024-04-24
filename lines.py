@@ -14,5 +14,5 @@ def count_lines(folder):
     
     return total
 
-total_lines = count_lines('./src') 
+total_lines = count_lines('./src_visualized') 
 print(total_lines)
