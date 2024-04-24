@@ -57,4 +57,4 @@ cl() {
     echo "清理完毕。"
 }
 
-cd ../build || (echo "无法进入 build 目录" && exit 1)
+cd build || (echo "无法进入 build 目录" && exit 1)

@@ -2,8 +2,7 @@
 *.csv
 *.ini
 build/*
-# do not ignore
-!data/*.csv
+
 # Backup
 *.c_backup
 *.h_backup
@@ -60,3 +59,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# do not ignore
+!data/*.csv
+!bin/*.exe
+!src_visualized/bin/*.exe
