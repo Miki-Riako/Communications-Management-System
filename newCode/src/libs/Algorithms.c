@@ -193,7 +193,7 @@ bool performQueryIteration(head_node *head, head_node **headA, head_node **headB
     char searchType[MAX_LENGTH];
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
-    if (attributeIndex == -1 || -2) {
+    if (attributeIndex == -1 || attributeIndex ==-2) {
         show_info_dialog(NULL,"无效的属性选择");
         return false;
     }
@@ -212,7 +212,6 @@ bool performQueryIteration(head_node *head, head_node **headA, head_node **headB
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "搜索结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);
@@ -586,7 +585,6 @@ void countAttributes(head_node *head, int attrIndex, int which) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "统计结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);
@@ -731,7 +729,6 @@ void countCombinedAttributes(head_node *head, int *attrIndexes, int numAttrs, in
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "组合统计结果：");
     gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);
@@ -906,7 +903,6 @@ void countAttributesByConditions(head_node *head, int *attrIndexes, char conditi
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "条件统计结果：");
     gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);

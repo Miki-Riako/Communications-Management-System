@@ -302,7 +302,7 @@ void loadFile(head_node *head) {
         loadCustomers("customers.csv", head);
         loadContactPersons("contacts.csv", head);
         loadEmployees("employees.csv", head);
-        loadRecords("customers.csv", head);
+        loadRecords("records.csv", head);
         return;
     }
     // 非管理员只加载其负责的客户数据

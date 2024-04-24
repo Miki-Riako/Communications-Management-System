@@ -116,7 +116,7 @@ void changeRecord() {
     FILE *file = fopen("records.csv", "r");
     FILE *tempFile = fopen("records_backup.csv", "w");
     if (!file || !tempFile) {
-        perror("文件打开失败");
+        show_info_dialog(NULL,"文件打开失败");
         return;
     }
 
@@ -131,7 +131,7 @@ void changeRecord() {
         }
         if (i == 7 && strcmp(fields[0], User) == 0 && strcmp(fields[1], companyName) == 0 && strcmp(fields[2], contactName) == 0) {
             found = true;
-            printf("找到记录，输入新的值:\n");
+            show_info_dialog(NULL,"找到记录，输入新的值");
             inputTheName(newCompanyName, sizeof(newCompanyName), "请输入新的客户公司名称：");
             inputTheName(newContactName, sizeof(newContactName), "请输入新的客户联络员名称：");
             while (true) {
@@ -139,7 +139,7 @@ void changeRecord() {
                 if (isSameString(newDate, " ") || matchDate(newDate)) {
                     break;
                 } else {
-                    printf("无效的日期格式，请重新输入。\n");
+                    show_info_dialog(NULL,"无效的日期格式，请重新输入。");
                 }
             }
             while (true) {
@@ -147,7 +147,7 @@ void changeRecord() {
                 if (isSameString(newTime, " ") || matchTime(newTime)) {
                     break;
                 } else {
-                    printf("无效的时间格式，请重新输入。\n");
+                    show_info_dialog(NULL,"无效的时间格式，请重新输入。");
                 }
             }
             while (true) {
@@ -155,9 +155,11 @@ void changeRecord() {
                 if (isSameString(newDuration, " ") || matchDuration(newDuration)) {
                     break;
                 } else {
-                    printf("无效的通信时长，请重新输入。\n");
+                    show_info_dialog(NULL,"无效的通信时长，请重新输入。");
                 }
             }
+            if(!infoInput(newContent, sizeof(newDuration), "请输入新的通信内容："))return;
+
             snprintf(originalLine, sizeof(originalLine), "%s|||%s|||%s|||%s|||%s|||%s|||%s\n", User, newCompanyName, newContactName, newDate, newTime, newDuration, newContent);
         }
         fputs(originalLine, tempFile); // 总是写回临时文件
@@ -170,9 +172,9 @@ void changeRecord() {
     rename("records_backup.csv", "records.csv");
 
     if (!found) {
-        printf("没有找到相应的记录。\n");
+        show_info_dialog(NULL,"没有找到相应的记录。");
     } else {
-        printf("记录已成功更新。\n");
+        show_info_dialog(NULL,"记录已成功更新。");
     }
 }
 
@@ -194,13 +196,26 @@ void showRecord() {
         g_string_free(info, TRUE);
         return;
     }
+
     // 读取文件内容并添加到文本缓冲区
     while (fgets(line, sizeof(line), file)) {
         char *currentUser = strtok(line, "|||");
         if (currentUser != NULL && strcmp(currentUser, User) == 0) {
-            g_string_append_printf(info, "%s - %s - %s - %s - %s - %s\n",
-                    strtok(NULL, "|||"), strtok(NULL, "|||"), strtok(NULL, "|||"),
-                    strtok(NULL, "|||"), strtok(NULL, "|||"), strtok(NULL, "|||"));
+            char *field1 = strtok(NULL, "|||");
+            char *field2 = strtok(NULL, "|||");
+            char *field3 = strtok(NULL, "|||");
+            char *field4 = strtok(NULL, "|||");
+            char *field5 = strtok(NULL, "|||");
+            char *field6 = strtok(NULL, "|||");
+
+            // 检查每个字段是否为NULL，避免使用NULL指针
+            if (field1 && field2 && field3 && field4 && field5 && field6) {
+                g_string_append_printf(info, "%s - %s - %s - %s - %s - %s\n",
+                                    field1, field2, field3, field4, field5, field6);
+            } else {
+                // 可以记录错误或处理字段缺失的情况
+                fprintf(stderr, "Error: Not enough fields in line for user %s\n", currentUser);
+            }
         }
     }
     fclose(file);

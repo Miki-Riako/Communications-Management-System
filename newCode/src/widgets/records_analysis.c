@@ -143,7 +143,7 @@ void enquiryRecords(head_node *head) {
         switch (get[0]) {
         case '1':
             attributeIndex = selectSearchAttribute(3);
-            if (attributeIndex == -1 || -2) {
+            if (attributeIndex == -1 ||attributeIndex == -2) {
                 show_info_dialog(NULL,"无效的属性选择。");
                 return;
             }
@@ -153,7 +153,8 @@ void enquiryRecords(head_node *head) {
             if (!found) {
                 show_info_dialog(NULL,"没有找到匹配的信息");
             }
-            break;
+            gtk_widget_show_all(window);
+            return;
         case '2':
             first = true;
             headA = (head_node *)malloc(sizeof(head_node));  // 分配内存
@@ -169,10 +170,10 @@ void enquiryRecords(head_node *head) {
             }
             freeAll(NULL,headA);
             freeAll(NULL,headB);
-            break;
+            return;
         case '3':
             attributeIndex = selectSearchAttribute(3);
-            if (attributeIndex == -1 || -2) {
+            if (attributeIndex == -1 || attributeIndex ==  -2) {
                 show_info_dialog(NULL,"无效的属性选择。");
                 return;
             }
@@ -182,7 +183,8 @@ void enquiryRecords(head_node *head) {
             if (!found) {
                 gtk_text_buffer_insert_at_cursor(buffer, "没有找到匹配的信息", -1);
             }
-            break;
+            gtk_widget_show_all(window);
+            return;
         case '4':
             return;
         default:
@@ -197,10 +199,11 @@ void enquiryRecords(head_node *head) {
                 return;
             }
             gtk_widget_destroy(dialog);
-            break;
+            gtk_widget_show_all(window);
+            return;
         }
     }
-    gtk_widget_show_all(window);
+    
 }
 
 void sortRecords(head_node *head) {
@@ -259,25 +262,28 @@ void sortRecords(head_node *head) {
             heading = "通信记录的信息列表：\n";
             gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
             printNodeList(buffer,head, 3);
-            break;
+            gtk_widget_show_all(window);
+            return;
         case '2':
             heading = "通信记录的信息列表：\n";
             gtk_text_buffer_insert_at_cursor(buffer, heading, -1);
             beforeSort(head, 3, &attributeIndex, &isAscending);
             sort(3, head, attributeIndex, isAscending);
             printNodeList(buffer,head, 3);
-            break;
+            gtk_widget_show_all(window);
+            return;
         case '3':
             combinedSortHelper(head, 3);
             printNodeList(buffer,head, 3);
-            break;
+            gtk_widget_show_all(window);
+            return;
         case '4':
             return;
         default:
             gtk_text_buffer_insert_at_cursor(buffer, "无效的选择，请重新输入。\n", -1);
         }
     }
-    gtk_widget_show_all(window);
+    
 }
 
 void statisticsRecords(head_node *head) {
@@ -326,7 +332,7 @@ void statisticsRecords(head_node *head) {
         switch (get[0]) {
         case '1':
             attrIndex = selectSearchAttribute(3);
-            if (attrIndex == -1 || -2) {
+            if (attrIndex == -1 || attrIndex == -2) {
                 GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                             GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                             GTK_MESSAGE_ERROR,
@@ -341,13 +347,13 @@ void statisticsRecords(head_node *head) {
                 break;
             }
             countAttributes(head, attrIndex, 3);
-            break;
+            return;
         case '2':
             print = false;
             while (true) {
                 attrIndex = selectSearchAttribute(3);
                 attrIndexes[numAttrs++] = attrIndex;
-                if (attrIndex == -1 || -2) break;
+                if (attrIndex == -1 ||attrIndex == -2) break;
                 else if (numAttrs >= 32) {
                     GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                                 GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -362,7 +368,7 @@ void statisticsRecords(head_node *head) {
                 print = true;
             }
             countCombinedAttributes(head, attrIndexes, numAttrs, 3);
-            break;
+            return;
         case '3':
             message = "预设统计选项：(1. 按客户公司统计 2. 按通信内容统计)";
             if(!infoInput(choice, sizeof(choice),message))return;
@@ -383,7 +389,7 @@ void statisticsRecords(head_node *head) {
                 show_info_dialog(NULL,"统计失败：无效的选择");
                 break;
             }
-            break;
+            return;
         case '4':
             dialog = gtk_message_dialog_new(NULL,
                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -410,7 +416,7 @@ void statisticsRecords(head_node *head) {
                 }
                 gtk_widget_destroy(dialog);
                 int attrIndex = selectSearchAttribute(3);
-                if (attrIndex == -1 || -2) break;
+                if (attrIndex == -1 ||attrIndex == -2) break;
                 attrIndexes[numConditions] = attrIndex;
                 print = true;
 
@@ -423,7 +429,7 @@ void statisticsRecords(head_node *head) {
                 }
             }
             if (print) countAttributesByConditions(head, attrIndexes, conditionValues, numConditions, 3);
-            break;
+            return;
         case '5':
             return;
         default:
@@ -435,6 +441,7 @@ void statisticsRecords(head_node *head) {
             gtk_window_set_title(GTK_WINDOW(dialog), "统计失败");
             gtk_dialog_run(GTK_DIALOG(dialog));
             gtk_widget_destroy(dialog);
+            return;
         }
     }
 }
