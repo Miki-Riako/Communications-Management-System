@@ -4,11 +4,11 @@
 comp() {
     if [ -f "../src/main.c" ]; then
         echo "找到 main.c，正在编译..."
-        gcc ../src/main.c -o cms.exe
+        gcc ../src/main.c -o cms.out
 
         if [ $? -eq 0 ]; then
             echo "编译成功！正在运行程序..."
-            ./cms.exe
+            ./cms.out
         else
             echo "编译失败。"
         fi
@@ -57,4 +57,4 @@ cl() {
     echo "清理完毕。"
 }
 
-cd build || (echo "无法进入 build 目录" && exit 1)
+cd ../build || (echo "无法进入 build 目录" && exit 1)
