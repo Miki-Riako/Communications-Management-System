@@ -100,7 +100,7 @@ void simpleQuery(head_node *head) {
     char queryValue[MAX_LENGTH];
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
-    if (attributeIndex == -1 || -2) {
+    if (attributeIndex == -1 || attributeIndex == -2) {
         GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                     GTK_MESSAGE_ERROR,
@@ -205,7 +205,7 @@ void fuzzyQuery(head_node *head) {
     char queryValue[MAX_LENGTH];
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
-    if (attributeIndex == -1 || -2) {
+    if (attributeIndex == -1 ||attributeIndex == -2) {
         GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                     GTK_MESSAGE_ERROR,

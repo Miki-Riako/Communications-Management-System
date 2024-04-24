@@ -103,7 +103,7 @@ void simpleStatistics(head_node *head) {
     if (which == -1) return;  // 无效的选择
 
     int attrIndex = selectSearchAttribute(which);
-    if (attrIndex == -1 || -2) {
+    if (attrIndex == -1 || attrIndex == -2) {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoStatisticsWidgets.window),
                                                     GTK_DIALOG_DESTROY_WITH_PARENT,
                                                     GTK_MESSAGE_ERROR,
