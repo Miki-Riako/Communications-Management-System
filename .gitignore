@@ -63,4 +63,4 @@ dkms.conf
 # do not ignore
 !data/*.csv
 !bin/*.exe
-!src_visualized/bin/*.exe
+!newCode/bin/*.exe
