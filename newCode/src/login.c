@@ -14,25 +14,27 @@ void startWidget() {
     gtk_window_set_position(GTK_WINDOW(startWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
 
     startWidgets.grid = gtk_grid_new();
+    gtk_grid_set_row_spacing(GTK_GRID(startWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(startWidgets.grid), 10);  // 设置列间距
     gtk_container_add(GTK_CONTAINER(startWidgets.window), startWidgets.grid);
     gtk_widget_set_halign(startWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(startWidgets.grid, GTK_ALIGN_CENTER);
 
     startWidgets.loginManager_btn = gtk_button_new_with_label("公司经理");
     g_signal_connect(startWidgets.loginManager_btn, "clicked", G_CALLBACK(on_loginManager_clicked), NULL);
-    gtk_grid_attach(GTK_GRID(startWidgets.grid), startWidgets.loginManager_btn, 0, 0, 10, 5);
-    
+    gtk_grid_attach(GTK_GRID(startWidgets.grid), startWidgets.loginManager_btn, 0, 0, 1, 1);
+
     startWidgets.loginEmployee_btn = gtk_button_new_with_label("公司业务员");
     g_signal_connect(startWidgets.loginEmployee_btn, "clicked", G_CALLBACK(on_loginEmployee_clicked), NULL);
-    gtk_grid_attach(GTK_GRID(startWidgets.grid), startWidgets.loginEmployee_btn, 0, 20, 10, 5);
-    
+    gtk_grid_attach(GTK_GRID(startWidgets.grid), startWidgets.loginEmployee_btn, 0, 1, 1, 1);
+
     startWidgets.register_btn = gtk_button_new_with_label("注册业务员");
     g_signal_connect(startWidgets.register_btn, "clicked", G_CALLBACK(on_register_clicked), NULL);
-    gtk_grid_attach(GTK_GRID(startWidgets.grid), startWidgets.register_btn, 0, 30, 10, 5);
-    
+    gtk_grid_attach(GTK_GRID(startWidgets.grid), startWidgets.register_btn, 0, 2, 1, 1);
+
     startWidgets.quit_btn = gtk_button_new_with_label("退出程序");
     g_signal_connect(startWidgets.quit_btn, "clicked", G_CALLBACK(on_quit_clicked), NULL);
-    gtk_grid_attach(GTK_GRID(startWidgets.grid), startWidgets.quit_btn, 0,40, 10, 5);
+    gtk_grid_attach(GTK_GRID(startWidgets.grid), startWidgets.quit_btn, 0, 3, 1, 1);
     
      
     gtk_widget_show_all(startWidgets.window);
@@ -52,6 +54,8 @@ void loginManagerWidget() {
     gtk_container_add(GTK_CONTAINER(loginManagerWidgets.window), loginManagerWidgets.grid);
     gtk_widget_set_halign(loginManagerWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(loginManagerWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(loginManagerWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(loginManagerWidgets.grid), 10);  // 设置列间距
 
     loginManagerWidgets.chance = 3;
 
@@ -86,6 +90,8 @@ void loginEmployeeWidget() {
     gtk_container_add(GTK_CONTAINER(loginEmployeeWidgets.window), loginEmployeeWidgets.grid);
     gtk_widget_set_halign(loginEmployeeWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(loginEmployeeWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(loginEmployeeWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(loginEmployeeWidgets.grid), 10);  // 设置列间距
 
     loginEmployeeWidgets.username_label = gtk_label_new("用户名：");
     gtk_grid_attach(GTK_GRID(loginEmployeeWidgets.grid), loginEmployeeWidgets.username_label, 0, 0, 1, 1);
@@ -123,6 +129,8 @@ void registerWidget() {
     gtk_container_add(GTK_CONTAINER(registerWidgets.window), registerWidgets.grid);
     gtk_widget_set_halign(registerWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(registerWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(registerWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(registerWidgets.grid), 10);  // 设置列间距
 
     registerWidgets.username_label = gtk_label_new("用户名：");
     gtk_grid_attach(GTK_GRID(registerWidgets.grid), registerWidgets.username_label, 0, 0, 1, 1);

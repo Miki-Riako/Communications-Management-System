@@ -47,12 +47,14 @@ void infoStatisticsWidget(GtkWidget *parent) {
     gtk_window_set_default_size(GTK_WINDOW(infoStatisticsWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(infoStatisticsWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(infoStatisticsWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(infoStatisticsWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
     infoStatisticsWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(infoStatisticsWidgets.window), infoStatisticsWidgets.grid);
     gtk_widget_set_halign(infoStatisticsWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(infoStatisticsWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(infoStatisticsWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(infoStatisticsWidgets.grid), 10);  // 设置列间距
+
 
     infoStatisticsWidgets.simpleStatistics_btn = gtk_button_new_with_label("简单统计");
     g_signal_connect(infoStatisticsWidgets.simpleStatistics_btn, "clicked", G_CALLBACK(on_simpleStatistics_clicked), head);
@@ -101,7 +103,7 @@ void simpleStatistics(head_node *head) {
     if (which == -1) return;  // 无效的选择
 
     int attrIndex = selectSearchAttribute(which);
-    if (attrIndex == -1) {
+    if (attrIndex == -1 || -2) {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoStatisticsWidgets.window),
                                                     GTK_DIALOG_DESTROY_WITH_PARENT,
                                                     GTK_MESSAGE_ERROR,
@@ -131,9 +133,9 @@ void combinedStatistics(head_node *head) {
     while (true) {
         int attrIndex = selectSearchAttribute(which);
         attrIndexes[numAttrs++] = attrIndex;
-        if (attrIndex == -1) break;
+        if (attrIndex == -1 || attrIndex == -2) break;
         else if (numAttrs >= 32) {
-            printf("属性索引数量超过限制。\n");
+            show_info_dialog(NULL,"属性索引数量超过限制");
             break;
         }
     }
@@ -215,6 +217,7 @@ void conditionalStatistics(head_node *head) {
         show_info_dialog(NULL,"输入属性索引");
         int attrIndex = selectSearchAttribute(which);
         if (attrIndex == -1) break;
+        else if (attrIndex == -2) return;
         attrIndexes[numConditions] = attrIndex;
         print = true;
 

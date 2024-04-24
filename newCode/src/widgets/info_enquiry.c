@@ -45,16 +45,17 @@ void infoEnquiryWidget(GtkWidget *parent) {
     }
 
     infoEnquiryWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(infoEnquiryWidgets.window), "通信管理系统 - 经理菜单 - 信息查询系统");
+    gtk_window_set_title(GTK_WINDOW(infoEnquiryWidgets.window), "通信管理系统 - 信息查询系统");
     gtk_window_set_default_size(GTK_WINDOW(infoEnquiryWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(infoEnquiryWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(infoEnquiryWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(infoEnquiryWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
     infoEnquiryWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(infoEnquiryWidgets.window), infoEnquiryWidgets.grid);
     gtk_widget_set_halign(infoEnquiryWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(infoEnquiryWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(infoEnquiryWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(infoEnquiryWidgets.grid), 10);  // 设置列间距
 
     infoEnquiryWidgets.simpleQuery_btn = gtk_button_new_with_label("简单查询");
     g_signal_connect(infoEnquiryWidgets.simpleQuery_btn, "clicked", G_CALLBACK(on_simpleQuery_clicked), head);
@@ -99,7 +100,7 @@ void simpleQuery(head_node *head) {
     char queryValue[MAX_LENGTH];
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
-    if (attributeIndex == -1) {
+    if (attributeIndex == -1 || -2) {
         GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                     GTK_MESSAGE_ERROR,
@@ -204,7 +205,7 @@ void fuzzyQuery(head_node *head) {
     char queryValue[MAX_LENGTH];
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
-    if (attributeIndex == -1) {
+    if (attributeIndex == -1 || -2) {
         GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                     GTK_MESSAGE_ERROR,
@@ -224,7 +225,6 @@ void fuzzyQuery(head_node *head) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "搜索结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);

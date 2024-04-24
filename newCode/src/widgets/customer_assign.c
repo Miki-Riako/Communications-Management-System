@@ -10,12 +10,14 @@ void customerAssignWidget(GtkWidget *parent) {
     gtk_window_set_default_size(GTK_WINDOW(customerAssignWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(customerAssignWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(customerAssignWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(customerAssignWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     customerAssignWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(customerAssignWidgets.window), customerAssignWidgets.grid);
     gtk_widget_set_halign(customerAssignWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(customerAssignWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(customerAssignWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(customerAssignWidgets.grid), 10);  // 设置列间距
+
 
     customerAssignWidgets.addAssignment_btn = gtk_button_new_with_label("分配客户");
     g_signal_connect(customerAssignWidgets.addAssignment_btn, "clicked", G_CALLBACK(on_addAssignment_clicked), NULL);
@@ -217,7 +219,6 @@ void displayAssignment() {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "业务员和客户配对");
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     // 创建滚动窗口
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);

@@ -9,12 +9,14 @@ void recordsManageWidget(GtkWidget *parent) {
     gtk_window_set_default_size(GTK_WINDOW(recordsManageWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(recordsManageWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(recordsManageWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(recordsManageWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     recordsManageWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(recordsManageWidgets.window), recordsManageWidgets.grid);
     gtk_widget_set_halign(recordsManageWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(recordsManageWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(recordsManageWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(recordsManageWidgets.grid), 10);  // 设置列间距
+
 
     recordsManageWidgets.addRecord_btn = gtk_button_new_with_label("增加通信记录");
     g_signal_connect(recordsManageWidgets.addRecord_btn, "clicked", G_CALLBACK(on_addRecord_clicked), NULL);

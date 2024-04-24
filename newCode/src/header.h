@@ -11,7 +11,7 @@
 #include <gtk/gtk.h>
 #include "data_structure.h"
 
-#define DEBUG_MODE true
+#define DEBUG_MODE false
 #define SECRET_KEY "AAAAA-AAAAA-AAAAA-AAAAA-AAAAA"
 
 #ifdef _WIN32

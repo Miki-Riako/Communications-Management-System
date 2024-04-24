@@ -9,12 +9,14 @@ void groupManageWidget(GtkWidget *parent) {
     gtk_window_set_default_size(GTK_WINDOW(groupManageWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(groupManageWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(groupManageWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(groupManageWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     groupManageWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(groupManageWidgets.window), groupManageWidgets.grid);
     gtk_widget_set_halign(groupManageWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(groupManageWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(groupManageWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(groupManageWidgets.grid), 10);  // 设置列间距
+
 
     groupManageWidgets.addGroup_btn = gtk_button_new_with_label("创建分组");
     g_signal_connect(groupManageWidgets.addGroup_btn, "clicked", G_CALLBACK(on_addGroup_clicked), NULL);
@@ -376,7 +378,6 @@ void showGroups() {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "查看分组信息");
     gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     // 创建滚动窗口和文本视图
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);

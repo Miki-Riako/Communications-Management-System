@@ -47,12 +47,14 @@ void recordsAnalysisWidget(GtkWidget *parent) {
     gtk_window_set_default_size(GTK_WINDOW(recordsAnalysisWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(recordsAnalysisWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(recordsAnalysisWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(recordsAnalysisWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
     recordsAnalysisWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(recordsAnalysisWidgets.window), recordsAnalysisWidgets.grid);
     gtk_widget_set_halign(recordsAnalysisWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(recordsAnalysisWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(recordsAnalysisWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(recordsAnalysisWidgets.grid), 10);  // 设置列间距
+
 
     recordsAnalysisWidgets.enquiryRecords_btn = gtk_button_new_with_label("查询通信记录");
     g_signal_connect(recordsAnalysisWidgets.enquiryRecords_btn, "clicked", G_CALLBACK(on_enquiryRecords_clicked), head);
@@ -100,7 +102,6 @@ void enquiryRecords(head_node *head) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "查询结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);
@@ -123,7 +124,6 @@ void enquiryRecords(head_node *head) {
         
         char get[MAX_LENGTH];
         if(!infoInput(get, sizeof(get),message))return;
-        system(SYSTEM_CLEAR);
         
         if (!isOneChar(get)) {
             GtkWidget* dialog = gtk_message_dialog_new(NULL,
@@ -134,7 +134,7 @@ void enquiryRecords(head_node *head) {
             gtk_window_set_title(GTK_WINDOW(dialog), "查询失败");
             if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_CANCEL) {
                 gtk_widget_destroy(dialog);
-                break;  // Exit the loop if Cancel is pressed
+                return;
             }
             gtk_widget_destroy(dialog);
             continue;
@@ -223,7 +223,6 @@ void sortRecords(head_node *head) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "排序结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);
@@ -301,7 +300,6 @@ void statisticsRecords(head_node *head) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "统计结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);

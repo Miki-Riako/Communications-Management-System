@@ -3,16 +3,17 @@
 
 void systemSettingWidget(GtkWidget *parent) {
     systemSettingWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(systemSettingWidgets.window), "通信管理系统 - 经理菜单 - 系统设置");
+    gtk_window_set_title(GTK_WINDOW(systemSettingWidgets.window), "通信管理系统 - 系统设置");
     gtk_window_set_default_size(GTK_WINDOW(systemSettingWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(systemSettingWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(systemSettingWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(systemSettingWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     systemSettingWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(systemSettingWidgets.window), systemSettingWidgets.grid);
     gtk_widget_set_halign(systemSettingWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(systemSettingWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(systemSettingWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(systemSettingWidgets.grid), 10);  // 设置列间距
 
     systemSettingWidgets.changePassword_btn = gtk_button_new_with_label("密码维护");
     g_signal_connect(systemSettingWidgets.changePassword_btn, "clicked", G_CALLBACK(on_changePassword_clicked), NULL);

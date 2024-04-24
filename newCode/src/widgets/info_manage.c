@@ -5,20 +5,20 @@ void infoManageWidget(GtkWidget *parent) {
     initializeInfoFile("employees.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
     initializeInfoFile("customers.csv", "Name|||Region|||Address|||LegalRepresentative|||Scale|||BusinessContactLevel|||Email|||Phone");
     initializeInfoFile("contacts.csv", "Name|||Gender|||Birthday|||Email|||Phone|||Representative");
-    
-    gtk_init(NULL,NULL);
 
     infoManageWidgets.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(infoManageWidgets.window), "通信管理系统 - 经理菜单 - 信息管理");
     gtk_window_set_default_size(GTK_WINDOW(infoManageWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(infoManageWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(infoManageWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(infoManageWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     infoManageWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(infoManageWidgets.window), infoManageWidgets.grid);
     gtk_widget_set_halign(infoManageWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(infoManageWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(infoManageWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(infoManageWidgets.grid), 10);  // 设置列间距
+
 
     infoManageWidgets.addEmployee_btn = gtk_button_new_with_label("增加业务员信息");
     g_signal_connect(infoManageWidgets.addEmployee_btn, "clicked", G_CALLBACK(on_addEmployee_clicked), NULL);
@@ -64,7 +64,6 @@ void infoManageWidget(GtkWidget *parent) {
     gtk_grid_attach(GTK_GRID(infoManageWidgets.grid), infoManageWidgets.back_btn, 0, 9, 2, 1);
     
     gtk_widget_show_all(infoManageWidgets.window);
-    gtk_main();
 }
 
 void addEmployee() {

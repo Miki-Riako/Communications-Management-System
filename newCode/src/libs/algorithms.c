@@ -193,7 +193,7 @@ bool performQueryIteration(head_node *head, head_node **headA, head_node **headB
     char searchType[MAX_LENGTH];
     bool found = false;
     int attributeIndex = selectSearchAttribute(which);
-    if (attributeIndex == -1) {
+    if (attributeIndex == -1 || -2) {
         show_info_dialog(NULL,"无效的属性选择");
         return false;
     }

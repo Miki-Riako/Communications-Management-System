@@ -46,12 +46,14 @@ void infoSortWidget(GtkWidget *parent) {
     gtk_window_set_default_size(GTK_WINDOW(infoSortWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(infoSortWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(infoSortWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(infoSortWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-    
+
     infoSortWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(infoSortWidgets.window), infoSortWidgets.grid);
     gtk_widget_set_halign(infoSortWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(infoSortWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(infoSortWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(infoSortWidgets.grid), 10);  // 设置列间距
+
 
     infoSortWidgets.defaultSort_btn = gtk_button_new_with_label("默认排序");
     g_signal_connect(infoSortWidgets.defaultSort_btn, "clicked", G_CALLBACK(on_defaultSort_clicked), head);
@@ -101,7 +103,6 @@ void defaultSort(head_node *head) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "排序结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);
@@ -150,7 +151,6 @@ void simpleSort(head_node *head) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "排序结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);
@@ -215,7 +215,6 @@ void combinedSort(head_node *head) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "排序结果");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(window), scrolled_window);

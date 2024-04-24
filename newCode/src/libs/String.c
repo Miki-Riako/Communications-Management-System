@@ -220,7 +220,6 @@ void inputTheName(char *name, int buffer_size, const char *prompt) {
 
 // 添加新的用户实例
 void addEntry(int section, const char *filename, const char *prompt, Employee *employee, Customer *customer, ContactPerson *contact) {
-    gtk_init(NULL, NULL);
     entryWidgets.section = section;
     entryWidgets.filename = filename;
     entryWidgets.employee = employee;
@@ -231,12 +230,15 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
     gtk_window_set_default_size(GTK_WINDOW(entryWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(entryWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(entryWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
-    g_signal_connect(entryWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
     entryWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(entryWidgets.window), entryWidgets.grid);
     gtk_widget_set_halign(entryWidgets.grid, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(entryWidgets.grid, GTK_ALIGN_CENTER);
+    gtk_grid_set_row_spacing(GTK_GRID(entryWidgets.grid), 10);  // 设置行间距
+    gtk_grid_set_column_spacing(GTK_GRID(entryWidgets.grid), 10);  // 设置列间距
+
+
     // 公共字段
     entryWidgets.name_entry = gtk_entry_new();
     gtk_grid_attach(GTK_GRID(entryWidgets.grid), gtk_label_new("姓名:"), 0, 0, 1, 1);
@@ -355,7 +357,6 @@ void addEntry(int section, const char *filename, const char *prompt, Employee *e
     }
 
     gtk_widget_show_all(entryWidgets.window);
-    gtk_main();
 }
 
 static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets) { 
@@ -568,8 +569,8 @@ int beforeInfo(head_node *head, const char *prompt) {
         index = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
         gtk_widget_destroy(dialog);
     } else {
-        response_id = 1;
-        index = 1;
+        response_id = GTK_RESPONSE_OK;
+        index = 0;
     }
     
     if (response_id == GTK_RESPONSE_OK) {
@@ -577,7 +578,7 @@ int beforeInfo(head_node *head, const char *prompt) {
         switch (index) {
             case 0:
                 if (head->is_cus) {
-                    result = 0;
+                    return 0;
                 } else {
                     dialog = gtk_message_dialog_new(NULL,
                                                 GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -587,11 +588,12 @@ int beforeInfo(head_node *head, const char *prompt) {
                     gtk_window_set_title(GTK_WINDOW(dialog), "错误");
                     gtk_dialog_run(GTK_DIALOG(dialog));
                     gtk_widget_destroy(dialog);
+                    return -1;
                 }
                 break;
             case 1:
                 if (IsManager && head->is_ctp) {
-                    result = 1;
+                    return 1;
                 } else {
                     dialog = gtk_message_dialog_new(NULL,
                                                 GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -601,11 +603,12 @@ int beforeInfo(head_node *head, const char *prompt) {
                     gtk_window_set_title(GTK_WINDOW(dialog), "错误");
                     gtk_dialog_run(GTK_DIALOG(dialog));
                     gtk_widget_destroy(dialog);
+                    return -1;
                 }
                 break;
             case 2:
                 if (IsManager && head->is_emp) {
-                    result = 2;
+                    return 2;
                 } else {
                     dialog = gtk_message_dialog_new(NULL,
                                                 GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -615,21 +618,14 @@ int beforeInfo(head_node *head, const char *prompt) {
                     gtk_window_set_title(GTK_WINDOW(dialog), "错误");
                     gtk_dialog_run(GTK_DIALOG(dialog));
                     gtk_widget_destroy(dialog);   
+                    return -1;
                 }
                 break;
             default:
-                dialog = gtk_message_dialog_new(NULL,
-                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
-                                            "无效的选择。");
-                gtk_window_set_title(GTK_WINDOW(dialog), "错误");
-                gtk_dialog_run(GTK_DIALOG(dialog));
-                gtk_widget_destroy(dialog);   
-                break;
+                show_info_dialog(NULL,"无效的选择。"); 
+                return -1;
         }
     }
-    return result; // 返回选择的结果或-1表示无效选择或取消操作
 }
 
 // 打印客户信息
@@ -806,7 +802,7 @@ int selectSearchAttribute(int which) {
     char get[MAX_LENGTH];
     int ret = infoInput(get, sizeof(get), message);
     if(!ret) {
-        return -1;
+        return -2;
     } else if (!isOneChar(get) || get[0] < '1' || get[0] > index) {
         return -1;
     } else {
