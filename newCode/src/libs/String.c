@@ -427,10 +427,6 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
         strncpy(gender,gender_const,MAX_LENGTH);
         gender[strcspn(gender, "\n")] = 0;
         if (isEmpty(gender)) strcpy(gender, " ");
-
-        printf("gender Converted string: %s\n", gender);    // debug
-
-
         
         if (!isSameString(gender, " ") && !matchGender(gender)) {
             GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(entryWidgets->window),
@@ -464,10 +460,6 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
     email[strcspn(email, "\n")] = 0;
     if (isEmpty(email)) strcpy(email, " ");
 
-
-    printf("email Converted string: %s\n", email);  // debug
-
-
     if (!isSameString(email, " ") && !matchMail(email)) {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(entryWidgets->window),
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -498,25 +490,107 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
     const char *representative_const;
     switch (entryWidgets->section) {
     case 1:
-        strncpy(entryWidgets->employee->name, userName,MAX_LENGTH);
-        strncpy(entryWidgets->employee->gender, gender,MAX_LENGTH);
-        strncpy(entryWidgets->employee->birthday, birthday,MAX_LENGTH);
-        strncpy(entryWidgets->employee->email, email,MAX_LENGTH);
-        strncpy(entryWidgets->employee->phone, phone,MAX_LENGTH);
-
         representative_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->representative_entry)));
-        strncpy(entryWidgets->employee->representative,representative_const,MAX_LENGTH);
+        strcpy(entryWidgets->employee->representative,representative_const);
         entryWidgets->employee->representative[strcspn(entryWidgets->employee->representative, "\n")] = 0;
         if (isEmpty(entryWidgets->employee->representative)) strcpy(entryWidgets->employee->representative, " ");
-        saveEmployeeToFile(*(entryWidgets->employee));
-        displayEmployee(*(entryWidgets->employee));
+        // saveEmployeeToFile(*(entryWidgets->employee));
+        char fullLine[6 * MAX_LENGTH + 15];
+        memset(fullLine, 0, sizeof(fullLine));  // 初始化 fullLine 为零
+        strcpy(fullLine, userName);
+        addColumn(fullLine, gender);
+        addColumn(fullLine, birthday);
+        addColumn(fullLine, email);
+        addColumn(fullLine, phone);
+        addColumn(fullLine, representative_const);
+        writeLineToFile("employees.csv", fullLine);
+        // displayEmployee(*(entryWidgets->employee));
+        GtkWidget *newdialog, *newlabel, *newcontent_area;
+        
+        newdialog = gtk_dialog_new_with_buttons("显示业务员信息",
+                                            NULL,
+                                            GTK_DIALOG_MODAL,
+                                            "_OK", GTK_RESPONSE_OK,
+                                            NULL);
+
+        newcontent_area = gtk_dialog_get_content_area(GTK_DIALOG(newdialog));
+
+        // 创建并设置标签内容
+        char info[1024];
+        snprintf(info, sizeof(info),
+                "\n显示业务员信息:\n"
+                "姓名: %-20.20s\n"
+                "性别: %-10.10s\n"
+                "生日: %-15.15s\n" 
+                "电子邮件: %-25.25s\n" 
+                "电话: %-15.15s\n"
+                "代表联络公司: %-20.20s\n", 
+                userName,
+                gender,
+                birthday,
+                email,
+                phone,
+                representative_const);
+
+        newlabel = gtk_label_new(info);
+        gtk_container_add(GTK_CONTAINER(newcontent_area), newlabel);
+
+        gtk_widget_show_all(newdialog);
+        gtk_dialog_run(GTK_DIALOG(newdialog));
+        gtk_widget_destroy(newdialog);
         break;
     case 2:
-        strncpy(entryWidgets->customer->name, userName,MAX_LENGTH);
-        strncpy(entryWidgets->customer->email, email,MAX_LENGTH);
-        strncpy(entryWidgets->customer->phone, phone,MAX_LENGTH);
-        saveCustomerToFile(*(entryWidgets->customer));
-        displayCustomer(*(entryWidgets->customer));
+        // strncpy(entryWidgets->customer->name, userName,MAX_LENGTH);
+        // strncpy(entryWidgets->customer->email, email,MAX_LENGTH);
+        // strncpy(entryWidgets->customer->phonWe, phone,MAX_LENGTH);
+        // saveCustomerToFile(*(entryWidgets->customer));
+        ;
+        char fullLine2[8 * MAX_LENGTH + 21];
+        strcpy(fullLine2, userName);
+        addColumn(fullLine2, entryWidgets->customer->region);
+        addColumn(fullLine2, entryWidgets->customer->address);
+        addColumn(fullLine2, entryWidgets->customer->legalRepresentative);
+        addColumn(fullLine2, entryWidgets->customer->scale);
+        addColumn(fullLine2, entryWidgets->customer->businessContactLevel);
+        addColumn(fullLine2, email);
+        addColumn(fullLine2, phone);
+
+        writeLineToFile("customers.csv", fullLine2);
+        // displayCustomer(*(entryWidgets->customer));
+        GtkWidget *newdialog2, *newlabel2, *newcontent_area2;
+        newdialog2 = gtk_dialog_new_with_buttons("显示客户信息",
+                                            NULL,
+                                            GTK_DIALOG_MODAL,
+                                            "_OK", GTK_RESPONSE_OK,
+                                            NULL);
+        newcontent_area2 = gtk_dialog_get_content_area(GTK_DIALOG(newdialog2));
+
+        char info1[1024];
+        snprintf(info1, sizeof(info1),
+                "\n显示客户信息:\n"
+                "姓名: %-20.20s\n"
+                "区域: %-20.20s\n"
+                "地址: %-30.30s\n"
+                "法人: %-20.20s\n"
+                "规模: %-10.10s\n"
+                "业务联系程度: %-15.15s\n"
+                "电子邮件: %-25.25s\n"
+                "电话: %-15.15s\n",
+                userName,
+                entryWidgets->customer->region,
+                entryWidgets->customer->address,
+                entryWidgets->customer->legalRepresentative,
+                entryWidgets->customer->scale,
+                entryWidgets->customer->businessContactLevel,
+                email,
+                phone);
+
+        newlabel2 = gtk_label_new(info1);
+        gtk_container_add(GTK_CONTAINER(newcontent_area2), newlabel2);
+
+        gtk_widget_show_all(newdialog2);
+        gtk_dialog_run(GTK_DIALOG(newdialog2));
+        gtk_widget_destroy(newdialog2);
         break;
     case 3:
         strncpy(entryWidgets->contact->name, userName,MAX_LENGTH);
@@ -529,8 +603,50 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
         strncpy(entryWidgets->contact->representative,representative_const,MAX_LENGTH);
         entryWidgets->contact->representative[strcspn(entryWidgets->contact->representative, "\n")] = 0;
         if (isEmpty(entryWidgets->contact->representative)) strcpy(entryWidgets->contact->representative, " ");
-        saveContactToFile(*(entryWidgets->contact));
-        displayContact(*(entryWidgets->contact));
+        
+        // saveContactToFile(*(entryWidgets->contact));
+        char fullLine3[6 * MAX_LENGTH + 15];
+        strcpy(fullLine3, userName);
+        addColumn(fullLine3, gender);
+        addColumn(fullLine3, birthday);
+        addColumn(fullLine3, email);
+        addColumn(fullLine3, phone);
+        addColumn(fullLine3, entryWidgets->contact->representative);
+
+        writeLineToFile("contacts.csv", fullLine3);
+
+        // displayContact(*(entryWidgets->contact));
+        GtkWidget *newdialog3, *newlabel3, *newcontent_area3;
+        
+        newdialog3 = gtk_dialog_new_with_buttons("显示联络员信息",
+                                            NULL,
+                                            GTK_DIALOG_MODAL,
+                                            "_OK", GTK_RESPONSE_OK,
+                                            NULL);
+        newcontent_area3 = gtk_dialog_get_content_area(GTK_DIALOG(newdialog3));
+
+        char info2[1024];
+        snprintf(info2, sizeof(info2),
+                "\n显示联络员信息:\n"
+                "姓名: %-20.20s\n"
+                "性别: %-10.10s\n"
+                "生日: %-15.15s\n"
+                "电子邮件: %-25.25s\n"
+                "电话: %-15.15s\n"
+                "代表公司: %-20.20s\n",
+                userName,
+                gender,
+                birthday,
+                email,
+                phone,
+                entryWidgets->contact->representative);
+
+        newlabel3 = gtk_label_new(info2);
+        gtk_container_add(GTK_CONTAINER(newcontent_area3), newlabel3);
+
+        gtk_widget_show_all(newdialog3);
+        gtk_dialog_run(GTK_DIALOG(newdialog3));
+        gtk_widget_destroy(newdialog3);
         break;
     default:
         return;

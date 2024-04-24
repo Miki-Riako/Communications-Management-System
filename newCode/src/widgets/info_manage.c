@@ -281,7 +281,8 @@ void changeContact(){
 
 void saveEmployeeToFile(Employee employee) {
     char fullLine[6 * MAX_LENGTH + 15];
-    
+    memset(fullLine, 0, sizeof(fullLine));  // 初始化 fullLine 为零
+
     strcpy(fullLine, employee.name);
     addColumn(fullLine, employee.gender);
     addColumn(fullLine, employee.birthday);

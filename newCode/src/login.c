@@ -349,10 +349,8 @@ static void on_confirm_Register_clicked(GtkWidget *widget, gpointer data) {
 
     if (response == GTK_RESPONSE_YES) {
         Employee newEmployee;
-        addEntry(1, "employees.csv", "请输入业务员姓名：", &newEmployee, NULL, NULL);
+        addEntry(1, "employees.csv", "请输入业务员信息：", &newEmployee, NULL, NULL);
         
-        // saveEmployeeToFile(newEmployee);
-        // displayEmployee(newEmployee);
     }
     system(SYSTEM_CLEAR);
 }
