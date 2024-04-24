@@ -331,6 +331,12 @@ void displayEmployee(Employee employee) {
                                          NULL);
 
     content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    printf("%s",employee.name);
+    printf("%s",employee.birthday);
+    printf("%s",employee.email);
+    printf("%s",employee.gender);
+    printf("%s",employee.phone);
+    printf("%s",employee.representative);
 
     // 创建并设置标签内容
     char info[1024];

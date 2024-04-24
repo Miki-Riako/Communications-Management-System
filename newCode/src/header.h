@@ -9,6 +9,8 @@
 #include <ctype.h>
 #include <regex.h>
 #include <gtk/gtk.h>
+#include <iconv.h>
+#include <errno.h>
 #include "data_structure.h"
 
 #define DEBUG_MODE false
@@ -131,7 +133,7 @@ int selectSearchAttribute(int which);
 // String
 static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets);
 static void on_cancel_save_clicked(GtkWidget *widget, EntryWidgets *entryWidgets);
-
+char* convert_to_utf8(const char* input);
 
 // all widget
 void on_back_clicked(GtkWidget *widget, WidgetPair *pair);

@@ -143,7 +143,7 @@ void enquiryRecords(head_node *head) {
         switch (get[0]) {
         case '1':
             attributeIndex = selectSearchAttribute(3);
-            if (attributeIndex == -1) {
+            if (attributeIndex == -1 || -2) {
                 show_info_dialog(NULL,"无效的属性选择。");
                 return;
             }
@@ -172,7 +172,7 @@ void enquiryRecords(head_node *head) {
             break;
         case '3':
             attributeIndex = selectSearchAttribute(3);
-            if (attributeIndex == -1) {
+            if (attributeIndex == -1 || -2) {
                 show_info_dialog(NULL,"无效的属性选择。");
                 return;
             }
@@ -326,7 +326,7 @@ void statisticsRecords(head_node *head) {
         switch (get[0]) {
         case '1':
             attrIndex = selectSearchAttribute(3);
-            if (attrIndex == -1) {
+            if (attrIndex == -1 || -2) {
                 GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                             GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                             GTK_MESSAGE_ERROR,
@@ -347,7 +347,7 @@ void statisticsRecords(head_node *head) {
             while (true) {
                 attrIndex = selectSearchAttribute(3);
                 attrIndexes[numAttrs++] = attrIndex;
-                if (attrIndex == -1) break;
+                if (attrIndex == -1 || -2) break;
                 else if (numAttrs >= 32) {
                     GtkWidget* dialog = gtk_message_dialog_new(NULL,
                                                 GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -410,7 +410,7 @@ void statisticsRecords(head_node *head) {
                 }
                 gtk_widget_destroy(dialog);
                 int attrIndex = selectSearchAttribute(3);
-                if (attrIndex == -1) break;
+                if (attrIndex == -1 || -2) break;
                 attrIndexes[numConditions] = attrIndex;
                 print = true;
 

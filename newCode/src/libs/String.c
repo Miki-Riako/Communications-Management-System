@@ -383,11 +383,12 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
     }
 
     if (entryWidgets->section == 2) {
-        const char *region_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->region_entry));
-        const char *address_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->address_entry));
-        const char *legalRepresentative_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->legal_rep_entry));
-        const char *scale_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->scale_entry));
-        const char *businessContactLevel_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->contact_level_entry));
+        const char *region_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->region_entry)));
+
+        const char *address_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->address_entry)));
+        const char *legalRepresentative_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->legal_rep_entry)));
+        const char *scale_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->scale_entry)));
+        const char *businessContactLevel_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->contact_level_entry)));
         strncpy(entryWidgets->customer->region,region_const,MAX_LENGTH);
         entryWidgets->customer->region[strcspn(entryWidgets->customer->region, "\n")] = 0;
         strncpy(entryWidgets->customer->address,address_const,MAX_LENGTH);
@@ -421,12 +422,16 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
             return;
         }
     } else { // section == 1 || section == 3
-        const char *gender_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->gender_entry));
-        const char *birthday_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->birthday_entry));
-        
+        const char *gender_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->gender_entry)));
+        const char *birthday_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->birthday_entry)));
         strncpy(gender,gender_const,MAX_LENGTH);
         gender[strcspn(gender, "\n")] = 0;
         if (isEmpty(gender)) strcpy(gender, " ");
+
+        printf("gender Converted string: %s\n", gender);    // debug
+
+
+        
         if (!isSameString(gender, " ") && !matchGender(gender)) {
             GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(entryWidgets->window),
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -440,6 +445,7 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
         strncpy(birthday,birthday_const,MAX_LENGTH);
         birthday[strcspn(birthday, "\n")] = 0;
         if (isEmpty(birthday)) strcpy(birthday, " ");
+        printf("birthday Converted string: %s\n", birthday);
         if (!isSameString(birthday, " ") && !matchDate(birthday)) {
             GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(entryWidgets->window),
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -453,10 +459,15 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
     }
 
 
-    const char *email_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->email_entry));        
+    const char *email_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->email_entry)));        
     strncpy(email,email_const,MAX_LENGTH);
     email[strcspn(email, "\n")] = 0;
     if (isEmpty(email)) strcpy(email, " ");
+
+
+    printf("email Converted string: %s\n", email);  // debug
+
+
     if (!isSameString(email, " ") && !matchMail(email)) {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(entryWidgets->window),
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -468,10 +479,11 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
         return;
     }
 
-    const char *phone_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->phone_entry));        
+    const char *phone_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->phone_entry)));        
     strncpy(phone,phone_const,MAX_LENGTH);
     phone[strcspn(phone, "\n")] = 0;
     if (isEmpty(phone)) strcpy(phone, " ");
+    printf("phone Converted string: %s\n", phone);  // debug
     if (!isSameString(phone, " ") && !matchPhone(phone)) {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(entryWidgets->window),
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -486,39 +498,39 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
     const char *representative_const;
     switch (entryWidgets->section) {
     case 1:
-        strcpy(entryWidgets->employee->name, userName);
-        strcpy(entryWidgets->employee->gender, gender);
-        strcpy(entryWidgets->employee->birthday, birthday);
-        strcpy(entryWidgets->employee->email, email);
-        strcpy(entryWidgets->employee->phone, phone);
+        strncpy(entryWidgets->employee->name, userName,MAX_LENGTH);
+        strncpy(entryWidgets->employee->gender, gender,MAX_LENGTH);
+        strncpy(entryWidgets->employee->birthday, birthday,MAX_LENGTH);
+        strncpy(entryWidgets->employee->email, email,MAX_LENGTH);
+        strncpy(entryWidgets->employee->phone, phone,MAX_LENGTH);
 
-        representative_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->representative_entry));
+        representative_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->representative_entry)));
         strncpy(entryWidgets->employee->representative,representative_const,MAX_LENGTH);
         entryWidgets->employee->representative[strcspn(entryWidgets->employee->representative, "\n")] = 0;
         if (isEmpty(entryWidgets->employee->representative)) strcpy(entryWidgets->employee->representative, " ");
-        saveEmployeeToFile(*entryWidgets->employee);
-        displayEmployee(*entryWidgets->employee);
+        saveEmployeeToFile(*(entryWidgets->employee));
+        displayEmployee(*(entryWidgets->employee));
         break;
     case 2:
-        strcpy(entryWidgets->customer->name, userName);
-        strcpy(entryWidgets->customer->email, email);
-        strcpy(entryWidgets->customer->phone, phone);
-        saveCustomerToFile(*entryWidgets->customer);
-        displayCustomer(*entryWidgets->customer);
+        strncpy(entryWidgets->customer->name, userName,MAX_LENGTH);
+        strncpy(entryWidgets->customer->email, email,MAX_LENGTH);
+        strncpy(entryWidgets->customer->phone, phone,MAX_LENGTH);
+        saveCustomerToFile(*(entryWidgets->customer));
+        displayCustomer(*(entryWidgets->customer));
         break;
     case 3:
-        strcpy(entryWidgets->contact->name, userName);
-        strcpy(entryWidgets->contact->gender, gender);
-        strcpy(entryWidgets->contact->birthday, birthday);
-        strcpy(entryWidgets->contact->email, email);
-        strcpy(entryWidgets->contact->phone, phone);
+        strncpy(entryWidgets->contact->name, userName,MAX_LENGTH);
+        strncpy(entryWidgets->contact->gender, gender,MAX_LENGTH);
+        strncpy(entryWidgets->contact->birthday, birthday,MAX_LENGTH);
+        strncpy(entryWidgets->contact->email, email,MAX_LENGTH);
+        strncpy(entryWidgets->contact->phone, phone,MAX_LENGTH);
         
-        representative_const = gtk_entry_get_text(GTK_ENTRY(entryWidgets->representative_entry));
+        representative_const = convert_to_utf8(gtk_entry_get_text(GTK_ENTRY(entryWidgets->representative_entry)));
         strncpy(entryWidgets->contact->representative,representative_const,MAX_LENGTH);
         entryWidgets->contact->representative[strcspn(entryWidgets->contact->representative, "\n")] = 0;
         if (isEmpty(entryWidgets->contact->representative)) strcpy(entryWidgets->contact->representative, " ");
-        saveContactToFile(*entryWidgets->contact);
-        displayContact(*entryWidgets->contact);
+        saveContactToFile(*(entryWidgets->contact));
+        displayContact(*(entryWidgets->contact));
         break;
     default:
         return;
@@ -808,4 +820,36 @@ int selectSearchAttribute(int which) {
     } else {
         return charToInt(get[0]) - 1;
     }
+}
+
+char* convert_to_utf8(const char* input) {
+    iconv_t cd = iconv_open("UTF-8", "ISO-8859-1"); // 确保编码名称正确
+    if (cd == (iconv_t)-1) {
+        perror("iconv_open failed");
+        return NULL;
+    }
+
+    size_t in_len = strlen(input);
+    size_t out_len = in_len * 2; // 预估UTF-8的长度最多为原长度的两倍
+    char* output = malloc(out_len + 1);
+    if (!output) {
+        perror("malloc failed");
+        iconv_close(cd);
+        return NULL;
+    }
+
+    char* out_ptr = output;
+    char** in_ptr_temp = (char**) &input; // 强制转换以匹配iconv的期望类型
+
+    size_t result = iconv(cd, in_ptr_temp, &in_len, &out_ptr, &out_len);
+    if (result == (size_t)-1) {
+        perror("iconv failed");
+        free(output);
+        iconv_close(cd);
+        return NULL;
+    }
+
+    *out_ptr = '\0';
+    iconv_close(cd);
+    return output;
 }
