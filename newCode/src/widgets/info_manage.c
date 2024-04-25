@@ -68,18 +68,18 @@ void infoManageWidget(GtkWidget *parent) {
 
 void addEmployee() {
     Employee newEmployee;
-    addEntry(1, "employees.csv", "请输入业务员姓名：", &newEmployee, NULL, NULL);
+    addEntry(1, "employees.csv", "请输入业务员信息：", &newEmployee, NULL, NULL);
 }
 
 
 void addCustomer() {
     Customer newCustomer;
-    addEntry(2, "customers.csv", "请输入客户姓名：",NULL, &newCustomer, NULL);
+    addEntry(2, "customers.csv", "请输入客户信息：",NULL, &newCustomer, NULL);
 }
 
 void addContact() {
     ContactPerson newContact;
-    addEntry(3, "contacts.csv", "请输入联络员姓名：", NULL, NULL, &newContact);
+    addEntry(3, "contacts.csv", "请输入联络员信息：", NULL, NULL, &newContact);
 }
 
 void changeEmployee(){

@@ -207,7 +207,7 @@ void inputTheName(char *name, int buffer_size, const char *prompt) {
             }
         } else {
             // 用户选择取消或关闭对话框
-            printf("取消输入(name为“ ”)\n");
+            // printf("取消输入(name为“ ”)\n");
 
             strcpy(name, " ");
             break;
@@ -441,7 +441,6 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
         strncpy(birthday,birthday_const,MAX_LENGTH);
         birthday[strcspn(birthday, "\n")] = 0;
         if (isEmpty(birthday)) strcpy(birthday, " ");
-        printf("birthday Converted string: %s\n", birthday);
         if (!isSameString(birthday, " ") && !matchDate(birthday)) {
             GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(entryWidgets->window),
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -475,7 +474,6 @@ static void on_save_entry_clicked(GtkWidget *widget, EntryWidgets *entryWidgets)
     strncpy(phone,phone_const,MAX_LENGTH);
     phone[strcspn(phone, "\n")] = 0;
     if (isEmpty(phone)) strcpy(phone, " ");
-    printf("phone Converted string: %s\n", phone);  // debug
     if (!isSameString(phone, " ") && !matchPhone(phone)) {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(entryWidgets->window),
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
