@@ -13,6 +13,8 @@ void startWidget() {
     g_signal_connect(startWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     gtk_window_set_position(GTK_WINDOW(startWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
 
+    gtk_window_maximize(GTK_WINDOW(startWidgets.window));
+
     startWidgets.grid = gtk_grid_new();
     gtk_grid_set_row_spacing(GTK_GRID(startWidgets.grid), 10);  // 设置行间距
     gtk_grid_set_column_spacing(GTK_GRID(startWidgets.grid), 10);  // 设置列间距
@@ -50,6 +52,8 @@ void loginManagerWidget() {
     gtk_window_set_position(GTK_WINDOW(loginManagerWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
     g_signal_connect(loginManagerWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
+    gtk_window_maximize(GTK_WINDOW(loginManagerWidgets.window));
+
     loginManagerWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(loginManagerWidgets.window), loginManagerWidgets.grid);
     gtk_widget_set_halign(loginManagerWidgets.grid, GTK_ALIGN_CENTER);
@@ -86,6 +90,8 @@ void loginEmployeeWidget() {
     gtk_window_set_position(GTK_WINDOW(loginEmployeeWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
     g_signal_connect(loginEmployeeWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
+    gtk_window_maximize(GTK_WINDOW(loginEmployeeWidgets.window));
+
     loginEmployeeWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(loginEmployeeWidgets.window), loginEmployeeWidgets.grid);
     gtk_widget_set_halign(loginEmployeeWidgets.grid, GTK_ALIGN_CENTER);
@@ -123,6 +129,9 @@ void registerWidget() {
     gtk_window_set_default_size(GTK_WINDOW(registerWidgets.window), 500, 400);
     gtk_container_set_border_width(GTK_CONTAINER(registerWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(registerWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
+
+    gtk_window_maximize(GTK_WINDOW(registerWidgets.window));
+
     g_signal_connect(registerWidgets.window, "destroy", G_CALLBACK(on_backtoStart_clicked), NULL);
 
     registerWidgets.grid = gtk_grid_new();
@@ -216,6 +225,7 @@ static void on_confirm_loginManager_clicked(GtkWidget *widget, gpointer data) {
                                                 "密码错误。还剩下 %d 次机会。", loginManagerWidgets.chance);
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
+        if(loginManagerWidgets.chance == 0) exit(0);
         return;
     }
 }
@@ -339,10 +349,8 @@ static void on_confirm_Register_clicked(GtkWidget *widget, gpointer data) {
 
     if (response == GTK_RESPONSE_YES) {
         Employee newEmployee;
-        addEntry(1, "employees.csv", "请输入业务员姓名：", &newEmployee, NULL, NULL);
+        addEntry(1, "employees.csv", "请输入业务员信息：", &newEmployee, NULL, NULL);
         
-        // saveEmployeeToFile(newEmployee);
-        // displayEmployee(newEmployee);
     }
     system(SYSTEM_CLEAR);
 }

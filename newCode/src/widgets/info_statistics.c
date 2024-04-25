@@ -70,7 +70,7 @@ void infoStatisticsWidget(GtkWidget *parent) {
 
     infoStatisticsWidgets.conditionalStatistics_btn = gtk_button_new_with_label("条件统计");
     g_signal_connect(infoStatisticsWidgets.conditionalStatistics_btn, "clicked", G_CALLBACK(on_conditionalStatistics_clicked), head);
-    gtk_grid_attach(GTK_GRID(infoStatisticsWidgets.grid), infoStatisticsWidgets.conditionalStatistics_btn, 0, 2, 2, 1);
+    gtk_grid_attach(GTK_GRID(infoStatisticsWidgets.grid), infoStatisticsWidgets.conditionalStatistics_btn, 0, 3, 2, 1);
 
     infoStatisticsWidgets.back_btn = gtk_button_new_with_label("返回");
     WidgetPair *widgetPair = g_slice_new(WidgetPair);
@@ -81,7 +81,7 @@ void infoStatisticsWidget(GtkWidget *parent) {
     g_signal_connect(infoStatisticsWidgets.back_btn, "clicked", G_CALLBACK(freeAll), head);
     g_signal_connect(infoStatisticsWidgets.back_btn, "clicked", G_CALLBACK(on_infoStatisticsBack_clicked), widgetPair);
 
-    gtk_grid_attach(GTK_GRID(infoStatisticsWidgets.grid), infoStatisticsWidgets.back_btn, 0, 3, 2, 1);
+    gtk_grid_attach(GTK_GRID(infoStatisticsWidgets.grid), infoStatisticsWidgets.back_btn, 0, 4, 2, 1);
     
     gtk_widget_show_all(infoStatisticsWidgets.window);
     gtk_main();
@@ -103,7 +103,7 @@ void simpleStatistics(head_node *head) {
     if (which == -1) return;  // 无效的选择
 
     int attrIndex = selectSearchAttribute(which);
-    if (attrIndex == -1 || -2) {
+    if (attrIndex == -1 || attrIndex == -2) {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(infoStatisticsWidgets.window),
                                                     GTK_DIALOG_DESTROY_WITH_PARENT,
                                                     GTK_MESSAGE_ERROR,
@@ -221,7 +221,7 @@ void conditionalStatistics(head_node *head) {
         attrIndexes[numConditions] = attrIndex;
         print = true;
 
-        infoInput(conditionValues[numConditions], sizeof(conditionValues[numConditions]),"输入条件值");
+        if(!infoInput(conditionValues[numConditions], sizeof(conditionValues[numConditions]),"输入条件值")) return;
         ++numConditions;
 
         if (numConditions >= 32) {

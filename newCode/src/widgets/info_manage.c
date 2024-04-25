@@ -68,18 +68,18 @@ void infoManageWidget(GtkWidget *parent) {
 
 void addEmployee() {
     Employee newEmployee;
-    addEntry(1, "employees.csv", "请输入业务员姓名：", &newEmployee, NULL, NULL);
+    addEntry(1, "employees.csv", "请输入业务员信息：", &newEmployee, NULL, NULL);
 }
 
 
 void addCustomer() {
     Customer newCustomer;
-    addEntry(2, "customers.csv", "请输入客户姓名：",NULL, &newCustomer, NULL);
+    addEntry(2, "customers.csv", "请输入客户信息：",NULL, &newCustomer, NULL);
 }
 
 void addContact() {
     ContactPerson newContact;
-    addEntry(3, "contacts.csv", "请输入联络员姓名：", NULL, NULL, &newContact);
+    addEntry(3, "contacts.csv", "请输入联络员信息：", NULL, NULL, &newContact);
 }
 
 void changeEmployee(){
@@ -281,7 +281,8 @@ void changeContact(){
 
 void saveEmployeeToFile(Employee employee) {
     char fullLine[6 * MAX_LENGTH + 15];
-    
+    memset(fullLine, 0, sizeof(fullLine));  // 初始化 fullLine 为零
+
     strcpy(fullLine, employee.name);
     addColumn(fullLine, employee.gender);
     addColumn(fullLine, employee.birthday);
@@ -331,6 +332,12 @@ void displayEmployee(Employee employee) {
                                          NULL);
 
     content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    printf("%s",employee.name);
+    printf("%s",employee.birthday);
+    printf("%s",employee.email);
+    printf("%s",employee.gender);
+    printf("%s",employee.phone);
+    printf("%s",employee.representative);
 
     // 创建并设置标签内容
     char info[1024];
