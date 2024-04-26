@@ -1,9 +1,10 @@
 // data_structure.h
 #ifndef DATA_STRUCTRUE_H
 #define DATA_STRUCTRUE_H
-#include "header.h"
-
 #define MAX_LENGTH 255
+#include <gtk/gtk.h>
+#include <stdbool.h>
+
 typedef struct {
     char name[MAX_LENGTH];                    // 客户名称
     char region[MAX_LENGTH];                  // 客户所在区域
@@ -73,7 +74,7 @@ typedef struct {
     Customer *customer;
     ContactPerson *contact;
 } EntryWidgets;
-EntryWidgets entryWidgets;
+extern EntryWidgets entryWidgets;
 
 // login
 typedef struct {
@@ -84,7 +85,7 @@ typedef struct {
     GtkWidget *register_btn;
     GtkWidget *quit_btn;
 } StartWidgets;
-StartWidgets startWidgets;
+extern StartWidgets startWidgets;
 
 typedef struct {
     GtkWidget *window;
@@ -95,7 +96,7 @@ typedef struct {
     GtkWidget *backToStart_btn;
     int chance;
 } LoginManagerWidgets;
-LoginManagerWidgets loginManagerWidgets;
+extern LoginManagerWidgets loginManagerWidgets;
 
 typedef struct {
     GtkWidget *window;
@@ -107,7 +108,7 @@ typedef struct {
     GtkWidget *confirmLoginManager_btn;
     GtkWidget *backToStart_btn;
 }LoginEmployeeWidgets;
-LoginEmployeeWidgets loginEmployeeWidgets;
+extern LoginEmployeeWidgets loginEmployeeWidgets;
 
 typedef struct {
     GtkWidget *window;
@@ -119,7 +120,7 @@ typedef struct {
     GtkWidget *confirmRegister_btn;
     GtkWidget *backToStart_btn;
 }RegisterWidgets;
-RegisterWidgets registerWidgets;
+extern RegisterWidgets registerWidgets;
 
 // menu
 typedef struct {
@@ -135,7 +136,7 @@ typedef struct {
     GtkWidget *systemSetting_btn;
     GtkWidget *exit_btn;
 } ManagerMenuWidgets;
-ManagerMenuWidgets managerMenuWidgets;
+extern ManagerMenuWidgets managerMenuWidgets;
 
 typedef struct {
     GtkWidget *window;
@@ -148,7 +149,7 @@ typedef struct {
     GtkWidget *systemSetting_btn;
     GtkWidget *exit_btn;
 } EmployeeMenuWidgets;
-EmployeeMenuWidgets employeeMenuWidgets;
+extern EmployeeMenuWidgets employeeMenuWidgets;
 
 // customer_assign
 typedef struct {
@@ -160,7 +161,7 @@ typedef struct {
     GtkWidget *displayAssignment_btn;
     GtkWidget *backToManagerMenu_btn;
 } CustomerAssignWidgets;
-CustomerAssignWidgets customerAssignWidgets;
+extern CustomerAssignWidgets customerAssignWidgets;
 
 // group_manage
 typedef struct {
@@ -177,7 +178,7 @@ typedef struct {
     GtkWidget *removeContactRecord_btn;
     GtkWidget *backToManageMenu_btn;
 } GroupManageWidgets;
-GroupManageWidgets groupManageWidgets;
+extern GroupManageWidgets groupManageWidgets;
 
 // info_enquiry
 typedef struct {
@@ -188,7 +189,7 @@ typedef struct {
     GtkWidget *fuzzyQuery_btn;
     GtkWidget *back_btn;
 } InfoEnquiryWidgets;
-InfoEnquiryWidgets infoEnquiryWidgets;
+extern InfoEnquiryWidgets infoEnquiryWidgets;
 
 // info_manage
 typedef struct {
@@ -205,7 +206,7 @@ typedef struct {
     GtkWidget *removeContactRecord_btn;
     GtkWidget *back_btn;
 } InfoManageWidgets;
-InfoManageWidgets infoManageWidgets;
+extern InfoManageWidgets infoManageWidgets;
 
 // info_sort
 typedef struct {
@@ -216,7 +217,7 @@ typedef struct {
     GtkWidget *combinedSort_btn;
     GtkWidget *back_btn;
 } InfoSortWidgets;
-InfoSortWidgets infoSortWidgets;
+extern InfoSortWidgets infoSortWidgets;
 
 // info_statistics
 typedef struct {
@@ -228,7 +229,7 @@ typedef struct {
     GtkWidget *conditionalStatistics_btn;
     GtkWidget *back_btn;
 } InfoStatisticsWidgets;
-InfoStatisticsWidgets infoStatisticsWidgets;
+extern InfoStatisticsWidgets infoStatisticsWidgets;
 
 // record_manage
 typedef struct {
@@ -239,7 +240,7 @@ typedef struct {
     GtkWidget *showRecord_btn;
     GtkWidget *back_btn;
 } RecordsManageWidgets;
-RecordsManageWidgets recordsManageWidgets;
+extern RecordsManageWidgets recordsManageWidgets;
 
 
 // record_analysis
@@ -251,7 +252,7 @@ typedef struct {
     GtkWidget *statisticsRecords_btn;
     GtkWidget *back_btn;
 } RecordsAnalysisWidgets;
-RecordsAnalysisWidgets recordsAnalysisWidgets;
+extern RecordsAnalysisWidgets recordsAnalysisWidgets;
 
 
 // system_setting
@@ -264,7 +265,7 @@ typedef struct {
     GtkWidget *restoreData_btn;
     GtkWidget *backToManageMenu_btn;
 } SystemSettingWidgets;
-SystemSettingWidgets systemSettingWidgets;
+extern SystemSettingWidgets systemSettingWidgets;
 
 
 
