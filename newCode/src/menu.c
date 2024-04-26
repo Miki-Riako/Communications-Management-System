@@ -88,7 +88,7 @@ void employeeMenuWidget() {
     gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.recordsManage_btn, 0, 3, 2, 1);
 
     employeeMenuWidgets.recordsAnalysis_btn = gtk_button_new_with_label("记录分析");
-    g_signal_connect(employeeMenuWidgets.recordsAnalysis_btn, "clicked", G_CALLBACK(on_recordManage_clicked), employeeMenuWidgets.window);
+    g_signal_connect(employeeMenuWidgets.recordsAnalysis_btn, "clicked", G_CALLBACK(on_analysisRecord_clicked), employeeMenuWidgets.window);
     gtk_grid_attach(GTK_GRID(employeeMenuWidgets.grid), employeeMenuWidgets.recordsAnalysis_btn, 0, 4, 2, 1);
 
     employeeMenuWidgets.systemSetting_btn = gtk_button_new_with_label("系统维护");

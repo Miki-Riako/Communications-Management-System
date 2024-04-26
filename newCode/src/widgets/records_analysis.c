@@ -23,7 +23,8 @@ void recordsAnalysisWidget(GtkWidget *parent) {
         gtk_widget_destroy(dialog);
         return;
     }
-    loadFile(head);  // 加载数据
+    loadFile_record(head);  // 加载数据
+    
     if (head->is_empty) {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(recordsAnalysisWidgets.window),
                                                     GTK_DIALOG_DESTROY_WITH_PARENT,
