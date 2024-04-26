@@ -12,7 +12,6 @@
 #include <iconv.h>
 #include <errno.h>
 #include "data_structure.h"
-
 #define DEBUG_MODE false
 #define SECRET_KEY "AAAAA-AAAAA-AAAAA-AAAAA-AAAAA"
 

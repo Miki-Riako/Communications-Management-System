@@ -1,7 +1,5 @@
 // login.c
 #include "header.h"
-bool IsManager = false;
-char User[MAX_LENGTH];
 
 void startWidget() {
     gtk_init(NULL, NULL);
@@ -13,7 +11,7 @@ void startWidget() {
     g_signal_connect(startWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     gtk_window_set_position(GTK_WINDOW(startWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
 
-    gtk_window_maximize(GTK_WINDOW(startWidgets.window));
+    // gtk_window_maximize(GTK_WINDOW(startWidgets.window));
 
     startWidgets.grid = gtk_grid_new();
     gtk_grid_set_row_spacing(GTK_GRID(startWidgets.grid), 10);  // 设置行间距
@@ -52,7 +50,7 @@ void loginManagerWidget() {
     gtk_window_set_position(GTK_WINDOW(loginManagerWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
     g_signal_connect(loginManagerWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
-    gtk_window_maximize(GTK_WINDOW(loginManagerWidgets.window));
+    // gtk_window_maximize(GTK_WINDOW(loginManagerWidgets.window));
 
     loginManagerWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(loginManagerWidgets.window), loginManagerWidgets.grid);
@@ -90,7 +88,7 @@ void loginEmployeeWidget() {
     gtk_window_set_position(GTK_WINDOW(loginEmployeeWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
     g_signal_connect(loginEmployeeWidgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
-    gtk_window_maximize(GTK_WINDOW(loginEmployeeWidgets.window));
+    // gtk_window_maximize(GTK_WINDOW(loginEmployeeWidgets.window));
 
     loginEmployeeWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(loginEmployeeWidgets.window), loginEmployeeWidgets.grid);
@@ -130,9 +128,9 @@ void registerWidget() {
     gtk_container_set_border_width(GTK_CONTAINER(registerWidgets.window), 10);
     gtk_window_set_position(GTK_WINDOW(registerWidgets.window), GTK_WIN_POS_CENTER);  // 设置窗口在屏幕中间
 
-    gtk_window_maximize(GTK_WINDOW(registerWidgets.window));
+    // gtk_window_maximize(GTK_WINDOW(registerWidgets.window));
 
-    g_signal_connect(registerWidgets.window, "destroy", G_CALLBACK(on_backtoStart_clicked), NULL);
+    g_signal_connect(registerWidgets.window, "destroy", G_CALLBACK(on_backtoStart_clicked), registerWidgets.window);
 
     registerWidgets.grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(registerWidgets.window), registerWidgets.grid);
@@ -231,7 +229,7 @@ static void on_confirm_loginManager_clicked(GtkWidget *widget, gpointer data) {
 }
 static void on_backtoStart_clicked(GtkWidget *widget, gpointer data) {
     gtk_widget_show(startWidgets.window);
-    gtk_widget_destroy((GtkWidget*)data);  
+    gtk_widget_destroy(data);  
 }
 
 static void on_confirm_loginEmployee_clicked(GtkWidget *widget, gpointer data) {
