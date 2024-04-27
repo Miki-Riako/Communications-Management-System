@@ -36,7 +36,7 @@ void startWidget() {
     g_signal_connect(startWidgets.quit_btn, "clicked", G_CALLBACK(on_quit_clicked), NULL);
     gtk_grid_attach(GTK_GRID(startWidgets.grid), startWidgets.quit_btn, 0, 3, 1, 1);
     
-     
+    
     gtk_widget_show_all(startWidgets.window);
     gtk_main();
 }
@@ -64,7 +64,7 @@ void loginManagerWidget() {
     loginManagerWidgets.label = gtk_label_new("请输入公司密钥：");
     gtk_grid_attach(GTK_GRID(loginManagerWidgets.grid), loginManagerWidgets.label, 0, 0, 2, 1);
     loginManagerWidgets.password_entry = gtk_entry_new();
-    gtk_entry_set_visibility(GTK_ENTRY(loginManagerWidgets.password_entry), FALSE);
+    gtk_entry_set_visibility(GTK_ENTRY(loginManagerWidgets.password_entry), TRUE);
     gtk_grid_attach(GTK_GRID(loginManagerWidgets.grid), loginManagerWidgets.password_entry, 0, 1, 2, 1);
     
     loginManagerWidgets.confirmLoginManager_btn = gtk_button_new_with_label("确认登录");
@@ -105,7 +105,7 @@ void loginEmployeeWidget() {
     loginEmployeeWidgets.password_label = gtk_label_new("密码： ");
     gtk_grid_attach(GTK_GRID(loginEmployeeWidgets.grid),loginEmployeeWidgets.password_label,0,1,1,1);
     loginEmployeeWidgets.password_entry = gtk_entry_new();
-    gtk_entry_set_visibility(GTK_ENTRY(loginEmployeeWidgets.password_entry), FALSE);
+    gtk_entry_set_visibility(GTK_ENTRY(loginEmployeeWidgets.password_entry), TRUE);
     gtk_grid_attach(GTK_GRID(loginEmployeeWidgets.grid), loginEmployeeWidgets.password_entry, 1, 1, 2, 1);
     
     loginEmployeeWidgets.confirmLoginManager_btn = gtk_button_new_with_label("确认登录");
@@ -147,7 +147,7 @@ void registerWidget() {
     registerWidgets.password_label = gtk_label_new("密码： ");
     gtk_grid_attach(GTK_GRID(registerWidgets.grid),registerWidgets.password_label,0,1,1,1);
     registerWidgets.password_entry = gtk_entry_new();
-    gtk_entry_set_visibility(GTK_ENTRY(registerWidgets.password_entry), FALSE);
+    gtk_entry_set_visibility(GTK_ENTRY(registerWidgets.password_entry), TRUE);
     gtk_grid_attach(GTK_GRID(registerWidgets.grid), registerWidgets.password_entry, 1, 1, 2, 1);
     
     registerWidgets.confirmRegister_btn = gtk_button_new_with_label("确认注册");
