@@ -8,6 +8,8 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <regex.h>
+#include <termios.h>
+#include <unistd.h>
 
 #define DEBUG_MODE true
 #define SECRET_KEY "AAAAA-AAAAA-AAAAA-AAAAA-AAAAA"
